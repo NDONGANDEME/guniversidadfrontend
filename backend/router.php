@@ -31,6 +31,9 @@ switch ($ruta) {
     case 'estudiante':
         require_once BASE_PATH . "frontend/estudiante/controlador/estudiante.php";
         break;
+    case 'global':
+        require_once BASE_PATH  . "frontend/global/index.php";
+        break;
 
     default:
         header("Location: ../index.html");
