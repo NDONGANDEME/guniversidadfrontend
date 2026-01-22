@@ -19,7 +19,11 @@ class NoticiasController
                 case "listar5NoticiasRecientes":
                     self::getNoticiasRecientes();
                     break;
+                case "paginacion":
+                    self::getNoticiasPaginacion($parametros['pagina']);
+                    break;
                 default:
+    
                     echo json_encode([
                         'estado' => 400,
                         'éxito' => false,
@@ -40,5 +44,8 @@ class NoticiasController
 
     private static function getNoticiasRecientes(){
         NoticiasDao::obtenerNoticiasRecientes();
+    }
+    private static function getNoticiasPaginacion($pagina){
+        NoticiasDao::obtenerNoticiasAPaginar($pagina);
     }
 }
