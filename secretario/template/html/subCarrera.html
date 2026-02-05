@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Panel del Secretario Académico - Carreras </title>
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../css/general.css">
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+           <div class="importandoSidebar"> </div>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <div class="importandoNavbar"> </div>
+                <!-- End of Topbar -->
+
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"> Carreras </h1>
+                    </div>
+
+
+
+                    <!-- Tabla de carreras -->
+                    <div class="card shadow mb-5">
+
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Carreras</h6>
+                            <button class="btn btn-primary btn-icon-split" data-bs-toggle="modal" data-bs-target="#modalNuevaCarrera"> 
+                                <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
+                                <span class="text"> Nueva </span>
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center " id="tablaCarreras">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th width="40%">Nombre</th>
+                                            <th width="40%">Departamento</th>
+                                            <th width="20%">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyTablaCarreras"> <!--Dinamicamente--> 
+                                        <tr>
+                                            <td> Ingenieria Informatica </td>
+                                            <td class="text-muted">Ninguno</td>
+                                            <td class="d-flex justify-content-center align-items-center gap-1">
+                                                <button class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="modal" data-bs-target="#modalAsignacion" 
+                                                    title="Asignar"> <i class="fas fa-hand-point-right"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="modal" data-bs-target="#modalNuevaCarrera" 
+                                                    title="Editar" data-id="${objeto.idCarrera}"> <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" data-id="${objeto.idCarrera}" title="Deshabilitar">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal para agregar una nueva carrera -->
+    <div class="modal fade" id="modalNuevaCarrera" tabindex="-1" aria-labelledby="modalNuevaCarreraLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNuevaCarreraLabel">Añadir nueva carrera</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formCarrera">
+
+                        <div class="mb-0">
+                            <label for="nombreCarrera" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombreCarrera" placeholder="Ej: Ingenieria Informatica" required>
+                            <label id="errorNombreCarrera" class="errorMensaje"></label>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btnGuardarAsignatura">Guardar Asignatura</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal para asignar una carrera a un departamento -->
+    <div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="modalAsignacionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAsignacionLabel">Asignar carrera</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formCarreraAsignacion">
+
+                        <div class="mb-0">
+                            <label for="departamentoAsignacion" class="form-label">Departamentos</label>
+                            <select class="form-select" id="departamentoAsignacion" required>
+                                <option value="">Seleccione...</option>
+                                <!-- Dinamicamente -->
+                            </select>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarAsignación">Guardar Asignación</button>
+                </div>               
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Cerrando sesión </h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body"> Confirme para cerrar la sesión actual </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary cerrarSesion">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <script src="../../../public/nomodules/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/jquery.easing/jquery.easing.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="module" src="../../controlador/c_subCarrera.js"></script>
+</body>
+</html>

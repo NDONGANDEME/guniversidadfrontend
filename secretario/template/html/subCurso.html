@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Panel del Secretario Académico - Cursos </title>
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../css/general.css">
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+           <div class="importandoSidebar"> </div>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <div class="importandoNavbar"> </div>
+                <!-- End of Topbar -->
+
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"> Cursos </h1>
+                    </div>
+
+
+
+                    <!-- Tabla de asignaturas -->
+                    <div class="card shadow mb-5">
+
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Cursos</h6>
+                            <button class="btn btn-primary btn-icon-split" data-bs-toggle="modal" data-bs-target="#modalNuevoCurso"> 
+                                <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
+                                <span class="text"> Nuevo </span>
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center " id="tablaCursos">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Créditos</th>
+                                            <th>Carrera</th>
+                                            <th>Semestre</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyTablaCursos"> <!--Dinamicamente--> 
+                                        <tr>
+                                            <td>Primero de Informática</td>
+                                            <td>60</td>
+                                            <td class="text-muted">Ninguno</td>
+                                            <td class="text-muted">Nimguno</td>
+                                            <td class="d-flex justify-content-center align-items-center gap-1">
+                                                <button class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="modal" data-bs-target="#modalAsignacion" 
+                                                    title="Asignar departamento"> <i class="fas fa-hand-point-right"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="modal" data-bs-target="#modalNuevoCurso" 
+                                                    title="Editar"> <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- =================================================== MODAL DE LAS CARRERAS =================================================== -->
+    <!-- Modal para agregar una nueva asignatura -->
+    <div class="modal fade" id="modalNuevoCurso" tabindex="-1" aria-labelledby="modalNuevoCursoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNuevoCursoLabel">Agregar nuevo curso</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formCurso">
+
+                        <div class="row">
+                            <div class="col-9 mb-3">
+                                <label for="nombreCurso" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreCurso" placeholder="Ej: Primero" required>
+                            </div>
+
+                            <div class="col-3 mb-3">
+                                <label for="creditosCurso" class="form-label">Créditos</label>
+                                <input type="number" min="0" max="100" class="form-control" id="creditosCurso" placeholder="Ej: 60" required>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarCurso">Guardar Curso</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- ============================================== MODAL DE LOS CURSO ASIGNADOS ============================================== -->
+    <!-- Modal para añadir un nuevo curso -->
+    <div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="modalAsignacionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAsignacionLabel">Asignar carrera</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formCursoAsignacion">
+
+                        <div class="row">
+                            <div class="col-7 mb-3">
+                                <label for="carreraCursoAsignado" class="form-label">Carrera</label>
+                                <select class="form-select" id="carreraCursoAsignado" required>
+                                    <option value="">Seleccione...</option>
+                                    <!-- Dinamicamente -->
+                                </select>
+                            </div>
+
+                            <div class="col-5 mb-3">
+                                <label for="semestreCursoAsignado" class="form-label">Semestre</label>
+                                <select class="form-select" id="semestreCursoAsignado" required>
+                                    <option value="">Seleccione...</option>
+                                    <!-- Dinamicamente -->
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarAsignación">Guardar Asignación</button>
+                </div>               
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Cerrando sesión </h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body"> Confirme para cerrar la sesión actual </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary cerrarSesion">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <script src="../../../public/nomodules/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/jquery.easing/jquery.easing.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="module" src="../../controlador/c_subCurso.js"></script>
+</body>
+</html>

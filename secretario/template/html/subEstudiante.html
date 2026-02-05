@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Panel del Secretario Académico - Estudiantes </title>
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../css/general.css">
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+           <div class="importandoSidebar"> </div>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <div class="importandoNavbar"> </div>
+                <!-- End of Topbar -->
+
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"> Estudiante </h1>
+                    </div>
+
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-end">
+                            <button class="btn btn-primary btn-icon-split" data-bs-toggle="modal" data-bs-target="#modalNuevoEstudiante"> 
+                                <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span> 
+                                <span class="text"> Nuevo </span>
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center " id="dataTable">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Carrera</th>
+                                            <th>Curso</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyTablaEstudiante"> <!--Dinamicamente--> 
+                                        <tr>
+                                            <td>Jose Lola</td>
+                                            <td> Ing Inf </td>
+                                            <td> 3º </td>
+                                            <td class="d-flex justify-content-center align-items-center gap-1">
+                                                <button class="btn btn-sm btn-outline-info me-1" data-bs-toggle="modal" data-bs-target="#modalDetallesEstudiante" 
+                                                    title="Ver detalles"> <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" title="Editar"> 
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger me-1" title="Ver notas">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning me-1" title="Ver inscripción"> 
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger me-1" title="Deshabilitar"> 
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+
+
+    <!-- Modal para añadir un nuevo estudiante -->
+    <div class="modal fade" id="modalNuevoEstudiante" tabindex="-1" role="dialog" aria-labelledby="modalNuevoEstudianteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNuevoEstudianteLabel">Agregar Nuevo Estudiante</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formNuevoEstudiante">
+
+                        <div class="seccion active" id="seccion1">
+
+                            <div class="d-grid gap-3 camposForm">
+                                <div class="mb-3">
+                                    <label for="codigoEstudiante" class="form-label">Código</label>
+                                    <input type="text" class="form-control" id="codigoEstudiante" placeholder="Ej: 26FI00001-INF" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="dipEstudiante" class="form-label">DIP</label>
+                                    <input type="text" class="form-control" id="dipEstudiante" placeholder="Ej: 000 123 456" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nombreEstudiante" class="form-label">Nombre completo</label>
+                                <input type="text" class="form-control" id="nombreEstudiante" placeholder="Ej: Jose Lola" required>
+                            </div>                        
+
+                            <div class="mb-3">
+                                <label for="correoEstudiante" class="form-label">Correo</label>
+                                <input type="text" class="form-control" id="correoEstudiante" placeholder="Ej: ejemplo@email.com" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="fechaNacimientoEstudiante" class="form-label">Fecha de nacimiento</label>
+                                <input type="date" class="form-control" id="fechaNacimientoEstudiante" placeholder="Ej: 1/01/2000" required>
+                            </div>
+
+                        </div>
+
+                        <div class="seccion" id="seccion2">
+
+                            <div class="d-grid gap-3 camposForm">
+                                <div class="mb-3">
+                                    <label for="carreraEstudiante" class="form-label">Carrera</label>
+                                    <select class="form-select" id="carreraEstudiante" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="Ingeniería Informática">Ingeniería Informática</option>
+                                        !-- Dinamicamente -
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="cursoEstudiante" class="form-label">Curso</label>
+                                    <select class="form-select" id="cursoEstudiante" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value=" 3º "> 3º </option>
+                                        !-- Dinamicamente --
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-3 camposForm">
+                                <div class="mb-3">
+                                    <label for="generoEstudiante" class="form-label">Genero</label>
+                                    <select class="form-select" id="generoEstudiante" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="nacionalidadEstudiante" class="form-label">Nacionalidad</label>
+                                    <select class="form-select" id="nacionalidadEstudiante" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="Ecuatoguineana">Ecuatoguineana</option>
+                                        !--Dinamicamente--
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="fotoEstudiante" class="form-label">Foto</label>
+                                <input type="file" class="form-control" id="fotoEstudiante" placeholder="imagen.png" required>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="anterior" style="display: none;">Anterior</button>
+                    <button type="button" class="btn btn-primary" id="siguiente">Siguiente</button>
+                    <button type="button" class="btn btn-success" id="saveCourseBtn" style="display: none;">Guardar Estudiante</button>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal para mostrar los detalles de los estudiantes-->
+    <div class="modal fade" id="modalDetallesEstudiante" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-body"> 
+                    <!-- Tarjeta basica para mostrar los detalles -->
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary"> Información del Estudiante </h6>
+                        </div>
+                        <div class="card-body">
+                            <!--Foto carnet-->
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="imgCarnet mb-3 w-25 h-25">
+                                    <img src="../../../public/img/undraw_profile.svg" alt="Foto carnet">
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-3 camposForm">
+                                <div class="row">
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Código:</label>
+                                        <span class="text-black-50">26FI00001-INF</span>
+                                    </div>
+
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">DIP:</label>
+                                        <span class="text-black-50">000 123 456</span>
+                                    </div>
+
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Nombre completo:</label>
+                                        <span class="text-black-50">Jose María Buatiché Lola</span>
+                                    </div>
+
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Correo:</label>
+                                        <span class="text-black-50">estudiante@email.com</span>
+                                    </div>
+
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Fecha de Nacimiento:</label>
+                                        <span class="text-black-50">1/01/2000</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Nacionalidad:</label>
+                                        <p class="text-black-50">Ecuatoguineana</p>
+                                    </div>
+
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Genero:</label>
+                                        <p class="text-black-50">Masculino</p>
+                                    </div>
+
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Carrera:</label>
+                                        <p class="text-black-50">Ingeniería Informática</p>
+                                    </div>
+
+                                    <div class="mb-3 d-grid camposFormDatos">
+                                        <label class="form-label">Curso:</label>
+                                        <p class="text-black-50">3º</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Cerrando sesión </h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body"> Confirme para cerrar la sesión actual </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary cerrarSesion">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="../../../public/nomodules/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/jquery.easing/jquery.easing.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="module" src="../../controlador/c_subEstudiante.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+*{
+    padding: 0; margin: 0; font-family: Georgia;
+}
+
+
+/* PARA ERRORES */
+.errorMensaje{
+  font-size: 12px;
+  margin-top: 5px;
+  color: red;
+}
+
+/* PARA LAS TABLAS */
+.contBotonesCrud{
+    width: 40%;
+}
+
+#tbodyTablaEstudiante tr {
+    height: 20px;
+}
+
+
+/* PARA EL MODAL */
+#modalNuevoEstudiante::-webkit-scrollbar, .modal-body::-webkit-scrollbar{
+    width: 0;
+}
+
+.camposForm{
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.seccion {
+  display: none;
+}
+
+.seccion.active {
+  display: block;
+}
+
+.seccion {
+  display: none;
+  position: absolute;
+  width: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+.seccion.active {
+  display: block;
+  position: relative;
+}
+.seccion.izquierda {
+  transform: translateX(-100%);
+}
+.seccion.derecha {
+  transform: translateX(100%);
+}
+.seccion.anim-in {
+  animation: slideIn 0.5s forwards;
+}
+.seccion.anim-out {
+  animation: slideOut 0.5s forwards;
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+@keyframes slideInRev {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slideOutRev {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+.modal-body{
+    overflow: hidden;
+}
+
+/* PARA EL MODAL DE DETALLES */
+.camposFormDatos{
+  grid-template-columns: repeat(1, 1fr);
+}
+
+
+/* PARA LA PARTE DE LA ASIGNATURA */
+.btn-icon-split {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon-split .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    background-color: rgba(0,0,0,0.15);
+    border-radius: .375rem 0 0 .375rem;
+}
+
+.btn-icon-split .text {
+    padding: 0.375rem 0.75rem;
+}
+
+.gap-1 {
+    gap: 0.25rem;
+}
+
+.me-1 {
+    margin-right: 0.25rem;
+}
+
+.modal-dialog.modal-sm {
+    max-width: 500px;
+}
+
+.modal-dialog.modal-lg {
+    max-width: 800px;
+}

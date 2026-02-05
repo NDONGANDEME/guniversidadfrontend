@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Panel del Secretario Académico - Asignaturas </title>
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../css/general.css">
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+           <div class="importandoSidebar"> </div>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <!-- End of Sidebar -->
+
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <div class="importandoNavbar"> </div>
+                <!-- End of Topbar -->
+
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"> Asignaturas </h1>
+                    </div>
+
+
+
+                    <!-- Tabla de asignaturas -->
+                    <div class="card shadow mb-5">
+
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Asignaturas</h6>
+                            <button class="btn btn-primary btn-icon-split" data-bs-toggle="modal" data-bs-target="#modalNuevaAsignatura"> 
+                                <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
+                                <span class="text"> Nueva </span>
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center " id="tablaAsignaturas">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th width="60%">Nombre</th>
+                                            <th width="20%">Créditos</th>
+                                            <th width="20%">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyTablaAsignaturas"> <!--Dinamicamente--> </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <!--Asignaturas asignadas-->
+                    <div class="card shadow mb-5">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Asignaturas asignadas</h6>
+                            <button class="btn btn-primary btn-icon-split" data-bs-toggle="modal" data-bs-target="#modalNuevaAsignaturaAsignada"> 
+                                <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
+                                <span class="text"> Nueva </span>
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center " id="tablaAsignaturasAsignadas">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th width="25%">Nombre</th>
+                                            <th width="20%">Carrera</th>
+                                            <th width="10%">Curso</th>
+                                            <th width="10%">Semestre</th>
+                                            <th width="25%">Profe</th>
+                                            <th width="10%">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbodyTablaAsignaturasAsignadas"> <!--Dinamicamente--> </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- =================================================== MODAL DE LAS ASIGNATURAS =================================================== -->
+    <!-- Modal para agregar una nueva asignatura -->
+    <div class="modal fade" id="modalNuevaAsignatura" tabindex="-1" aria-labelledby="modalNuevaAsignaturaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNuevaAsignaturaLabel">Agregar nueva asignatura</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formNuevaAsignatura">
+
+                        <div class="row">
+                            <div class="col-9 mb-3">
+                                <label for="nombreAsignatura" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombreAsignatura" placeholder="Ej: Programación I" required>
+                            </div>
+
+                            <div class="col-3 mb-3">
+                                <label for="creditosAsignatura" class="form-label">Créditos</label>
+                                <input type="number" min="0" max="60" class="form-control" id="creditosAsignatura" placeholder="Ej: 5" required>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarAsignatura">Guardar Asignatura</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- ============================================== MODAL DE LAS ASIGNATURAS ASIGNADAS ============================================== -->
+    <!-- Modal para añadir un nueva asignatura -->
+    <div class="modal fade" id="modalNuevaAsignaturaAsignada" tabindex="-1" aria-labelledby="modalNuevaAsignaturaAsignadaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNuevaAsignaturaAsignadaLabel">Asignar asignatura</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formAsignaturaAsignada">
+
+                        <div class="mb-3">
+                            <label for="asignaturaAAsignar" class="form-label">Asignaturas</label>
+                            <select class="form-select" id="asignaturaAAsignar" required>
+                                <option value="">Seleccione...</option>
+                                <!-- Dinamicamente -->
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-9 mb-3">
+                                <label for="profesorAsignaturaAsignada" class="form-label">Profesor</label>
+                                <select class="form-select" id="profesorAsignaturaAsignada" required>
+                                    <option value="">Seleccione...</option>
+                                    <!-- Dinamicamente -->
+                                </select>
+                            </div>
+
+                            <div class="col-3 mb-3">
+                                <label for="cursoAsignaturaAsignada" class="form-label">Curso</label>
+                                <select class="form-select" id="cursoAsignaturaAsignada" required>
+                                    <option value="">Seleccione...</option>
+                                    <!-- Dinamicamente -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-9 mb-3">
+                                <label for="carreraAsignaturaAsignada" class="form-label">Carrera</label>
+                                <select class="form-select" id="carreraAsignaturaAsignada" required>
+                                    <option value="">Seleccione...</option>
+                                    <!-- Dinamicamente -->
+                                </select>
+                            </div>
+
+                            <div class="col-3 mb-3">
+                                <label for="semestreAsignaturaAsignada" class="form-label">Semestre</label>
+                                <select class="form-select" id="semestreAsignaturaAsignada" required>
+                                    <option value="">Seleccione...</option>
+                                    <!-- Dinamicamente -->
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarAsignación">Guardar Asignación</button>
+                </div>               
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Cerrando sesión </h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body"> Confirme para cerrar la sesión actual </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary cerrarSesion">Cerrar sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <script src="../../../public/nomodules/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/jquery.easing/jquery.easing.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="module" src="../../controlador/c_subAsignaturas.js"></script>
+</body>
+</html>

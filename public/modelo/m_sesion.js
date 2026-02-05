@@ -47,13 +47,10 @@ export class m_sesion
                 });
             }
             
-            Alerta.exito('Sesión Cerrada', 'Ha cerrado sesión exitosamente');
-            u_utiles.redirigirA(null, '/guniversidadfrontend/index.html');
+            u_alertas.cargarSimple(3000, 'Cerrando sesión. Redirigiendo, espere por favor...', '/guniversidadfrontend/index.html');
         } catch (error) {
-            console.error('Error al cerrar sesión:', error);
-            Alerta.error('Error', `Error al cerrar sesión: ${error}`);
             sessionStorage.removeItem('usuarioActivo');
-            u_utiles.redirigirA(null, '/guniversidadfrontend/public/template/html/iniciarSesion.html');
+            u_alertas.cargarSimple(3000, 'Error al cerrar sesión. Redirigiendo, espere por favor...', '/guniversidadfrontend/index.html');
         }
     }
 
