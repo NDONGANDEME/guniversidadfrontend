@@ -57,11 +57,19 @@ export class u_utiles
     static colorearCampo(parametroBooleano, campo)
     {
         if(parametroBooleano==false){
+<<<<<<< HEAD
             campo.removeClass('border-success');
             campo.addClass('border', 'border-2', 'border-danger');
         }else{
             campo.removeClass('border-danger');
             campo.addClass('border', 'border-2', 'border-success');
+=======
+            campo.classList.remove('border-success');
+            campo.classList.add('border', 'border-2', 'border-danger');
+        }else{
+            campo.classList.remove('border-danger');
+            campo.classList.add('border', 'border-2', 'border-success');
+>>>>>>> origin/main
         }
     }
 
@@ -100,6 +108,7 @@ export class u_utiles
             });
         }
     }
+<<<<<<< HEAD
 
 
 
@@ -126,4 +135,6 @@ export class u_utiles
         contadores[tipo]++;
         return contadores[tipo];
     }
+=======
+>>>>>>> origin/main
 }
