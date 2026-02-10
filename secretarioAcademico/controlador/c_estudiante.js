@@ -15,5 +15,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar componentes
     u_utilesSA.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
     u_utilesSA.botonesNavegacionWrapper();
-    u_utilesSA.manejoTabla('#tablaEstudiantes');
 });

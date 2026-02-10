@@ -25,6 +25,8 @@ export class u_utilesSA
 
         this.navegacionSlider('.aula', `${url}/aula.html`);
 
+        this.navegacionSlider('.horario', `${url}/horario.html`);
+
         this.navegacionSlider('.formacion', `${url}/formacion.html`);
 
         this.navegacionSlider('.matricula', `${url}/matricula.html`);

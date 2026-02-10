@@ -31,7 +31,7 @@ export class u_verificaciones
 
 
     // metodo para validar el texto: solo se aceptan caracteres y como min 3 y maw de 100
-    static validarTexto(texto) 
+    static validarTexto(texto)
     {
         const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,100}/;
         return regex.test(texto.trim());

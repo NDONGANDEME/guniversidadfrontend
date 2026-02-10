@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Panel del Secretario Académico - Horarios </title>
+    <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg">
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../css/general.css">
+    <link rel="stylesheet" href="../css/secretario.css">
+</head>
+
+<body id="page-top">
+    
+    <!-- Page Wrapper -->
+    <div id="wrapper" class="toggled">
+        
+        <!-- Sidebar -->
+        <ul class="navbar-nav sidebar sidebar-dark accordion toggled shadow-lg" id="accordionSidebar">
+            <div class="sidebar-brand d-flex align-items-center justify-content-center">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3"> Secretario Académico </div>
+            </div>
+
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link tablero">
+                    <i class="fas fa-chalkboard"></i> <span> Tablero </span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link facultad">
+                    <i class="fas fa-university"></i> <span> Facultades </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link departamento">
+                    <i class="fas fa-building"></i> <span> Departamentos </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link planEstudio">
+                    <i class="fas fa-list-alt"></i> <span> Planes de Estudios </span>
+                </a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" 
+                        aria-controls="collapseTwo">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Currículo</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Plan</h6>
+                        <a class="collapse-item carrera">Carrera</a>
+                        <a class="collapse-item curso">Curso</a>
+                        <a class="collapse-item semestre">Semestre</a>
+                        <a class="collapse-item asignatura">Asignatura</a>
+
+                        <h6 class="collapse-header mt-2">Profesores</h6>
+                        <a class="collapse-item formacion">Formación</a>
+
+                        <h6 class="collapse-header mt-2">Gestión</h6>
+                        <a class="collapse-item aula">Aulas</a>
+                        <a class="collapse-item horario">Horarios</a>
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link matricula">
+                    <i class="fas fa-clipboard-list"></i> <span> Matrícula </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link pago">
+                    <i class="fas fa-clipboard-list"></i> <span> Pago </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link profesor">
+                    <i class="fas fa-chalkboard-teacher"></i> <span> Profesores </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link estudiante">
+                    <i class="fas fa-user-graduate"></i> <span> Estudiantes </span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" id="userDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <div>
+                                    <span class="mr-2 d-lg-inline text-gray-600"> Nombre del usuario </span><br>
+                                    <span class="mr-2 d-lg-inline text-gray-600 small"> Correo del usuario </span>
+                                </div>
+                                <img class="img-profile rounded-circle" src="../../../public/img/undraw_profile.svg">
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item perfil">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Cerrar sesión
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
+
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="mb-5">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <i class="fas fa-school text-warning mr-2"></i> Horarios
+                        </h1>
+                    </div>
+
+                    <!-- FILTROS -->
+                    <div class="container row">
+                        <div class="col">
+                            <label for="facultadesFiltroHorario" class="form-label">Facultades</label>
+                            <select class="form-select" id="facultadesFiltroHorario">
+                                <option value="Ninguno">Seleccione...</option>
+                                <!-- Dinamicamente -->
+                            </select>
+                            <label id="errorFacultadesFiltroHorario" class="errorMensaje"></label>
+                        </div>
+
+                        <div class="col">
+                            <label for="carrerasFiltroHorario" class="form-label">Carreras</label>
+                            <select class="form-select" id="carrerasFiltroHorario">
+                                <option value="Ninguno">Seleccione...</option>
+                                <!-- Dinamicamente -->
+                            </select>
+                            <label id="errorCarrerasFiltroHorario" class="errorMensaje"></label>
+                        </div>
+
+                        <div class="col">
+                            <label for="cursosFiltroHorario" class="form-label">Cursos</label>
+                            <select class="form-select" id="cursosFiltroHorario">
+                                <option value="Ninguno">Seleccione...</option>
+                                <!-- Dinamicamente -->
+                            </select>
+                            <label id="errorCursosFiltroHorario" class="errorMensaje"></label>
+                        </div>
+
+                        <div class="col">
+                            <label for="semestresFiltroHorario" class="form-label">Semestres</label>
+                            <select class="form-select" id="semestresFiltroHorario">
+                                <option value="Ninguno">Seleccione...</option>
+                                <!-- Dinamicamente -->
+                            </select>
+                            <label id="errorSemestresFiltroHorario" class="errorMensaje"></label>
+                        </div>
+
+                        <div class="col">
+                            <label for="semestresFiltroHorario" class="form-label"> </label><br>
+                            <button class="btn btn-success buscar" id="buscarHorario"> <i class="fas fa-search"></i> Buscar </button>
+                        </div>
+                    </div>
+
+                    <div class="text-end mb-4">
+                        <button class="btn btn-warning nuevo" data-bs-toggle="modal" data-bs-target="#modalNuevaClase">
+                            <i class="fas fa-plus"></i> Nueva Clase
+                        </button>
+
+                        <button class="btn btn-info editar" data-bs-toggle="modal" data-bs-target="#modalNuevaClase">
+                            <i class="fas fa-plus"></i> Editar Clase
+                        </button>
+                    </div>
+
+                    <!-- VISTA DE HORARIO SEMANAL -->
+                    <div id="vistaHorarioSemanal" class="mb-5">
+                        <!-- Aquí se renderiza dinámicamente la tabla de horarios -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL: Nueva/Editar Clase -->
+    <div class="modal fade" id="modalNuevaClase" tabindex="-1" aria-labelledby="modalNuevaClaseLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title text-dark" id="modalNuevaClaseLabel">
+                        <i class="fas fa-plus-circle"></i> Agregar nueva clase
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- SELECT + INPUT para PROFESOR -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Profesor</label>
+                            <select id="selectProfesor" class="form-select">
+                                <option value="Ninguno">Seleccione...</option>
+                            </select>
+                            <div id="errorProfesor" class="text-danger small mt-1" style="display: none;"></div>
+                            
+                            <div id="nuevoProfesorContainer" style="display: none;" class="mt-2">
+                                <label class="form-label small">Nuevo profesor:</label>
+                                <input type="text" id="nuevoProfesor" class="form-control" placeholder="Nombre completo">
+                            </div>
+                        </div>
+
+                        <!-- SELECT + INPUT para ASIGNATURA -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Asignatura</label>
+                            <select id="selectAsignatura" class="form-select">
+                                <option value="Ninguno">Seleccione...</option>
+                            </select>
+                            <div id="errorAsignatura" class="text-danger small mt-1" style="display: none;"></div>
+                            
+                            <div id="nuevaAsignaturaContainer" style="display: none;" class="mt-2">
+                                <label class="form-label small">Nueva asignatura:</label>
+                                <input type="text" id="nuevaAsignatura" class="form-control" placeholder="Nombre de la asignatura">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- AULA -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Aula</label>
+                            <select id="selectAula" class="form-select">
+                                <option value="Ninguno">Seleccione...</option>
+                            </select>
+                            <div id="errorAula" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+
+                        <!-- HORARIO -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Horario</label>
+                            <select id="selectHorario" class="form-select">
+                                <option value="Ninguno">Seleccione...</option>
+                            </select>
+                            <div id="errorHorario" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+
+                        <!-- DÍA SEMANAL -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label font-weight-bold">Día</label>
+                            <select id="diaSemanal" class="form-select">
+                                <option value="Ninguno">Seleccione...</option>
+                            </select>
+                            <div id="errorDiaSemanal" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- HORA INICIO -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Hora Inicio</label>
+                            <input type="text" id="horaInicio" class="form-control" placeholder="HH:MM">
+                            <div id="errorHoraInicio" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+
+                        <!-- HORA FINAL -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Hora Final</label>
+                            <input type="text" id="horaFinal" class="form-control" placeholder="HH:MM">
+                            <div id="errorHoraFinal" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnGuardarClase" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>
+
+
+    <!-- Logout Modal-->
+    <div class="importandoModalCierreSesion"> </div>
+    
+
+    <script src="../../../public/nomodules/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/jquery.easing/jquery.easing.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="module" src="../../controlador/c_horario.js"></script>
+</body>
+</html>

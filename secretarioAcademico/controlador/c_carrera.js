@@ -90,7 +90,7 @@ export class c_carrera
         } else {
             // Datos de ejemplo
             this.carreras = [
-                new m_carrera(1, "Informática", null)
+                new m_carrera(1, "Ingeniería Informática", null)
             ];
             
             this.guardarCarrerasEnSesion();

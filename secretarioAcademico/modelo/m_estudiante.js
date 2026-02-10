@@ -1,6 +1,6 @@
 export class m_estudiante
 {
-    constructor(codigo, idUsuario, nombre, apellidos, fechaNacimiento, nacionalidad, centroProcedencia, genero, idFamiliar)
+    constructor(codigo, idUsuario, nombre, apellidos, fechaNacimiento, nacionalidad, centroProcedencia, genero, telefono, idFamiliar)
     {
         this.codigo = codigo || null;
         this.idUsuario = idUsuario || null;
@@ -10,6 +10,7 @@ export class m_estudiante
         this.nacionalidad = nacionalidad || null;
         this.centroProcedencia = centroProcedencia || null;
         this.genero = genero || null;
+        this.telefono = telefono || null;
         this.idFamiliar = idFamiliar || null;
     }
 }

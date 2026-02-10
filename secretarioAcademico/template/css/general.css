@@ -207,3 +207,136 @@ p, div, span, li, td {
   -moz-user-select: text;
   -ms-user-select: text;
 }
+
+
+/***************************************************************************/
+/* VISTA DE HORARIO - ESTILOS ESPECÍFICOS */
+/***************************************************************************/
+.schedule-table {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.schedule-table th {
+  background-color: var(--color-primario) !important;
+  color: var(--color-secundario) !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  padding: 15px;
+  border-bottom: 2px solid var(--color-primario-oscuro);
+}
+
+.schedule-table td {
+  vertical-align: top;
+  padding: 12px;
+  min-height: 120px;
+  background-color: white;
+}
+
+.time-slot {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: var(--color-secundario);
+  width: 120px;
+  text-align: center;
+}
+
+.class-item {
+  background-color: #fff9e6;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.class-item:hover {
+  background-color: #fff3cd;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.break-row td {
+  background-color: #f8d7da !important;
+  color: #721c24;
+  font-weight: 700;
+  text-align: center;
+}
+
+.footer {
+  color: var(--color-secundario);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/***************************************************************************/
+/* MODAL DE CLASES */
+/***************************************************************************/
+.modal-header.bg-warning {
+  border-bottom: 3px solid var(--color-primario-oscuro);
+}
+
+.modal-title {
+  font-weight: 700;
+  color: var(--color-secundario);
+}
+
+.form-label.font-weight-bold {
+  color: var(--color-secundario);
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.border-left-warning {
+  border-left-color: var(--color-primario) !important;
+}
+
+/***************************************************************************/
+/* BOTONES DE ACCIÓN EN TABLA */
+/***************************************************************************/
+.btn-outline-warning {
+  border-color: var(--color-primario) !important;
+  color: var(--color-primario-oscuro) !important;
+}
+
+.btn-outline-warning:hover {
+  background-color: var(--color-primario) !important;
+  color: var(--color-secundario) !important;
+}
+
+.btn-outline-danger {
+  border-color: #dc3545 !important;
+  color: #dc3545 !important;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.gap-1 {
+  gap: 5px;
+}
+
+/***************************************************************************/
+/* RESPONSIVE PARA VISTA DE HORARIO */
+/***************************************************************************/
+@media (max-width: 768px) {
+  .schedule-table {
+      font-size: 0.8rem;
+  }
+  
+  .schedule-table td {
+      padding: 8px;
+  }
+  
+  .class-item {
+      padding: 6px !important;
+  }
+  
+  .time-slot {
+      width: 80px;
+  }
+}
