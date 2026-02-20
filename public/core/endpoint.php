@@ -1,2 +1,2 @@
-<php
-require_once __DIR__ . "/../../../../gestionDepartamento/core/gateway.php";
+<?php
+require_once __DIR__ . '/../../../../guniversidadbackend/core/gateway.php';

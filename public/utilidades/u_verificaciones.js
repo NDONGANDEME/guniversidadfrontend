@@ -25,7 +25,7 @@ export class u_verificaciones
     // metodo para validar el nombre: solo se aceptan caracteres y como min 2
     static validarNombre(nombre) 
     {
-        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,}/;
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}/;
         return regex.test(nombre.trim());
     }
 
@@ -33,7 +33,13 @@ export class u_verificaciones
     // metodo para validar el texto: solo se aceptan caracteres y como min 3 y maw de 100
     static validarTexto(texto)
     {
-        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,100}/;
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{5,100}/;
+        return regex.test(texto.trim());
+    }
+
+    static validarDescripcion(texto)
+    {
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,;:¿?¡!-]{10,500}$/;
         return regex.test(texto.trim());
     }
 

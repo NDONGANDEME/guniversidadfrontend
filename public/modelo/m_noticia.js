@@ -1,53 +1,39 @@
+import { fetchNoticia } from "../servicios/fetchNoticia.js";
+
 export class m_noticia
 {
-    constructor(id, asunto, descripcion, tipo, rutaImagen){
-        this.id = id;
+    constructor(idNoticia, asunto, descripcion, tipo, fechaPublicacion){
+        this.idNoticia = idNoticia;
         this.asunto = asunto;
         this.descripcion = descripcion;
         this.tipo = tipo;
-        this.rutaImagen = rutaImagen;
+        this.fechaPublicacion = fechaPublicacion;
     }
 
+    /*
+        tipo(comunicado(publico en general),interna(para los de la misma facultad), departamento(miembros del mismo departamento))
+    */
 
-    
-    // metodo que devuelve la version corta de la noticia
-    resumen(longitud = 100){
-        return this.descripcion.length > longitud ? 
-            this.descripcion.substring(0, longitud) + '...' : this.descripcion;
+    // obtiene las noticias mas recientes del backend
+    static async obtenerNoticiasRecientes() {
+        return await fetchNoticia.obtenerNoticasRecientesDelBackend();
     }
 
-
-
-    // lista estatica de noticias
-    static noticiasEstaticas()
-    {
-        let listaNoticias = [];
-
-        for(let i=1; i<=100; i++){
-            listaNoticias.push(
-                new m_noticia(`${i}`, `Noticia numero ${i}`, 
-                `Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugiat quaerat, commodi architecto voluptatem amet inventore 
-                esse hic earum. Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                mollitia recusandae! Repudiandae nisi temporibus aspernatur cupiditate, eveniet, expedita eius ex minima officia quia 
-                tenetur eligendi!`, "Comunicado", "/guniversidadfrontend/public/img/IMG-20251114-WA0022-copia.jpg")
-            )
-        }
-        return listaNoticias;
+    // obtiene todas las noticias del backend
+    static async obtenerNoticias() {
+        return await fetchNoticia.obtenerNoticiasDelBackend();
     }
 
+    // obtiene todas las noticias de tipo comunicado del backend
+    static async obtenerNoticiasPorComunicado() {
+        return await fetchNoticia.obtenerNoticiasPorComunicadoDelBackend(); 
+    }
 
-    
-    // metodo para cargar las noticias recientes
-    static listarNoticiasRecientes()
-    {
-        let lista = this.noticiasEstaticas(); 
-        let lista5recientes = [];
+    static async obtenerCantidadPaginacion() {
+        return await fetchNoticia.obtenerCantidadPaginacionEnBDD();
+    }
 
-        lista.forEach(noticia => {
-            if (noticia.id > 0 && noticia.id < 6) {
-                lista5recientes.push(noticia)
-            }
-        })
-        return lista5recientes;
+    static async obtenerNoticiaById(id) {
+        return await fetchNoticia.obtenerNoticiaByIdEnBDD(id)
     }
 }

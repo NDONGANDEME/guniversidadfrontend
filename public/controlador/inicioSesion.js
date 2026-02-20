@@ -1,18 +1,9 @@
 import { m_sesion } from "../modelo/m_sesion.js";
+import { u_utiles } from "../utilidades/u_utiles.js";
 
-// funcion de redireccion para is a inicio de sesion
-function irAInicio()
+
+document.addEventListener("DOMContentLoaded", function()
 {
-    document.querySelector('#enlaceInicio').addEventListener('click', function() {
-        window.location.href = '/guniversidadfrontend/index.html';
-    });
-}
-
-
-
-document.addEventListener('DOMContentLoaded', function()
-{
-    irAInicio();
-
+    u_utiles.botonesNavegacion();
     m_sesion.iniciarSesion();
 });

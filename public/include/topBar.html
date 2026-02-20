@@ -1,0 +1,24 @@
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown no-arrow">
+        <a class="nav-link dropdown-toggle mx-3" id="userDropdown" role="button"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div>
+                <strong class="mr-2 d-lg-inline text-gray-800">Nombre del usuario</strong> <br>
+                <strong class="mr-2 d-lg-inline text-gray-800 small">Correo del usuario</strong>
+            </div>
+            <img class="img-profile rounded-circle" src="/guniversidadfrontend/public/img/undraw_profile.svg">
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+            <a class="dropdown-item perfil">
+                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil
+            </a>
+
+            <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Cerrar sesión
+            </a>
+        </div>
+    </li>
+</ul>

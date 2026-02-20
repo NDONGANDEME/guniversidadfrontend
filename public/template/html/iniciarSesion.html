@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../css/inicioSesion.css">
 </head>
 <body>
-    
+    <!-- Formulario de inicio de sesion -->
     <div class="bodyIniciarSesion">
         <div class="contenedorInicioSesion">
             <div class="text-end mb-3">
@@ -34,6 +34,38 @@
                     <button type="submit" class="btn btn-warning w-100 fw-bold">Iniciar sesión</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Panel de soporte -->
+    <div class="modal fade" id="panelSoporte" tabindex="-1" aria-labelledby="soporteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="soporteModalLabel">Soporte</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <form id="formSoporte">
+                        <div class="mb-3">
+                            <label for="correoSoporte" class="form-label">Correo</label>
+                            <input type="email" class="form-control" id="correoSoporte" placeholder="Ingrese su correo" required>
+                            <div id="errorCorreoSoporte" class="errorLabel"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="motivoSoporte" class="form-label">Motivo</label>
+                            <textarea class="form-control" id="motivoSoporte" placeholder="Describa su problema" rows="4" required></textarea>
+                            <div id="errorMotivoSoporte" class="errorLabel"></div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" id="enviarSoporte">Enviar</button>
+                </div>
+            </div>
         </div>
     </div>
 

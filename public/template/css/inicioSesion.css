@@ -2,7 +2,12 @@
 /* GLOBAL */
 /***************************************************************************/
 *{
-    padding: 0; margin: 0; font-family: Georgia; zoom: 100%;
+    padding: 0; margin: 0; font-family: Georgia;
+}
+
+textarea{
+  min-height: 10vh !important;
+  resize: none;
 }
 
 .bodyIniciarSesion {
@@ -23,14 +28,15 @@
     max-width: 400px;
 }
 
+/*
 .valido{
-    background-color: #28a745; /*tambien #38c172*/
+    background-color: #28a745; /*tambien #38c172
     border-color: #28a745;
     color: #fff;
 }
 
 .noValido{
-    background-color: #fb615c; /*tambien #e3342f*/
+    background-color: #fb615c; /*tambien #e3342f
     border-color: #fb615c;
 }
 
@@ -40,30 +46,25 @@
 }
 
 .errorLabel{
+    font-size: 12px;
+    margin-top: 5px;
     color: red;
-    font-size: 0.9rem;
-    display: none;
-}
+}*/
 
 input, button{
     padding: 0.7rem !important;
 }
 
 
-
 /***************************************************************************/
 /* SECCION DE INICIAR SESION */
 /***************************************************************************/
-#enlaceInicio,
-#enlaceInicioSesion,
-#enlaceRegistrarse{
+#enlaceInicio{
     text-decoration: none;
     cursor: pointer;
     color: rgb(104, 104, 104);
 }
-#enlaceInicio:hover,
-#enlaceInicioSesion:hover,
-#enlaceRegistrarse:hover{
+#enlaceInicio:hover{
     color: #151100;
 }
 
@@ -74,14 +75,9 @@ input, button{
 }
 
 
-
 /***************************************************************************/
 /* SECCION DE REGISTRARSE */
 /***************************************************************************/
-.contenedorRegistrarse {
-    max-width: 800px;
-}
-
 .form-check-input:checked{
     background-color: #ffd600;
     border-color: #f1c40f;
@@ -94,4 +90,100 @@ input, button{
 .form-select:focus, .form-control:focus{
     box-shadow: 0 0 0 0.25rem rgba(241, 196, 15, 0.5);
     border-color: #f1c40f;
+}
+
+/***************************************************************************/
+/* MODAL DE SOPORTE */
+/***************************************************************************/
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 2px solid #f1c40f;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+}
+
+.modal-header h4 {
+    color: #2c3e50;
+    font-weight: bold;
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.modal-header .btn-close:focus {
+    box-shadow: 0 0 0 0.25rem rgba(241, 196, 15, 0.25);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+}
+
+/* Estilo para los labels */
+.modal-body .form-label {
+    color: #34495e;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilo para los inputs cuando están enfocados */
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+    border-color: #f1c40f;
+    box-shadow: 0 0 0 0.25rem rgba(241, 196, 15, 0.25);
+}
+
+/* Estilo para inputs inválidos */
+.modal-body .form-control.is-invalid:focus,
+.modal-body .form-select.is-invalid:focus {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Estilo para el botón de enviar */
+.modal-footer .btn-warning {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem 2rem;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(241, 196, 15, 0.3);
+}
+
+.modal-footer .btn-warning:active {
+    transform: translateY(0);
+}
+
+.modal-footer .btn-warning:focus {
+    box-shadow: 0 0 0 0.25rem rgba(241, 196, 15, 0.25);
+}
+
+/* Estilo para las etiquetas de error */
+.errorLabel {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 576px) {
+    .modal-header h4 {
+        font-size: 1.5rem;
+    }
+    
+    .modal-footer .btn-warning,
+    .modal-footer .btn-secondary {
+        padding: 0.5rem 1.5rem;
+    }
 }

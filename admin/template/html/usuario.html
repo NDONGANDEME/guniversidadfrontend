@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Panel del Administrador - Usuarios</title>
+    <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg">
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/general.css">
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper" class="toggled">
+        <!-- Sidebar -->
+        <ul class="navbar-nav sidebar sidebar-dark accordion toggled shadow-lg" id="accordionSidebar">
+            <div class="sidebar-brand d-flex align-items-center justify-content-center">
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="sidebar-brand-text"> Administrador </div>
+            </div>
+
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link tableroA">
+                    <i class="fas fa-chalkboard"></i> <span> Tablero </span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider">
+
+            <li class="nav-item active">
+                <a class="nav-link usuario">
+                    <i class="fas fa-users"></i> <span> Usuarios </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" 
+                        aria-controls="collapseTwo">
+                    <i class="fas fa-list-alt"></i> <span>Currículo</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item facultad">Facultad</a>
+                        <a class="collapse-item departamento">Departamento</a>
+                        <a class="collapse-item carrera">Carrera</a>
+                        <a class="collapse-item curso">Curso</a>
+                        <a class="collapse-item semestre">Semestre</a>
+                        <a class="collapse-item asignatura">Asignatura</a>
+                        <a class="collapse-item aula">Aula</a>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link noticia">
+                    <i class="fas fa-newspaper"></i> <span> Noticias </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link parametro">
+                    <i class="fas fa-cogs"></i> <span> Parámetros del sistema </span>
+                </a>
+            </li>
+
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="mt-3 text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow d-flex justify-content-between">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none mx-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <div class="importandoTopBar w-100 d-flex justify-content-end"> </div>
+                </nav>
+
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <span class="text-warning ms-2"></span> Usuarios
+                        </h1>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="mb-2 d-flex justify-content-end align-items-center">
+                        <button class="btn btn-success nuevo" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario"> 
+                            <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span> <span class="text"> Nuevo </span>
+                        </button>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="p-3 mb-3 border border-2 rounded">
+                        <div class="row">
+                            <div class="col-5">
+                                <select class="form-select" id="filtroPorRol">
+                                    <option value="Ninguno">Filtrar por rol</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Secretario">Secretario</option>
+                                    <option value="Profesor">Profesor</option>
+                                    <option value="Estudiante">Estudiante</option>
+                                </select>
+                            </div>
+
+                            <div class="col-5">
+                                <select class="form-select" id="filtroPorEstado">
+                                    <option value="Ninguno">Filtrar por estado</option>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                </select>
+                            </div>
+
+                            <div class="col-2">
+                                <button type="button" class="w-100 btn btn-outline-secondary" id="btnLimpiarFiltros">
+                                    <i class="fas fa-undo-alt"></i> Limpiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de usuarios -->
+                    <div class="border border-3 border-black mb-5 rounded-1">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>Usuario</th>
+                                        <th>Correo</th>
+                                        <th>Contraseña</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th width="10%">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbodyTabla" id="tbodyTablaUsuarios"> <!-- Añadir dinámicamente --> 
+                                    <tr>
+                                        <td class="align-middle text-muted">Sin imagen</td>
+                                        <td class="align-middle">usuario22</td>
+                                        <td class="align-middle">usuario@email.com</td>
+                                        <td class="align-middle">********</td>
+                                        <td class="align-middle">admin</td>
+                                        <td class="align-middle">habilitado</td>
+                                        <td class="align-middle">
+                                            <div class="d-flex justify-content-center align-items-center gap-1">
+                                                <button class="btn btn-sm btn-outline-warning me-1 editar" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario" 
+                                                    title="Editar" data-id="idUsuario"> <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar" data-id="idUsuario"> 
+                                                    <i class="fas fa-toggle-off"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PARTE DE ADMINISTRATIVO -->
+                    
+                    <div class="mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <span class="text-warning ms-2"></span> Administrativos
+                        </h1>
+                    </div>
+
+                    <!-- Tabla de administrativos -->
+                    <div class="border border-2 mb-5 rounded-1">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center tabla">
+                                    <thead>
+                                        <tr>
+                                            <th>Imagen</th>
+                                            <th>Nombre</th>
+                                            <th>Contacto</th>
+                                            <th>Rol</th>
+                                            <th>Facultad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tbodyTabla" id="tbodyTablaSecretarios"> <!--Dinamicamente--> 
+                                        <tr>
+                                            <td class="align-middle text-muted">Sin imagen</td>
+                                            <td class="align-middle">Sandra Urano</td>
+                                            <td class="align-middle">usuario@email.com / +240 222 123 456</td>
+                                            <td class="align-middle">secretario</td>
+                                            <td class="align-middle text-muted">Ninguna</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar una nuevo usuario -->
+    <div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="modalNuevoUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNuevoUsuarioLabel">Agregar nuevo usuario</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formUsuario">
+                        <!-- Datos para inicio de sesion -->
+                        <div class="modal-header justify-content-center">
+                            <h5 class="modal-title">Datos para iniciar sesión</h5>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <label for="nombreOCorreoUsuario" class="form-label">Nombre de usuario o correo</label>
+                                <input type="tel" class="form-control" id="nombreOCorreoUsuario" placeholder="Ej: usuario@email.com o usuario123" required>
+                                <label id="errorNombreOCorreoUsuario" class="errorMensaje"></label>
+                            </div>
+
+                            <div class="col-6">
+                                <label for="rolUsuario" class="form-label">Rol</label>
+                                <select class="form-select" id="rolUsuario" required>
+                                    <option value="Ninguno">Seleccione...</option>
+                                    <option value="Estudiante">Estudiante</option>
+                                    <option value="Profesor">Profesor</option>
+                                    <option value="Secretario">Secretario</option>
+                                </select>
+                                <label id="errorRolUsuario" class="errorMensaje"></label>
+                            </div>
+                        </div>
+
+                        <!-- método de envío de las credenciales -->
+                        <div class="mt-1">
+                            <h6 class="modal-title">Seleccione metodo de envío de las credenciales</h6>
+
+                            <div class="row container">
+                                <!-- Opción SMS -->
+                                <div class="col-6 form-check">
+                                    <input class="form-check-input" type="radio" name="formaEnvio" value="sms" id="envioSMS">
+                                    <label class="form-check-label" for="smsCheck">
+                                        <i class="bi bi-chat-dots text-success"></i> 
+                                        Enviar por SMS
+                                        <span class="badge bg-success ms-2">Móvil</span>
+                                    </label>
+                                    <div class="form-text text-muted ms-4">
+                                        Envío de credenciales vía mensaje de texto
+                                    </div>
+                                </div>
+
+                                <!-- Opción Correo -->
+                                <div class="col-6 form-check">
+                                    <input class="form-check-input" type="radio" name="formaEnvio" value="email" id="envioCorreo">
+                                    <label class="form-check-label" for="emailCheck">
+                                        <i class="bi bi-envelope text-primary"></i> 
+                                        Enviar por Correo
+                                        <span class="badge bg-primary ms-2">Email</span>
+                                    </label>
+                                    <div class="form-text text-muted ms-4">
+                                        Envío de credenciales vía correo electrónico
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datos personales -->
+                        <div class="mt-4" id="panelDatosPersonales">
+                            <div class="modal-header justify-content-center">
+                                <h5 class="modal-title">Datos personales</h5>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <label for="nombreUsuario" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="nombreUsuario" placeholder="Ej: Lucio" required>
+                                    <label id="errorNombreUsuario" class="errorMensaje"></label>
+                                </div>
+
+                                <div class="col-6">
+                                    <label for="apellidosUsuario" class="form-label">Apellidos</label>
+                                    <input type="text" class="form-control" id="apellidosUsuario" placeholder="Ej: Hernández" required>
+                                    <label id="errorApellidosUsuario" class="errorMensaje"></label>
+                                </div>
+                            </div>
+
+                            <div class="row mt-1">
+                                <div class="col-6">
+                                    <label for="contactoUsuario" class="form-label">Contacto</label>
+                                    <input type="tel" class="form-control" id="contactoUsuario" placeholder="Ej: +240 222 *** *** o correo@email.com" required>
+                                    <label id="errorContactoUsuario" class="errorMensaje"></label>
+                                </div>
+
+                                <div class="col-6">
+                                    <label for="facultadesUsuario" class="form-label">Facultades</label>
+                                    <select class="form-select" id="facultadesUsuario">
+                                        <option value="Ninguno">Seleccione ...</option>
+                                        <!-- Dinamicamente -->
+                                    </select>
+                                    <label id="errorFacultadesUsuario" class="errorMensaje"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarSecretario">Guardar Secretario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>
+
+    <!-- Logout Modal-->
+    <div class="importandoModalCierreSesion"> </div>
+    
+    <script src="../../../public/nomodules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="module" src="../../controlador/c_usuario.js"></script>
+</body>
+</html>

@@ -1,11 +1,11 @@
-export class u_alertas {
+export const Alerta = {
     /**
      * Muestra un modal de carga con redirección automática
      * @param {number} tiempo - Tiempo en milisegundos
      * @param {string} mensaje - Mensaje a mostrar
      * @param {string} url - URL para redireccionar
      */
-    static cargarSimple(tiempo = 3000, mensaje, url) {
+    cargarSimple: function(tiempo = 3000, mensaje, url) {
         // Crear estructura del modal
         const modalId = 'loadingModal' + Date.now();
         
@@ -15,9 +15,9 @@ export class u_alertas {
                 <div class="modal-dialog modal-dialog-centered modal-sm">
                     <div class="modal-content border-0 shadow-lg">
                         <div class="modal-body text-center p-5">
-                            <!-- Spinner de Bootstrap mejorado -->
+                            <!-- Spinner con color personalizado -->
                             <div class="mb-4">
-                                <div class="spinner-border text-primary" style="width: 70px; height: 70px;" role="status">
+                                <div class="spinner-border" style="width: 70px; height: 70px; color: #ffd600 !important;" role="status">
                                     <span class="visually-hidden">Cargando...</span>
                                 </div>
                             </div>
@@ -25,18 +25,18 @@ export class u_alertas {
                             <!-- Mensaje -->
                             <h5 class="text-dark mb-3 fw-semibold">${mensaje}</h5>
                             
-                            <!-- Barra de progreso mejorada -->
+                            <!-- Barra de progreso con color personalizado -->
                             <div class="progress" style="height: 6px;">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
                                     role="progressbar" 
-                                    style="width: 100%" 
+                                    style="width: 100%; background-color: #ffd600 !important;" 
                                     aria-valuenow="100" 
                                     aria-valuemin="0" 
                                     aria-valuemax="100">
                                 </div>
                             </div>
                             
-                            <!-- Texto adicional opcional -->
+                            <!-- Texto adicional -->
                             <small class="text-muted d-block mt-3">
                                 Redireccionando automáticamente...
                             </small>
@@ -49,14 +49,10 @@ export class u_alertas {
         // Insertar modal en el DOM
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         
-        // Mostrar modal
+        // Obtener elementos
         const modalElement = document.getElementById(modalId);
-        const loadingModal = new bootstrap.Modal(modalElement, {
-            backdrop: 'static',
-            keyboard: false
-        });
         
-        // Forzar a que el modal se muestre sin animación de entrada lenta
+        // Forzar a que el modal se muestre
         modalElement.classList.add('show');
         modalElement.style.display = 'block';
         modalElement.setAttribute('aria-hidden', 'false');
@@ -69,7 +65,9 @@ export class u_alertas {
         // Configurar redirección
         setTimeout(() => {
             // Remover backdrop
-            backdrop.remove();
+            if (backdrop.parentNode) {
+                backdrop.parentNode.removeChild(backdrop);
+            }
             
             // Ocultar modal
             modalElement.classList.remove('show');
@@ -78,28 +76,40 @@ export class u_alertas {
             
             // Remover elementos del DOM
             setTimeout(() => {
-                modalElement.remove();
+                if (modalElement.parentNode) {
+                    modalElement.parentNode.removeChild(modalElement);
+                }
                 if (url) {
                     window.location.href = url;
                 }
             }, 300);
         }, tiempo);
-    }
+    },
+
+
+    /***************************************************************************/
+    /* MÉTODOS DE NOTIFICACIONES TOAST */
+    /***************************************************************************/
     
     /**
-     * Muestra una notificación toast (útil para mensajes no intrusivos)
+     * Muestra una notificación toast (mensajes no intrusivos)
      * @param {string} tipo - success, error, warning, info
      * @param {string} mensaje - Mensaje a mostrar
      * @param {number} duracion - Duración en milisegundos
      */
-    static notificar(tipo = 'info', mensaje, duracion = 5000) {
+    notificar: function(tipo = 'info', mensaje, duracion = 5000) {
         const toastId = 'toast-' + Date.now();
         const tipoBootstrap = this._mapearTipoBootstrap(tipo);
-        const icono = this._obtenerIcono(tipo);
+        const icono = this._obtenerIcono(tipo, false);
         
         const toastHTML = `
-            <div id="${toastId}" class="toast align-items-center border-0 text-bg-${tipoBootstrap}" 
-                 role="alert" aria-live="assertive" aria-atomic="true">
+            <div id="${toastId}" class="toast align-items-center border-0" 
+                 role="alert" aria-live="assertive" aria-atomic="true"
+                 style="background-color: ${tipoBootstrap === 'warning' ? '#ffd600' : 
+                                         tipoBootstrap === 'danger' ? '#dc3545' :
+                                         tipoBootstrap === 'success' ? '#198754' :
+                                         tipoBootstrap === 'info' ? '#0dcaf0' : '#6c757d'};
+                        color: ${tipoBootstrap === 'warning' ? '#000000' : '#ffffff'};">
                 <div class="d-flex">
                     <div class="toast-body p-3">
                         <div class="d-flex align-items-center">
@@ -111,7 +121,7 @@ export class u_alertas {
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                    <button type="button" class="btn-close ${tipoBootstrap === 'warning' ? 'btn-close-dark' : 'btn-close-white'}" 
                             data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
@@ -138,38 +148,18 @@ export class u_alertas {
         toast.show();
         
         // Remover del DOM cuando se oculte
-        toastElement.addEventListener('hidden.bs.toast', () => {
-            toastElement.remove();
+        toastElement.addEventListener('hidden.bs.toast', function() {
+            if (this.parentNode) {
+                this.parentNode.removeChild(this);
+            }
         });
-    }
+    },
+
+
+    /***************************************************************************/
+    /* MÉTODOS DE ALERTAS MODALES (DIÁLOGOS) */
+    /***************************************************************************/
     
-    // Métodos auxiliares
-    static _mapearTipoBootstrap(tipo) {
-        const mapa = {
-            success: 'success',
-            error: 'danger',
-            warning: 'warning',
-            info: 'info',
-            question: 'primary'
-        };
-        return mapa[tipo] || 'primary';
-    }
-    
-    static _obtenerIcono(tipo, grande = false) {
-        const iconos = {
-            success: `<i class="fas fa-check-circle${grande ? ' fa-2x' : ''}"></i>`,
-            error: `<i class="fas fa-times-circle${grande ? ' fa-2x' : ''}"></i>`,
-            warning: `<i class="fas fa-exclamation-triangle${grande ? ' fa-2x' : ''}"></i>`,
-            info: `<i class="fas fa-info-circle${grande ? ' fa-2x' : ''}"></i>`,
-            question: `<i class="fas fa-question-circle${grande ? ' fa-2x' : ''}"></i>`
-        };
-        return iconos[tipo] || iconos.info;
-    }
-}
-
-
-
-export const Alerta = {
     /**
      * Muestra una alerta personalizada
      * @param {string} tipo - success, error, warning, info, question
@@ -177,14 +167,21 @@ export const Alerta = {
      * @param {string} texto - Texto adicional (opcional)
      * @param {Object} opciones - Opciones de configuración
      * @returns {Promise} Promise que resuelve con la acción del usuario
-    */
-
+     */
     mostrar: function(tipo, titulo, texto = '', opciones = {}) 
     {
         return new Promise((resolve) => {
             const alertaId = 'alerta-' + Date.now();
             const tipoBootstrap = this._mapearTipoBootstrap(tipo);
-            const icono = this._obtenerIcono(tipo);
+            const icono = this._obtenerIcono(tipo, true);
+            
+            // Determinar color del botón basado en el tipo
+            let claseBoton = 'btn-';
+            if (tipo === 'warning' || tipo === 'question') {
+                claseBoton += 'warning';
+            } else {
+                claseBoton += tipoBootstrap;
+            }
             
             // Configuración por defecto
             const config = {
@@ -203,7 +200,7 @@ export const Alerta = {
                             <div class="modal-body p-4">
                                 <!-- Encabezado -->
                                 <div class="text-center mb-3">
-                                    <div class="text-${tipoBootstrap} mb-3" style="font-size: 3rem;">
+                                    <div class="mb-3" style="font-size: 2rem; ${tipo === 'warning' ? 'color: #ffd600 !important;' : `color: var(--bs-${tipoBootstrap})`}">
                                         ${icono}
                                     </div>
                                     <h4 class="modal-title text-dark fw-bold mb-2">${titulo}</h4>
@@ -217,7 +214,7 @@ export const Alerta = {
                                                 style="min-width: 100px;">
                                             ${config.textoCancelar}
                                         </button>` : ''}
-                                    <button type="button" class="btn btn-${tipoBootstrap} btn-confirm" 
+                                    <button type="button" class="btn ${claseBoton} btn-confirm" 
                                             style="min-width: 100px;">
                                         ${config.textoConfirmar}
                                     </button>
@@ -240,7 +237,9 @@ export const Alerta = {
             const cerrarYResolver = (resultado) => {
                 modal.hide();
                 setTimeout(() => {
-                    alertaElement.remove();
+                    if (alertaElement.parentNode) {
+                        alertaElement.parentNode.removeChild(alertaElement);
+                    }
                     resolve(resultado);
                 }, 300);
             };
@@ -265,24 +264,63 @@ export const Alerta = {
             modal.show();
         });
     },
+
+
+    /***************************************************************************/
+    /* MÉTODOS RÁPIDOS (SUGAR SYNTAX) PARA ALERTAS */
+    /***************************************************************************/
     
-    // Métodos rápidos (sugar syntax)
+    /**
+     * Muestra una alerta de éxito
+     * @param {string} titulo - Título de la alerta
+     * @param {string} texto - Texto adicional (opcional)
+     * @param {Object} opciones - Opciones de configuración
+     * @returns {Promise}
+     */
     exito: function(titulo, texto = '', opciones = {}) {
         return this.mostrar('success', titulo, texto, opciones);
     },
     
+    /**
+     * Muestra una alerta de error
+     * @param {string} titulo - Título de la alerta
+     * @param {string} texto - Texto adicional (opcional)
+     * @param {Object} opciones - Opciones de configuración
+     * @returns {Promise}
+     */
     error: function(titulo, texto = '', opciones = {}) {
         return this.mostrar('error', titulo, texto, opciones);
     },
     
+    /**
+     * Muestra una alerta de advertencia (usando tu color amarillo)
+     * @param {string} titulo - Título de la alerta
+     * @param {string} texto - Texto adicional (opcional)
+     * @param {Object} opciones - Opciones de configuración
+     * @returns {Promise}
+     */
     advertencia: function(titulo, texto = '', opciones = {}) {
         return this.mostrar('warning', titulo, texto, opciones);
     },
     
+    /**
+     * Muestra una alerta de información
+     * @param {string} titulo - Título de la alerta
+     * @param {string} texto - Texto adicional (opcional)
+     * @param {Object} opciones - Opciones de configuración
+     * @returns {Promise}
+     */
     informacion: function(titulo, texto = '', opciones = {}) {
         return this.mostrar('info', titulo, texto, opciones);
     },
     
+    /**
+     * Muestra una alerta de pregunta/confirmación
+     * @param {string} titulo - Título de la alerta
+     * @param {string} texto - Texto adicional (opcional)
+     * @param {Object} opciones - Opciones de configuración
+     * @returns {Promise} - Resuelve true (Sí) o false (No)
+     */
     pregunta: function(titulo, texto = '', opciones = {}) {
         const opcionesDefault = {
             textoConfirmar: 'Sí',
@@ -293,11 +331,91 @@ export const Alerta = {
         return this.mostrar('question', titulo, texto, opcionesDefault);
     },
     
+    /**
+     * Alias de pregunta() para mayor claridad
+     * @param {string} titulo - Título de la alerta
+     * @param {string} texto - Texto adicional (opcional)
+     * @param {Object} opciones - Opciones de configuración
+     * @returns {Promise}
+     */
     confirmar: function(titulo, texto = '', opciones = {}) {
         return this.pregunta(titulo, texto, opciones);
     },
+
+
+    /***************************************************************************/
+    /* MÉTODOS RÁPIDOS PARA NOTIFICACIONES TOAST */
+    /***************************************************************************/
     
-    // Métodos auxiliares internos
+    /**
+     * Muestra un toast de éxito
+     * @param {string} mensaje - Mensaje a mostrar
+     * @param {number} duracion - Duración en milisegundos
+     */
+    notificarExito: function(mensaje, duracion = 5000) {
+        this.notificar('success', mensaje, duracion);
+    },
+    
+    /**
+     * Muestra un toast de error
+     * @param {string} mensaje - Mensaje a mostrar
+     * @param {number} duracion - Duración en milisegundos
+     */
+    notificarError: function(mensaje, duracion = 5000) {
+        this.notificar('error', mensaje, duracion);
+    },
+    
+    /**
+     * Muestra un toast de advertencia (usando tu color amarillo)
+     * @param {string} mensaje - Mensaje a mostrar
+     * @param {number} duracion - Duración en milisegundos
+     */
+    notificarAdvertencia: function(mensaje, duracion = 5000) {
+        this.notificar('warning', mensaje, duracion);
+    },
+    
+    /**
+     * Muestra un toast de información
+     * @param {string} mensaje - Mensaje a mostrar
+     * @param {number} duracion - Duración en milisegundos
+     */
+    notificarInfo: function(mensaje, duracion = 5000) {
+        this.notificar('info', mensaje, duracion);
+    },
+
+
+    /***************************************************************************/
+    /* MÉTODOS RÁPIDOS PARA MODALES DE CARGA */
+    /***************************************************************************/
+    
+    /**
+     * Muestra un modal de carga y redirige después
+     * @param {string} mensaje - Mensaje a mostrar
+     * @param {string} url - URL para redireccionar
+     * @param {number} tiempo - Tiempo en milisegundos
+     */
+    cargarYRedirigir: function(mensaje, url, tiempo = 3000) {
+        this.cargarSimple(tiempo, mensaje, url);
+    },
+    
+    /**
+     * Muestra un modal de carga sin redirección
+     * @param {string} mensaje - Mensaje a mostrar
+     * @param {number} tiempo - Tiempo en milisegundos
+     */
+    cargar: function(mensaje, tiempo = 3000) {
+        this.cargarSimple(tiempo, mensaje);
+    },
+
+    
+    /***************************************************************************/
+    /* MÉTODOS AUXILIARES INTERNOS */
+    /***************************************************************************/
+    
+    /**
+     * Mapea tipos amigables a clases de Bootstrap
+     * @private
+     */
     _mapearTipoBootstrap: function(tipo) {
         const mapa = {
             success: 'success',
@@ -309,13 +427,19 @@ export const Alerta = {
         return mapa[tipo] || 'primary';
     },
     
-    _obtenerIcono: function(tipo) {
+    /**
+     * Obtiene el icono correspondiente según el tipo
+     * @private
+     */
+    _obtenerIcono: function(tipo, grande = false) {
+        // Para modales (grande = true) usamos tamaño 2rem, para toasts (grande = false) usamos tamaño normal
+        const tamaño = grande ? ' style="font-size: 2rem;"' : '';
         const iconos = {
-            success: '<i class="fas fa-check-circle"></i>',
-            error: '<i class="fas fa-times-circle"></i>',
-            warning: '<i class="fas fa-exclamation-triangle"></i>',
-            info: '<i class="fas fa-info-circle"></i>',
-            question: '<i class="fas fa-question-circle"></i>'
+            success: `<i class="fas fa-check-circle"${tamaño}></i>`,
+            error: `<i class="fas fa-times-circle"${tamaño}></i>`,
+            warning: `<i class="fas fa-exclamation-triangle"${tamaño}></i>`,
+            info: `<i class="fas fa-info-circle"${tamaño}></i>`,
+            question: `<i class="fas fa-question-circle"${tamaño}></i>`
         };
         return iconos[tipo] || iconos.info;
     }

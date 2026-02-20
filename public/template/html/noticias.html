@@ -11,12 +11,10 @@
     <link rel="stylesheet" href="../css/global.css">
 </head>
 <body>
-
     <header>
+
         <!-- Navegacion -->
         <div class="importandoNavegacion"> </div>
-
-
 
         <!-- Hero -->
         <div class="container">
@@ -32,42 +30,31 @@
         </div>
     </header>
 
-
-
     <div class="container px-5 pb-4">
         <div class="division2"></div>
     </div>
 
-    
-
     <section>
         <div class="contenedorTarjetasNoticias mb-4">
+
             <!-- Carta de noticias -->
             <div id="contTarjetaNoticia" class="container">
-                <div class="row" id="tarjetasNoticiasRow">
-                    <!-- Las tarjetas se añadirán aquí dinámicamente -->
-                </div>
+                <div class="row" id="tarjetasNoticiasRow"> <!-- Las tarjetas se añadirán aquí dinámicamente --> </div>
             </div>
-
-
 
             <!-- Contenedor de paginación -->
             <div id="contPaginacion" class="container mt-4 d-flex justify-content-center">
                 <!-- La paginación se añadirá aquí dinámicamente -->
             </div>
                 
-
-
             <!-- Detalles de las noticias -->
             <div id="contDetallesNoticias" class="container"> <!-- Agregar de manera dinamica --> </div>
         </div>
 
-
-
         <!-- Modal -->
-        <div id="modalNoticias" class="modal">
+        <div id="modalNoticias" class="modal fade" tabindex="-1" aria-hidden="true">
             <div class="modal-contenido">
-                <span class="cerrar w-100 text-end" id="cerrarModal">&times;</span>
+                <span class="cerrar w-100 text-end" id="cerrarModal"> &times; </span>
 
                 <div class="modal-encabezado">
                     <h2 id="tituloNoticiaDetalle"> </h2>
@@ -80,13 +67,9 @@
         </div>
     </section>
 
-
-
     <!-- Importacion del footer -->
     <div class="importandoFooter"> </div>
 
-
-    
     <script type="module" src="../../controlador/c_noticia.js"></script>
     <script src="../../nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
