@@ -1,34 +1,34 @@
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 
-export class fetchAsignatura
+export class fetchSemestre
 {
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * Enviar solicitud para cargar las asignaturas de la BDD
-     * @returns array de asignaturas
+     * Envia solicitud para cargar los semestres de la BDD
+     * @returns array de semestres
      */
-    static async obtenerAsignaturasDelBackend() {
+    static async obtenerSemestresDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturas&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=semestre&action=obtenerSemestres&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchSemestre]. ${error}`, 3000);
             return [];
         }
     }
 
     /**
-     * Envia solicitud para insertar una nueva asignatura en la BDD
-     * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
+     * Envia solicitud para insertar un nuevo semestre a la BDD
+     * @param {m_semestre} objeto - objeto que contiene los parametros de la clase semestre
      * @returns id del nuevo registro insertado
      */
-    static async insertarAsignaturaEnBackend(objeto) {
+    static async insertarSemestreEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=insertarAsignatura&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=semestre&accion=insertarSemestre&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -36,19 +36,19 @@ export class fetchAsignatura
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchSemestre]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
      * Envia solicitud para actualizar un registro existente de la BDD
-     * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
+     * @param {m_semestre} objeto - objeto que contiene los parametros de la clase semestre
      * @returns id del registro actualizado
      */
-    static async actualizarAsignaturaEnBackend(objeto) {
+    static async actualizarSemestreEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=actualizarAsignatura&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=semestre&accion=actualizarSemestre&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -56,7 +56,7 @@ export class fetchAsignatura
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchSemestre]. ${error}`, 3000);
             return null;
         }
     }
@@ -66,15 +66,15 @@ export class fetchAsignatura
      * @param {Integer} id 
      * @returns booleano
      */
-    static async deshabilitarAsignaturaEnBackend(id) {
+    static async deshabilitarSemestreEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=deshabilitarAsignatura&valor=${id}&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=semestre&accion=deshabilitarSemestre&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
         } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchAsignatura]. ${error}`);
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchSemestre]. ${error}`);
             return false;
         }
     }
@@ -84,15 +84,15 @@ export class fetchAsignatura
      * @param {Integer} id 
      * @returns booleano
      */
-    static async habilitarAsignaturaEnBackend(id) {
+    static async habilitarSemestreEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=habilitarAsignatura&valor=${id}&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=semestre&accion=habilitarSemestre&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
         } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchAsignatura]. ${error}`);
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchSemestre]. ${error}`);
             return false;
         }
     }

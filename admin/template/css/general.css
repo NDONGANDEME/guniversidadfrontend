@@ -48,12 +48,22 @@ textarea{
 }
 
 .dropdown-option {
-  padding: 10px 12px;
+  padding: 8px 12px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .dropdown-option:hover {
   background-color: #f8f9fa;
+}
+
+.dropdown-option.no-results {
+  color: #6c757d;
+  cursor: default;
+}
+
+.dropdown-option.no-results:hover {
+  background-color: transparent;
 }
 
 

@@ -1,9 +1,9 @@
-// c_departamento.js - Controlador de departamentos
 import { sesiones } from "../../public/core/sesiones.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { m_departamento } from "../modelo/m_departamento.js";
 import { u_departamento } from "../utilidades/u_departamento.js";
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
+import { m_facultad } from "../modelo/m_facultad.js";
 
 export class c_departamento {
     constructor() {
@@ -54,11 +54,8 @@ export class c_departamento {
             // Configurar eventos
             this.configurarEventos();
             this.configurarValidaciones();
-            
-            console.log('Controlador de departamentos inicializado correctamente');
         } catch (error) {
-            console.error('Error al inicializar:', error);
-            Alerta.error('Error', 'No se pudo inicializar el módulo de departamentos');
+            Alerta.notificarError(`No se pudo inicializar el módulo de departamentos: ${error}`, 1500);
         }
     }
     
@@ -72,37 +69,26 @@ export class c_departamento {
 
     async cargarFacultades() {
         try {
-            // Intentar cargar desde sessionStorage primero
-            const facultadesJSON = sessionStorage.getItem('facultades');
-            if (facultadesJSON) {
-                this.facultades = JSON.parse(facultadesJSON);
-                console.log('Facultades cargadas desde sessionStorage:', this.facultades.length);
-            } else {
-                // Si no hay en sessionStorage, cargar desde backend usando m_facultad
-                this.facultades = await m_facultad.obtenerFacultades();
-                sessionStorage.setItem('facultades', JSON.stringify(this.facultades));
-                console.log('Facultades cargadas desde backend:', this.facultades.length);
-            }
+            this.facultades = await m_facultad.obtenerFacultades();
+
+            if(this.facultades==[]) Alerta.notificar('No hay facultades almacenadas', 1500);
             
             // Cargar facultades en el select
             u_departamento.cargarSelectFacultades('facultadesDepartamento', this.facultades);
-            
         } catch (error) {
-            console.error('Error cargando facultades:', error);
-            this.facultades = [];
-            
-            // Mostrar mensaje de error al usuario
-            Alerta.error('Error', 'No se pudieron cargar las facultades');
+            Alerta.error('Error', `No se pudieron cargar las facultades: ${error}`);
         }
     }
     
     async cargarDepartamentos() {
         try {
             this.departamentos = await m_departamento.obtenerDepartamentos();
+
+            if(this.departamentos==[]) Alerta.notificar('No hay departamentos almacenados', 1500);
+
             this.actualizarTabla();
         } catch (error) {
-            console.error('Error cargando departamentos:', error);
-            Alerta.error('Error', 'No se pudieron cargar los departamentos');
+            Alerta.error('Error', `No se pudieron cargar los departamentos: ${error}`);
         }
     }
     
@@ -207,7 +193,7 @@ export class c_departamento {
     async guardarDepartamento() {
         // Validar todos los campos
         if (!this.validaciones.nombre || !this.validaciones.idFacultad) {
-            Alerta.advertencia('Campos incompletos', 'Complete todos los campos correctamente');
+            Alerta.notificarAdvertencia('Complete todos los campos correctamente', 1500);
             return;
         }
         
@@ -246,8 +232,7 @@ export class c_departamento {
                 );
             }
         } catch (error) {
-            console.error('Error al guardar departamento:', error);
-            Alerta.error('Error', 'No se pudo guardar el departamento');
+            Alerta.error('Error', `No se pudo guardar el departamento: ${error}`);
         }
     }
     
@@ -277,8 +262,7 @@ export class c_departamento {
                 }
             }
         } catch (error) {
-            console.error('Error al cambiar estado:', error);
-            Alerta.error('Error', 'No se pudo cambiar el estado del departamento');
+            Alerta.error('Error', `No se pudo cambiar el estado del departamento: ${error}`);
         }
     }
     

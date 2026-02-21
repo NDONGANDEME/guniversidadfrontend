@@ -6,7 +6,7 @@ export class fetchDepartamento
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * Obtiene todos los departamentos almacenados en la BDD
+     * Envia solicitud para cargar los departamentos de la BDD
      * @returns array de departamento
      */
     static async obtenerDepartamentosDelBackend() {

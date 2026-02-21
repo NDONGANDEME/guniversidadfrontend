@@ -1,45 +1,18 @@
-import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
-
-export class u_asignatura {
+export class u_semestre {
     // ============================================
     // VALIDACIONES DE CAMPOS
     // ============================================
     
-    // Validar nombre de la asignatura
-    static validarNombre(valor) {
-        return u_verificaciones.validarTexto(valor);
+    // Validar número de semestre
+    static validarNumero(valor) {
+        if (valor === '' || valor === null) return false;
+        const num = parseInt(valor);
+        return !isNaN(num) && num > 0;
     }
     
-    // Validar descripción de la asignatura
-    static validarDescripcion(valor) {
-        return u_verificaciones.validarDescripcion(valor);
-    }
-    
-    // ============================================
-    // GENERACIÓN DE CÓDIGO
-    // ============================================
-    
-    // Generar código único para la asignatura
-    static generarCodigoAsignatura(nombre, existingCodes = []) {
-        // Tomar las primeras 3 letras del nombre en mayúsculas
-        let prefijo = nombre.substring(0, 3).toUpperCase();
-        
-        // Si el nombre tiene menos de 3 letras, completar con 'X'
-        if (prefijo.length < 3) {
-            prefijo = prefijo.padEnd(3, 'X');
-        }
-        
-        // Generar número aleatorio de 3 dígitos
-        let numero = Math.floor(Math.random() * 900) + 100; // 100-999
-        let codigo = `${prefijo}${numero}`;
-        
-        // Verificar que el código no exista
-        while (existingCodes.includes(codigo)) {
-            numero = Math.floor(Math.random() * 900) + 100;
-            codigo = `${prefijo}${numero}`;
-        }
-        
-        return codigo;
+    // Validar tipo de semestre
+    static validarTipo(valor) {
+        return valor === 'Par' || valor === 'Impar';
     }
     
     // ============================================
@@ -48,46 +21,49 @@ export class u_asignatura {
     
     // Limpiar formulario
     static limpiarFormulario() {
-        $('#formAsignatura')[0].reset();
+        $('#formSemestre')[0].reset();
         
         // Limpiar clases de validación
-        $('#formAsignatura input, #formAsignatura textarea').removeClass('border-success border-danger');
+        $('#formSemestre input, #formSemestre select').removeClass('border-success border-danger');
         
         // Limpiar mensajes de error
         $('.errorMensaje').text('').hide();
+        
+        // Resetear select
+        $('#tipoSemestre').val('Ninguno');
     }
     
     // Obtener datos del formulario
     static obtenerDatosFormulario() {
         return {
-            nombre: $('#nombreAsignatura').val().trim(),
-            descripcion: $('#descripcionAsignatura').val().trim()
+            numero: $('#numeroSemestre').val().trim(),
+            tipo: $('#tipoSemestre').val()
         };
     }
     
     // Cargar datos en el formulario para edición
-    static cargarFormularioEdicion(asignatura) {
-        $('#nombreAsignatura').val(asignatura.nombreAsignatura || '');
-        $('#descripcionAsignatura').val(asignatura.descripcion || '');
+    static cargarFormularioEdicion(semestre) {
+        $('#numeroSemestre').val(semestre.numeroSemestre || '');
+        $('#tipoSemestre').val(semestre.tipoSemestre || 'Ninguno');
         
         // Forzar validaciones
-        $('#nombreAsignatura').trigger('input');
-        $('#descripcionAsignatura').trigger('input');
+        $('#numeroSemestre').trigger('input');
+        $('#tipoSemestre').trigger('change');
     }
     
     // Configurar modo edición
     static configurarModoEdicion(modoEdicion) {
         if (modoEdicion) {
-            $('.btnGuardarAsignatura').text('Actualizar Asignatura');
+            $('#btnGuardarSemestre').text('Actualizar Semestre');
             if ($('#btnCancelarEdicion').length === 0) {
-                $('.btnGuardarAsignatura').after(`
+                $('#btnGuardarSemestre').after(`
                     <button type="button" class="btn btn-secondary ms-2" id="btnCancelarEdicion">
                         <i class="fas fa-times me-1"></i> Cancelar
                     </button>
                 `);
             }
         } else {
-            $('.btnGuardarAsignatura').text('Guardar Asignatura');
+            $('#btnGuardarSemestre').text('Guardar Semestre');
             $('#btnCancelarEdicion').remove();
         }
     }
@@ -97,7 +73,7 @@ export class u_asignatura {
     // ============================================
     
     // Crear botones de acción para la tabla
-    static crearBotonesAccion(idAsignatura, habilitado = true) {
+    static crearBotonesAccion(idSemestre, habilitado = true) {
         const claseBoton = habilitado ? 'btn-outline-danger' : 'btn-outline-success';
         const icono = habilitado ? 'fa-toggle-on' : 'fa-toggle-off';
         const titulo = habilitado ? 'Deshabilitar' : 'Habilitar';
@@ -106,11 +82,11 @@ export class u_asignatura {
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar"
                         title="Editar" 
-                        data-id="${idAsignatura}">
+                        data-id="${idSemestre}">
                     <i class="fas fa-edit"></i>
                 </button>
                 <button class="btn btn-sm ${claseBoton} btn-toggle-estado" 
-                        data-id="${idAsignatura}" 
+                        data-id="${idSemestre}" 
                         title="${titulo}">
                     <i class="fas ${icono}"></i>
                 </button>
@@ -139,33 +115,35 @@ export class u_asignatura {
         }
     }
     
-    // Truncar descripción para la tabla
-    static truncarDescripcion(descripcion, longitud = 50) {
-        if (!descripcion) return '';
-        if (descripcion.length <= longitud) return descripcion;
-        return descripcion.substring(0, longitud) + '...';
+    // Obtener badge para tipo de semestre
+    static obtenerBadgeTipo(tipo) {
+        if (tipo === 'Par') {
+            return '<span class="badge bg-info">Par</span>';
+        } else if (tipo === 'Impar') {
+            return '<span class="badge bg-warning text-dark">Impar</span>';
+        }
+        return '<span class="badge bg-secondary">Desconocido</span>';
     }
     
     // Actualizar tabla
-    static actualizarTabla(dataTable, asignaturas, generadorBotones) {
+    static actualizarTabla(dataTable, semestres, generadorBotones) {
         if (!dataTable) return;
         
         dataTable.clear();
         
-        if (asignaturas.length === 0) {
+        if (semestres.length === 0) {
             dataTable.draw();
             return;
         }
         
-        asignaturas.forEach(asignatura => {
-            const estado = asignatura.habilitado !== 0; // Asumiendo que existe campo habilitado
-            const descripcionCorta = this.truncarDescripcion(asignatura.descripcion, 50);
+        semestres.forEach(semestre => {
+            const estado = semestre.habilitado !== 0; // Asumiendo que existe campo habilitado
+            const badgeTipo = this.obtenerBadgeTipo(semestre.tipoSemestre);
             
             dataTable.row.add([
-                asignatura.codigoAsignatura || 'Sin código',
-                asignatura.nombreAsignatura || 'Sin nombre',
-                descripcionCorta || 'Sin descripción',
-                generadorBotones(asignatura.idAsignatura, estado)
+                semestre.numeroSemestre || '0',
+                badgeTipo,
+                generadorBotones(semestre.idSemestre, estado)
             ]);
         });
         

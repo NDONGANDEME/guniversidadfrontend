@@ -1,4 +1,3 @@
-// m_departamento.js - CORREGIDO
 import { fetchDepartamento } from "../servicios/fetchDepartamento.js";
 
 export class m_departamento
@@ -10,7 +9,6 @@ export class m_departamento
         this.idFacultad = idFacultad || null;
     }
 
-    // NOTA: Estos métodos estaban mal nombrados (decían Facultad pero son Departamento)
     static async obtenerDepartamentos() {
         return await fetchDepartamento.obtenerDepartamentosDelBackend();
     }

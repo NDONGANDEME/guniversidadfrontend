@@ -196,7 +196,9 @@ export class u_utiles
 
         u_utiles.redirigirA(document.querySelector('.noticia'), `${url}/noticia.html`);
 
-        // u_utiles.redirigirA(document.querySelector('.parametro'), `${url}/parametro.html`);
+        u_utiles.redirigirA(document.querySelector('.parametro'), `${url}/parametros.html`);
+
+        if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
         $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
