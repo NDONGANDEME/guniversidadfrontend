@@ -47,9 +47,6 @@ export class c_usuario {
             await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
             u_utiles.botonesNavegacionAdministrador();
             
-            // Cargar datos del actor (usuario que hace la acción)
-            this.actor = JSON.parse(sessionStorage.getItem('usuarioActual'));
-            
             // Cargar facultades del sessionStorage
             this.cargarFacultades();
             
@@ -77,26 +74,20 @@ export class c_usuario {
 
     async cargarFacultades() {
         try {
-            this.facultades = await m_facultad.obtenerFacultades(this.actor);
-            
-            // Guardar en sessionStorage como respaldo
-            sessionStorage.setItem('facultades', JSON.stringify(this.facultades));
+            this.facultades = await m_facultad.obtenerFacultades();
+
+            if (this.facultades == []) Alerta.notificar('No hay facultades en la BDD', 1500);
         } catch (error) {
-            // Intentar cargar desde sessionStorage como respaldo
-            const facultadesJSON = sessionStorage.getItem('facultades');
-            if (facultadesJSON) {
-                this.facultades = JSON.parse(facultadesJSON);
-            } else {
-                this.facultades = [];
-                Alerta.notificarError('Error. No se pudieron cargar las facultades', 1500);
-            }
+            Alerta.notificarError(`Error. No se pudieron cargar las facultades: ${error}`, 1500);
         }
     }
     
     async cargarUsuarios() {
         try {
-            this.usuarios = await m_usuario.obtenerUsuarios(this.actor);
+            this.usuarios = await m_usuario.obtenerUsuarios();
             this.actualizarTablaUsuarios();
+
+            if (this.usuarios == []) Alerta.notificar('No hay usuarios en la BDD', 1500);
         } catch (error) {
             Alerta.notificarError(`Error. No se pudieron cargar los usuarios: ${error}`, 1500);
         }
@@ -104,8 +95,10 @@ export class c_usuario {
     
     async cargarAdministrativos() {
         try {
-            this.administrativos = await m_administrativo.obtenerAdministrativos(this.actor);
+            this.administrativos = await m_administrativo.obtenerAdministrativos();
             this.actualizarTablaAdministrativos();
+
+            if (this.administrativos == []) Alerta.notificar('No hay administrativos en la BDD', 1500);
         } catch (error) {
             Alerta.notificarError(`Error cargando administrativos: ${error}` ,1500);
         }
@@ -362,9 +355,7 @@ export class c_usuario {
         
         // Si el panel está visible, validar datos personales
         if (panelVisible) {
-            if (!this.validaciones.nombre || !this.validaciones.apellidos || 
-                !this.validaciones.correo || !this.validaciones.telefono || 
-                !this.validaciones.facultad) {
+            if (!this.validaciones.nombre || !this.validaciones.apellidos || !this.validaciones.correo || !this.validaciones.telefono) {
                 Alerta.notificarAdvertencia('Campos incompletos. Complete todos los datos personales', 1500);
                 return;
             }
@@ -389,10 +380,10 @@ export class c_usuario {
             if (this.modoEdicion) {
                 // Actualizar usuario existente
                 usuarioData.idUsuario = this.usuarioActual.idUsuario;
-                resultado = await m_usuario.actualizarUsuario(usuarioData, this.actor);
+                resultado = await m_usuario.actualizarUsuario(usuarioData);
             } else {
                 // Insertar nuevo usuario
-                resultado = await m_usuario.insertarUsuario(usuarioData, this.actor);
+                resultado = await m_usuario.insertarUsuario(usuarioData);
             }
             
             if (resultado) {
@@ -408,9 +399,9 @@ export class c_usuario {
                     };
                     
                     if (this.modoEdicion) {
-                        await m_administrativo.actualizarAdministrativo(adminData, this.actor);
+                        await m_administrativo.actualizarAdministrativo(adminData);
                     } else {
-                        await m_administrativo.insertarAdministrativo(adminData, this.actor);
+                        await m_administrativo.insertarAdministrativo(adminData);
                     }
                 }
                 
@@ -451,9 +442,9 @@ export class c_usuario {
             if (confirmacion) {
                 let resultado;
                 if (accion === 'deshabilitar') {
-                    resultado = await m_usuario.deshabilitarUsuario(id, this.actor);
+                    resultado = await m_usuario.deshabilitarUsuario(id);
                 } else {
-                    resultado = await m_usuario.habilitarUsuario(id, this.actor);
+                    resultado = await m_usuario.habilitarUsuario(id);
                 }
                 
                 if (resultado) {

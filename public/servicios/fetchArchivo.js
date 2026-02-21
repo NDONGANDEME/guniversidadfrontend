@@ -1,36 +1,36 @@
 import { Alerta } from "../utilidades/u_alertas.js";
 
-export class fetchFoto
+export class fetchArchivo
 {
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * Envia solicitud para cargar todas las fotos de la BDD
+     * Envia solicitud para listar los archivos de la BDD
      * @param {String} actor 
-     * @returns array de fotos
+     * @returns array de archivos
      */
-    static async obtenerFotosEnBDD(actor) {
+    static async obtenerArchivosDelBackend(actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=foto&accion=obtenerFotos&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=obtenerArchivos&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFoto]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchArchivo]. ${error}`, 3000);
             return [];
         }
     }
 
     /**
-     * Envia solicitud para insertar una nueva foto para la noticia en la BDD
-     * @param {m_foto} objeto 
+     * Envia solicitud para insertar una nuevo archivo en la BDD
+     * @param {m_archivo} objeto 
      * @param {String} actor 
      * @returns id del nuevo registro insertado
      */
-    static async insertarFotoEnBDD(objeto, actor) {
+    static async insertarArchivoEnBDD(objeto, actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=foto&accion=insertarFoto&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=insertarArchivo&actor=${actor}`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -38,20 +38,20 @@ export class fetchFoto
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
         } catch(error){
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFoto]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchArchivo]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
-     * Enviar solicitud para actualizar una foto guardada en la BDD
-     * @param {m_foto} objeto 
+     * Enviar solicitud para actualizar un archivo guardado en la BDD
+     * @param {m_archivo} objeto 
      * @param {String} actor 
      * @returns id del registro actualizado
      */
-    static async actualizarFotoEnBDD(objeto, actor) {
+    static async actualizarArchivoEnBDD(objeto, actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=foto&accion=actualizarFoto&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=actualizarArchivo&actor=${actor}`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -59,45 +59,45 @@ export class fetchFoto
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
         } catch(error){
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFoto]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchArchivo]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
-     * Envia solicitud para eliminar una foto
+     * Envia solicitud para eliminar un archivo
      * @param {Integer} id 
      * @param {String} actor 
      * @returns boolean
      */
-    static async eliminarFotoEnBDD(id, actor) {
+    static async eliminarArchivoEnBDD(id, actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=foto&accion=eliminarFoto&valor=${id}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=eliminarArchivo&valor=${id}&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFoto]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchArchivo]. ${error}`, 3000);
             return false;
         }
     }
 
     /**
-     * Envia solicitud para obteber fotos por noticia
+     * Envia solicitud para obteber archivos por noticia
      * @param {Integer} idNoticia 
      * @param {String} actor 
-     * @returns array de fotos pertenecientes a una sola noticia
+     * @returns array de archivos pertenecientes a una sola noticia
      */
-    static async obtenerFotosPorNoticiaEnBDD(idNoticia, actor) {
+    static async obtenerArchivosPorNoticiaEnBDD(idNoticia, actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=foto&accion=obtenerFotosPorNoticia&valor=${idNoticia}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=obtenerArchivosPorNoticia&valor=${idNoticia}&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFoto]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchArchivo]. ${error}`, 3000);
             return [];
         }
     }

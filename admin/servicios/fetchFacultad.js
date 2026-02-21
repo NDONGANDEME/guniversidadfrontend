@@ -11,7 +11,7 @@ export class fetchFacultad
      */
     static async obtenerFacultadesDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&action=obtenerFacultades`);
+            let solicitud = await fetch(`${this.url}?ruta=facultad&action=obtenerFacultades&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -29,7 +29,7 @@ export class fetchFacultad
      */
     static async insertarFacultadEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=insertarFacultad`, {
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=insertarFacultad&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -49,7 +49,7 @@ export class fetchFacultad
      */
     static async actualizarFacultadEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=actualizarNoticia`, {
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=actualizarNoticia&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -69,7 +69,7 @@ export class fetchFacultad
      */
     static async deshabilitarFacultadEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=deshabilitarFacultad&valor=${id}`);
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=deshabilitarFacultad&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -87,7 +87,7 @@ export class fetchFacultad
      */
     static async habilitarFacultadEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=habilitarFacultad&valor=${id}`);
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=habilitarFacultad&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

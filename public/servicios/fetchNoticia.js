@@ -6,12 +6,11 @@ export class fetchNoticia
 
     /**
      * Enviar solicitud para cargar las noticias mas recientes de la BDD
-     * @param {String} actor - indicar el modulo al que le hacemos la solicitud
      * @returns array de noticias recientes
      */
-    static async obtenerNoticiasRecientesDelBackend(actor) {
+    static async obtenerNoticiasRecientesDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasRecientes&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasRecientes&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -24,12 +23,11 @@ export class fetchNoticia
 
     /**
      * Enviar solicitud para cargar las noticas de tipo comunicado
-     * @param {String} actor 
      * @returns array de noticias de tipo comunicado
      */
-    static async obtenerNoticiasPorComunicadoDelBackend(actor) {
+    static async obtenerNoticiasPorComunicadoDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorComunicado&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorComunicado&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -42,12 +40,11 @@ export class fetchNoticia
 
     /**
      * Enviar solicitud para cargar todas las noticias
-     * @param {String} actor 
      * @returns array de noticias
      */
-    static async obtenerNoticiasDelBackend(actor) {
+    static async obtenerNoticiasDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&action=obtenerNoticias&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticia&action=obtenerNoticias&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -61,12 +58,11 @@ export class fetchNoticia
     /**
      * Enviar solicitud para insertar una nueva noticia en la BDD
      * @param {m_noticia} objeto 
-     * @param {String} actor 
      * @returns id del nuevo registro insertado
      */
-    static async insertarNoticiaEnBDD(objeto, actor) {
+    static async insertarNoticiaEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -82,12 +78,11 @@ export class fetchNoticia
     /**
      * Enviar solicitud para actualizar una noticia de la BDD
      * @param {m_noticia} objeto 
-     * @param {String} actor 
      * @returns id del registro actualizado
      */
-    static async actualizarNoticiaEnBDD(objeto, actor) {
+    static async actualizarNoticiaEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=admin`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -103,12 +98,11 @@ export class fetchNoticia
     /**
      * Envia solicitud para eliminar una noticia
      * @param {Integer} id 
-     * @param {String} actor 
      * @returns booleano
      */
-    static async eliminarNoticiaEnBDD(id, actor) {
+    static async eliminarNoticiaEnBDD(id) {
         try  {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=eliminarNoticia&valor=${id}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=eliminarNoticia&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -121,12 +115,11 @@ export class fetchNoticia
 
     /**
      * Envia solicitud para obtener el numero de paginas a paginar
-     * @param {String} actor 
      * @returns integer (entero)
      */
-    static async obtenerCantidadPaginacionEnBDD(actor) {
+    static async obtenerCantidadPaginacionEnBDD() {
         try  {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerCantidadPaginacion&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerCantidadPaginacion&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -140,12 +133,11 @@ export class fetchNoticia
     /**
      * Envia solicitud para cargar una noticia conociendo el id
      * @param {Integer} id 
-     * @param {String} actor 
      * @returns 
      */
-    static async obtenerNoticiaPorIdEnBDD(id, actor) {
+    static async obtenerNoticiaPorIdEnBDD(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticiaPorId&valor=${id}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticiaPorId&valor=${id}&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

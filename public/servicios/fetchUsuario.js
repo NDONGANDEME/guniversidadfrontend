@@ -2,17 +2,16 @@ import { Alerta } from "../utilidades/u_alertas.js";
 
 export class fetchUsuario
 {
-    url = '/guniversidadfrontend/public/core/endpoint.php';
+    static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * 
-     * @param {*} objeto 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para insertar un nuevo usuario en la BDD 
+     * @param {m_usuario} objeto 
+     * @returns id del nuevo registro insertado
      */
-    static async insertarUsuarioEnBDD(objeto, actor) {
+    static async insertarUsuarioEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${url}?ruta=usuario&accion=insertarUsuario&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=insertarUsuario&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -26,14 +25,13 @@ export class fetchUsuario
     }
 
     /**
-     * 
-     * @param {*} objeto 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para actualizar un registro existente de la BDD
+     * @param {m_usuario} objeto 
+     * @returns id del registro actualizado
      */
-    static async actualizarUsuarioEnBDD(objeto, actor) {
+    static async actualizarUsuarioEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${url}?ruta=usuario&accion=actualizarUsuario&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=actualizarUsuario&actor=admin`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -47,14 +45,13 @@ export class fetchUsuario
     }
 
     /**
-     * 
-     * @param {*} id 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para deshabilitar a un usuario habilitado
+     * @param {Integer} id 
+     * @returns booleano
      */
-    static async deshabilitarUsuarioEnBDD(id, actor) {
+    static async deshabilitarUsuarioEnBDD(id) {
         try {
-            let solicitud = await fetch(`${url}?ruta=usuario&accion=deshabilitarUsuario&valor=${id}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=deshabilitarUsuario&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -66,14 +63,13 @@ export class fetchUsuario
     }
 
     /**
-     * 
-     * @param {*} id 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para habilitar a un usuario deshabilitado
+     * @param {Integer} id 
+     * @returns booleano
      */
-    static async habilitarUsuarioEnBDD(id, actor) {
+    static async habilitarUsuarioEnBDD(id) {
         try {
-            let solicitud = await fetch(`${url}?ruta=usuario&accion=habilitarUsuario&valor=${id}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=habilitarUsuario&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -85,14 +81,13 @@ export class fetchUsuario
     }
 
     /**
-     * 
-     * @param {*} contraseña 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para verificar si la contraseña pasada como parametro ya existe en la BDD
+     * @param {String} contraseña 
+     * @returns booleano
      */
-    static async verificarContraseñaExistenteEnBackend(contraseña, actor) {
+    static async verificarContraseñaExistenteEnBackend(contraseña) {
         try {
-            let solicitud = await fetch(`${url}?ruta=usuario&accion=verificarContraseñaExistente&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=verificarContraseñaExistente&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({contrasena: contraseña})
             });
             let respuesta = await solicitud.json();
@@ -106,13 +101,12 @@ export class fetchUsuario
     }
 
     /**
-     * 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para listar todos los usuarios de la BDD
+     * @returns array de usuarios
      */
-    static async obtenerUsuariosEnBDD(actor) {
+    static async obtenerUsuariosEnBDD() {
         try {
-            let solicitud = await fetch(`${url}?ruta=usuario&accion=obtenerUsuarios&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=obtenerUsuarios&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

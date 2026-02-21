@@ -5,9 +5,9 @@ export class fetchSesion
     url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * Verifica las credenciales del usuario en el backend
+     * Envia solicitud para verificar las credenciales del usuario en el backend
      * @param {m_sesion} objeto - objeto que contiene las credenciales: nombreOCorreo y contraseña 
-     * @returns {objetoJSON} - que contiene: nombreUsuario, estado, rol, facultad (si es que es un administrativo)
+     * @returns al usuario al que pertenecen las credenciales introducidas en el formulario (se recibe toda su informacion excepto la foto)
      */
     static async verificarCredencialesEnBackend(objeto) {
         try {

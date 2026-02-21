@@ -2,7 +2,7 @@ import { fetchUsuario } from "../servicios/fetchUsuario.js";
 
 export class m_usuario
 {
-    constructor(idUsuario, nombreUsuario, contrasena, correo, rol, foto, estado, ultimoAcceso, preguntaRecuperacion, respuestaRecuperacion) {
+    constructor(idUsuario, nombreUsuario, contrasena, correo, rol, foto, estado, ultimoAcceso) {
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
         this.contrasena = contrasena;
@@ -11,31 +11,29 @@ export class m_usuario
         this.foto = foto;
         this.estado = estado;
         this.ultimoAcceso = ultimoAcceso;
-        this.preguntaRecuperacion = preguntaRecuperacion;
-        this.respuestaRecuperacion = respuestaRecuperacion;
     }
 
-    static async obtenerUsuarios(actor) {
-        return await fetchUsuario.obtenerUsuariosEnBDD(actor);
+    static async obtenerUsuarios() {
+        return await fetchUsuario.obtenerUsuariosEnBDD();
     }
 
-    static async insertarUsuario(objeto, actor) {
-        return await fetchUsuario.insertarUsuarioEnBDD(objeto, actor);
+    static async insertarUsuario(objeto) {
+        return await fetchUsuario.insertarUsuarioEnBDD(objeto);
     }
 
-    static async actualizarUsuario(objeto, actor) {
-        return await fetchUsuario.actualizarUsuarioEnBDD(objeto, actor);
+    static async actualizarUsuario(objeto) {
+        return await fetchUsuario.actualizarUsuarioEnBDD(objeto);
     }
 
-    static async deshabilitarUsuario(id, actor) {
-        return await fetchUsuario.deshabilitarUsuarioEnBDD(id, actor);
+    static async deshabilitarUsuario(id) {
+        return await fetchUsuario.deshabilitarUsuarioEnBDD(id);
     }
 
-    static async habilitarUsuario(id, actor) {
-        return await fetchUsuario.habilitarUsuarioEnBDD(id, actor);
+    static async habilitarUsuario(id) {
+        return await fetchUsuario.habilitarUsuarioEnBDD(id);
     }
 
-    static async verificarContraseñaExistente(contraseña, actor) {
-        return await fetchUsuario.verificarContraseñaExistenteEnBackend(contraseña, actor);
+    static async verificarContraseñaExistente(contraseña) {
+        return await fetchUsuario.verificarContraseñaExistenteEnBackend(contraseña);
     }
 }

@@ -1,15 +1,27 @@
-export class u_noticias
+export class u_noticias 
 {
+    // ============================================
+    // MANEJO DE FOTOS
+    // ============================================
+    
     // Obtiene la foto principal de una noticia. Si no tiene fotos, usa una imagen por defecto
     static obtenerFotoPrincipal(noticia) {
-        if (noticia.fotos && noticia.fotos.length > 0) return noticia.fotos[0].url;
+        if (noticia.fotos && noticia.fotos.length > 0) {
+            return noticia.fotos[0].url;
+        }
         return "/guniversidadfrontend/public/img/IMG-20251114-WA0022-copia.jpg";
     }
 
+    // ============================================
+    // GENERACIÓN DE HTML
+    // ============================================
+    
     // Crea el HTML de una tarjeta de noticia
     static crearTarjetaHTML(noticia) {
         const foto = this.obtenerFotoPrincipal(noticia);
-        const resumen = noticia.descripcion.length > 100 ? noticia.descripcion.substring(0, 100) + '...' : noticia.descripcion;
+        const resumen = noticia.descripcion.length > 100 
+            ? noticia.descripcion.substring(0, 100) + '...' 
+            : noticia.descripcion;
 
         return `
             <div class="col-lg-4 col-md-6 col-sm-6 col-12">
@@ -39,7 +51,9 @@ export class u_noticias
     static crearItemCarouselHTML(noticia, index) {
         const foto = this.obtenerFotoPrincipal(noticia);
         const activo = index === 0 ? 'active' : '';
-        const resumen = noticia.descripcion.length > 100 ? noticia.descripcion.substring(0, 100) + '...' : noticia.descripcion;
+        const resumen = noticia.descripcion.length > 100 
+            ? noticia.descripcion.substring(0, 100) + '...' 
+            : noticia.descripcion;
 
         return `
             <div class="carousel-item ${activo}">
@@ -58,7 +72,7 @@ export class u_noticias
         `;
     }
 
-    // Crea el HTML de la vista completa de una noticia
+    // Crea el HTML de la vista completa de una noticia (para el modal)
     static crearNoticiaCompletaHTML(noticia) {
         const foto = this.obtenerFotoPrincipal(noticia);
         
@@ -106,27 +120,14 @@ export class u_noticias
                 </div>
                 
                 ${galeria}
-                
-                <div class="mt-4">
-                    <a href="noticias.html" class="btn btn-outline-warning">
-                        ← Volver a noticias
-                    </a>
-                </div>
             </article>
         `;
     }
 
-    // Muestra un mensaje de error en los contenedores
-    static mostrarMensajeError(mensaje) {
-        const contenedorTarjetas = document.getElementById('contTarjetaNoticia');
-        const contenedorCarousel = document.querySelector('.carroNoticias');
-        
-        const htmlError = `<div class="text-center py-5"><h3 class="text-muted">${mensaje}</h3></div>`;
-        
-        if (contenedorTarjetas) contenedorTarjetas.innerHTML = htmlError;
-        if (contenedorCarousel) contenedorCarousel.innerHTML = htmlError;
-    }
-
+    // ============================================
+    // MANEJO DE URL
+    // ============================================
+    
     // Obtiene el parámetro 'pagina' de la URL
     static obtenerPaginaDeURL() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -148,22 +149,130 @@ export class u_noticias
         window.history.pushState({}, '', url);
     }
 
-    // Convierte datos del backend a objetos m_noticia
-    static async convertirANoticias(datosBackend) {
-        const noticias = [];
+    // Actualiza la URL con el ID de la noticia
+    static actualizarURLId(id) {
+        const url = new URL(window.location);
+        url.searchParams.set('id', id);
+        window.history.pushState({}, '', url);
+    }
+
+    // ============================================
+    // MENSAJES DE ESTADO
+    // ============================================
+    
+    // Muestra un mensaje de error
+    static mostrarMensajeError(mensaje) {
+        const contenedorTarjetas = document.getElementById('contTarjetaNoticia');
+        const contenedorCarousel = document.querySelector('.carroNoticias');
+        const contenedorDetalles = document.getElementById('contDetallesNoticias');
         
-        for (const item of datosBackend) {
-            const noticia = {
-                idNoticia: item.id,
-                asunto: item.asunto,
-                descripcion: item.descripcion,
-                tipo: item.tipo || 'Comunicado',
-                fotos: item.fotos || []
-            };
-            
-            noticias.push(noticia);
+        const htmlError = `
+            <div class="text-center py-5">
+                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                <h3 class="text-muted">${mensaje}</h3>
+            </div>
+        `;
+        
+        if (contenedorTarjetas) contenedorTarjetas.innerHTML = htmlError;
+        if (contenedorCarousel) contenedorCarousel.innerHTML = htmlError;
+        if (contenedorDetalles) contenedorDetalles.innerHTML = htmlError;
+    }
+
+    // Muestra mensaje de "No hay noticias"
+    static mostrarSinNoticias() {
+        const contenedorTarjetas = document.getElementById('contTarjetaNoticia');
+        if (contenedorTarjetas) {
+            contenedorTarjetas.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="far fa-newspaper fa-4x text-muted mb-3"></i>
+                    <h3 class="text-muted">No hay noticias disponibles</h3>
+                </div>
+            `;
         }
+    }
+
+    // ============================================
+    // UTILIDADES
+    // ============================================
+    
+    // Convierte datos del backend a objetos noticia
+    static async convertirANoticias(datosBackend) {
+        if (!datosBackend || !Array.isArray(datosBackend)) return [];
         
-        return noticias;
+        return datosBackend.map(item => ({
+            idNoticia: item.idNoticia || item.id,
+            asunto: item.asunto,
+            descripcion: item.descripcion,
+            tipo: item.tipo || 'Comunicado',
+            fechaPublicacion: item.fechaPublicacion,
+            fotos: item.fotos || []
+        }));
+    }
+
+    // Limpia el contenido del modal
+    static limpiarModal() {
+        document.getElementById('tituloNoticiaDetalle').innerHTML = '';
+        document.getElementById('contenidoNoticiadetalle').innerHTML = '';
+    }
+
+    // Crea los botones de paginación
+    static crearBotonPaginacion(texto, pagina, deshabilitado = false, activo = false) {
+        let clases = 'page-item';
+        if (deshabilitado) clases += ' disabled';
+        if (activo) clases += ' active';
+
+        return `
+            <li class="${clases}">
+                <a class="page-link" href="#" data-pagina="${pagina}" ${deshabilitado ? 'tabindex="-1"' : ''}>
+                    ${texto}
+                </a>
+            </li>
+        `;
+    }
+
+    // Renderiza la paginación
+    static renderizarPaginacion(contenedor, paginaActual, totalPaginas, callback) {
+        if (!contenedor) return;
+
+        // Si solo hay una página, no mostrar paginación
+        if (totalPaginas <= 1) {
+            contenedor.innerHTML = '';
+            return;
+        }
+
+        let html = '<ul class="pagination justify-content-center">';
+
+        // Botón "Anterior"
+        html += this.crearBotonPaginacion('«', paginaActual - 1, paginaActual === 1);
+
+        // Botones de números
+        for (let i = 1; i <= totalPaginas; i++) {
+            // Mostrar solo algunos números para no saturar
+            if (i === 1 || i === totalPaginas || (i >= paginaActual - 2 && i <= paginaActual + 2)) {
+                html += this.crearBotonPaginacion(i, i, false, i === paginaActual);
+            } else if (i === paginaActual - 3 || i === paginaActual + 3) {
+                html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+        }
+
+        // Botón "Siguiente"
+        html += this.crearBotonPaginacion('»', paginaActual + 1, paginaActual === totalPaginas);
+
+        html += '</ul>';
+        
+        contenedor.innerHTML = html;
+
+        // Agregar eventos a los botones
+        contenedor.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (link.closest('.disabled')) return;
+                
+                const nuevaPagina = parseInt(link.dataset.pagina);
+                if (!isNaN(nuevaPagina) && callback) {
+                    callback(nuevaPagina);
+                }
+            });
+        });
     }
 }

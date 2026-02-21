@@ -85,7 +85,7 @@ export class m_sesion
                 const nuevaS = new m_sesion(correoONombre.value.trim(), contraseña.value.trim());
 
                 
-                /*let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
+                let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
                 let administrador = (nuevaS.nombreOCorreo == 'admin' || nuevaS.nombreOCorreo == 'admin@email.com') && nuevaS.contraseña == 'admin1234';
 
                 if(secretario || administrador){
@@ -119,9 +119,9 @@ export class m_sesion
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}.`, 3000);
                         return;
                     }
-                }*/
+                }
 
-                /*PARTE REAL*/
+                /*PARTE REAL
                 let usuarioVerificado = await fetchSesion.verificarCredencialesEnBackend(nuevaS);
                 if (usuarioVerificado) {
                     intentos = 0;   // Reiniciar contador de intentos al iniciar sesión exitosamente
@@ -154,7 +154,7 @@ export class m_sesion
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}.`, 3000);
                         return;
                     }
-                }
+                }*/
             } catch(error) {
                 Alerta.notificarError(`Error de verificación [m_sesion]: ${error}.`, 3000);
                 return;
