@@ -6,12 +6,11 @@ export class fetchArchivo
 
     /**
      * Envia solicitud para listar los archivos de la BDD
-     * @param {String} actor 
      * @returns array de archivos
      */
-    static async obtenerArchivosDelBackend(actor) {
+    static async obtenerArchivosDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=obtenerArchivos&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=obtenerArchivos&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -25,12 +24,11 @@ export class fetchArchivo
     /**
      * Envia solicitud para insertar una nuevo archivo en la BDD
      * @param {m_archivo} objeto 
-     * @param {String} actor 
      * @returns id del nuevo registro insertado
      */
-    static async insertarArchivoEnBDD(objeto, actor) {
+    static async insertarArchivoEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=insertarArchivo&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=insertarArchivo&actor=global`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -46,12 +44,11 @@ export class fetchArchivo
     /**
      * Enviar solicitud para actualizar un archivo guardado en la BDD
      * @param {m_archivo} objeto 
-     * @param {String} actor 
      * @returns id del registro actualizado
      */
-    static async actualizarArchivoEnBDD(objeto, actor) {
+    static async actualizarArchivoEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=actualizarArchivo&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=actualizarArchivo&actor=global`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -67,12 +64,11 @@ export class fetchArchivo
     /**
      * Envia solicitud para eliminar un archivo
      * @param {Integer} id 
-     * @param {String} actor 
      * @returns boolean
      */
-    static async eliminarArchivoEnBDD(id, actor) {
+    static async eliminarArchivoEnBDD(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=eliminarArchivo&valor=${id}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=eliminarArchivo&valor=${id}&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -86,12 +82,11 @@ export class fetchArchivo
     /**
      * Envia solicitud para obteber archivos por noticia
      * @param {Integer} idNoticia 
-     * @param {String} actor 
      * @returns array de archivos pertenecientes a una sola noticia
      */
-    static async obtenerArchivosPorNoticiaEnBDD(idNoticia, actor) {
+    static async obtenerArchivosPorNoticiaEnBDD(idNoticia) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=obtenerArchivosPorNoticia&valor=${idNoticia}&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=archivos&accion=obtenerArchivosPorNoticia&valor=${idNoticia}&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

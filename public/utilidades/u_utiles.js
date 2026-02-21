@@ -36,7 +36,9 @@ export class u_utiles
             const html = await respuesta.text();
             document.querySelector(contenedorImportar).innerHTML = html;
             u_utiles.botonesNavegacion();
-            if(document.querySelector('.cerrarSesion')) u_utiles.botonesNavegacionAdministrador();
+            
+            if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador();
+            if(document.querySelector('#secretarioAcademico')) u_utiles.botonesNavegacionSecretario();
         } catch(error) {
             Alerta.error('Error', `Fallo al hacer fetch para cargar los archivos de importacion, estoy en u_utiles: ${error}`);
         }
@@ -146,41 +148,25 @@ export class u_utiles
     /**********************************************************************************************************/
 
     // navegacion para los botones de la parte del secretario academico
-   /* static botonesNavegacionSecretario() {
+    static botonesNavegacionSecretario() {
         let url = '/guniversidadfrontend/secretarioAcademico/template/html';
 
-        $(document).ready( () =>  $('.tablero').click( () => u_utiles.redirigirA(null, '/guniversidadfrontend/secretarioAcademico/index.html') ) );
+        u_utiles.redirigirA(document.querySelector('.tableroS'), '/guniversidadfrontend/secretarioAcademico/index.html');
 
-        this.navegacionSlider('.departamento', `${url}/departamento.html`);
+        u_utiles.redirigirA(document.querySelector('.planEstudio'), `${url}/planEstudio.html`);
 
-        this.navegacionSlider('.planEstudio', `${url}/planEstudio.html`);
+        u_utiles.redirigirA(document.querySelector('.horario'), `${url}/horario.html`);
 
-        this.navegacionSlider('.carrera', `${url}/carrera.html`);
+        u_utiles.redirigirA(document.querySelector('.matricula'), `${url}/matricula.html`);
 
-        this.navegacionSlider('.curso', `${url}/curso.html`);
+        u_utiles.redirigirA(document.querySelector('.pago'), `${url}/pago.html`);
 
-        this.navegacionSlider('.semestre', `${url}/semestre.html`);
+        u_utiles.redirigirA(document.querySelector('.estudiante'), `${url}/estudiante.html`);
 
-        this.navegacionSlider('.asignatura', `${url}/asignatura.html`);
+        u_utiles.redirigirA(document.querySelector('.profesor'), `${url}/profesor.html`);
 
-        this.navegacionSlider('.aula', `${url}/aula.html`);
-
-        this.navegacionSlider('.horario', `${url}/horario.html`);
-
-        this.navegacionSlider('.formacion', `${url}/formacion.html`);
-
-        this.navegacionSlider('.matricula', `${url}/matricula.html`);
-        
-        this.navegacionSlider('.pago', `${url}/pago.html`);
-
-        this.navegacionSlider('.estudiante', `${url}/estudiante.html`);
-
-        this.navegacionSlider('.profesor', `${url}/profesor.html`);
-
-        // sentencia para cerrar la sesion
         $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
-*/
 
     /**********************************************************************************************************/
     /* PARTE ADMIN */
@@ -212,7 +198,6 @@ export class u_utiles
 
         // u_utiles.redirigirA(document.querySelector('.parametro'), `${url}/parametro.html`);
 
-        // sentencia para cerrar la sesion
-        if(document.querySelector('.cerrarSesion')) document.querySelector('.cerrarSesion').addEventListener('click', function(){  m_sesion.cerrarSesion() })
+        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
 }

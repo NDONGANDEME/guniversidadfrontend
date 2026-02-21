@@ -2,11 +2,17 @@ import { fetchAsignatura } from "../servicios/fetchAsignatura.js";
 
 export class m_asignatura
 {
-    constructor(idAsignatura, nombreAsignatura)
+    constructor(idAsignatura, codigoAsignatura, nombreAsignatura, descripcion)
     {
         this.idAsignatura = idAsignatura;
+        this.codigoAsignatura = codigoAsignatura;
         this.nombreAsignatura = nombreAsignatura;
+        this.descripcion = descripcion;
     }
+
+    /*
+        el codigo de la aignatura se generará automaticamente en el metodo generarCodigoAsignatura(){}
+    */
 
     static async obtenerAsignaturas() {
         return await fetchAsignatura.obtenerAsignaturasDelBackend();

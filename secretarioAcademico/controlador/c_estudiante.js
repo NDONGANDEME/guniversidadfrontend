@@ -1,18 +1,12 @@
 import { sesiones } from "../../public/core/sesiones.js"
-import { u_utilesSA } from "../utilidades/u_utilesSA.js";
+import { u_utiles } from "../../public/utilidades/u_utiles.js";
 
-
-export class c_estudiante
+document.addEventListener('DOMContentLoaded', function()
 {
-
-}
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Verificar sesión
+    // verificamos que existe sesion
     sesiones.verificarExistenciaSesion();
-
-    // Cargar componentes
-    u_utilesSA.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
-    u_utilesSA.botonesNavegacionWrapper();
+    u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
+    u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
+    u_utiles.botonesNavegacionSecretario();
+    u_utiles.manejoTabla();
 });

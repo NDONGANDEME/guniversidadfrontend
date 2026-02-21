@@ -1,37 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Panel del Secretario Académico - Profesores </title>
+    <title> Panel del Secretario Académico - Profesores</title>
     <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg">
     <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="../css/general.css">
+    <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="../css/secretario.css">
+    <link rel="stylesheet" href="../css/general.css">
 </head>
-
 <body id="page-top">
-    
     <!-- Page Wrapper -->
     <div id="wrapper" class="toggled">
-        
         <!-- Sidebar -->
         <ul class="navbar-nav sidebar sidebar-dark accordion toggled shadow-lg" id="accordionSidebar">
             <div class="sidebar-brand d-flex align-items-center justify-content-center">
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3"> Secretario Académico </div>
+                <div class="sidebar-brand-text" id="secretarioAcademico"> Secretario Académico </div>
             </div>
 
             <hr class="sidebar-divider">
 
             <li class="nav-item">
-                <a class="nav-link tablero">
+                <a class="nav-link tableroS">
                     <i class="fas fa-chalkboard"></i> <span> Tablero </span>
                 </a>
             </li>
@@ -39,45 +35,9 @@
             <hr class="sidebar-divider">
 
             <li class="nav-item">
-                <a class="nav-link facultad">
-                    <i class="fas fa-university"></i> <span> Facultades </span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link departamento">
-                    <i class="fas fa-building"></i> <span> Departamentos </span>
-                </a>
-            </li>
-
-            <li class="nav-item">
                 <a class="nav-link planEstudio">
                     <i class="fas fa-list-alt"></i> <span> Planes de Estudios </span>
                 </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" 
-                        aria-controls="collapseTwo">
-                    <i class="fas fa-list-alt"></i>
-                    <span>Currículo</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Plan</h6>
-                        <a class="collapse-item carrera">Carrera</a>
-                        <a class="collapse-item curso">Curso</a>
-                        <a class="collapse-item semestre">Semestre</a>
-                        <a class="collapse-item asignatura">Asignatura</a>
-
-                        <h6 class="collapse-header mt-2">Profesores</h6>
-                        <a class="collapse-item formacion">Formación</a>
-
-                        <h6 class="collapse-header mt-2">Gestión</h6>
-                        <a class="collapse-item aula">Aulas</a>
-                        <a class="collapse-item horario">Horarios</a>
-                    </div>
-                </div>
             </li>
 
             <li class="nav-item">
@@ -104,115 +64,48 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link horario">
+                    <i class="fas fa-user-graduate"></i> <span> Horario </span>
+                </a>
+            </li>
+
             <hr class="sidebar-divider d-none d-md-block">
 
             <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
+            <div class="mt-3 text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
         </ul>
 
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow d-flex justify-content-between">
 
                     <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none mx-3">
                         <i class="fa fa-bars"></i>
                     </button>
 
                     <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" id="userDropdown" role="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <div>
-                                    <span class="mr-2 d-lg-inline text-gray-600"> Nombre del usuario </span><br>
-                                    <span class="mr-2 d-lg-inline text-gray-600 small"> Correo del usuario </span>
-                                </div>
-                                <img class="img-profile rounded-circle" src="../../../public/img/undraw_profile.svg">
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item perfil">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Perfil
-                                </a>
-
-                                <div class="dropdown-divider"></div>
-
-                                <a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Cerrar sesión
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
+                    <div class="importandoTopBar w-100 d-flex justify-content-end"> </div>
                 </nav>
 
-
                 <div class="container-fluid">
-
                     <!-- Page Heading -->
                     <div class="mb-4">
                         <h1 class="h3 mb-0 text-gray-800">
-                            <i class="fas fa-chalkboard-teacher text-warning mr-2"></i> Profesores
+                            <span class="text-warning ms-2"></span> Profesores
                         </h1>
                     </div>
 
-
-                    <!-- Tabla de matricula -->
-                    <div class="card shadow mb-5">
-
-                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-dark">Profesores</h6>
-                            <button class="btn btn-success btn-icon-split" data-bs-toggle="modal" data-bs-target="#modalNuevoProfesor"> 
-                                <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
-                                <span class="text"> Nuevo </span>
-                            </button>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center " id="tablaProfesores">
-                                    <thead class="table-dark">
-                                        <tr>
-                                            <th width="22.5%">Nombre</th>
-                                            <th width="22.5%">Departamento</th>
-                                            <th width="22.5%">Responsabilidad</th>
-                                            <th width="22.5%">Estado</th>
-                                            <th width="10%">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="tbodyTabla" id="tbodyTablaProfesores"> <!--Dinamicamente--> 
-                                        <tr>
-                                            <td class="align-middle">Samuel Elá</td>
-                                            <td class="align-middle text-muted">Ninguno</td>
-                                            <td class="align-middle">Ninguna</td>
-                                            <td class="align-middle">ALta</td>
-                                            <td class="align-middle">
-                                                <div class="d-flex justify-content-center align-items-center gap-1">
-                                                    <button class="btn btn-sm btn-outline-info me-1 verDetalles" data-bs-toggle="modal" data-bs-target="#modalVerDetallesProfesor" 
-                                                        title="Ver detalles" data-id="idProfesor">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-warning me-1 editar" data-bs-toggle="modal" data-bs-target="#modalNuevoProfesor" 
-                                                        title="Editar" data-id="idProfesor"> <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" data-id="idProfesor" title="Deshabilitar">
-                                                        <i class="fas fa-ban"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="row">
+                        <div class="card w-100 shadow mb-4">
+                            <div class="card-header"> </div>
+                            <div class="card-body text-xl-center"> <h5>Implementar Después</h5> </div>
                         </div>
                     </div>
                 </div>
@@ -220,247 +113,18 @@
         </div>
     </div>
 
-
-    <!-- Modal para agregar/editar un nuevo profesor -->
-    <div class="modal fade" id="modalNuevoProfesor" tabindex="-1" aria-labelledby="modalNuevoProfesorLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-sm">
-            <div class="modal-content">
-
-                <div class="modal-header justify-content-between align-items-center">
-                    <h5 class="modal-title" id="modalNuevoProfesorLabel">Agregar nuevo profesor</h5>
-                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="formProfesor">
-
-                        <div class="seccion active" id="seccion1">
-                            <div class="modal-header justify-content-center">
-                                <h5 class="modal-title">Datos personales del profesor</h5>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-4">
-                                    <label for="nombreProfesor" class="form-label">Nombre</label>
-                                    <input type="text" class="form-control" id="nombreProfesor" placeholder="Ej: Samuel" required>
-                                    <label id="errorNombreProfesor" class="errorMensaje"></label>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="apellidosProfesor" class="form-label">Apellidos</label>
-                                    <input type="text" class="form-control" id="apellidosProfesor" placeholder="Ej: Elá" required>
-                                    <label id="errorApellidosProfesor" class="errorMensaje"></label>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="correoProfesor" class="form-label">Correo</label>
-                                    <input type="email" class="form-control" id="correoProfesor" placeholder="Ej: ejemplo@email.com">
-                                    <label id="errorCorreoProfesor" class="errorMensaje"></label>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <label for="telefonoProfesor" class="form-label">Teléfono</label>
-                                    <input type="tel" class="form-control" id="telefonoProfesor" placeholder="Ej: +240 123 456" required>
-                                    <label id="errorTelefonoProfesor" class="errorMensaje"></label>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="nacionalidadProfesor" class="form-label">Nacionalidad</label>
-                                    <input type="text" class="form-control" id="nacionalidadProfesor" placeholder="Ej: ecuatoguineana" required>
-                                    <label id="errorNacionalidadProfesor" class="errorMensaje"></label>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="generosProfesor" class="form-label">Generos</label>
-                                    <select class="form-select" id="generosProfesor" required>
-                                        <option value="Ninguno">Seleccione...</option>
-                                        <option value="Masculino">Masculino</option>
-                                        <option value="Femenino">Femenino</option>
-                                    </select>
-                                    <label id="errorGenerosProfesor" class="errorMensaje"></label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="seccion active" id="seccion2">
-                            <div class="modal-header justify-content-center">
-                                <h5 class="modal-title">Datos profesionales</h5>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-4">
-                                    <label for="departamentosProfesor" class="form-label">Departamentos</label>
-                                    <select class="form-select" id="departamentosProfesor">
-                                        <option value="Ninguno">Seleccione...</option>
-                                        <!-- Dinamicamente -->
-                                    </select>
-                                    <label id="errorDepartamentosProfesor" class="errorMensaje"></label>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="estadosProfesor" class="form-label">Estados</label>
-                                    <select class="form-select" id="estadosProfesor">
-                                        <option value="Ninguno">Seleccione...</option>
-                                        <option value="Alta">Alta</option>
-                                        <option value="Baja">Baja</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="responsabilidadProfesor" class="form-label">Responsabilidad</label>
-                                    <select class="form-select" id="responsabilidadProfesor">
-                                        <option value="Ninguna">Ninguna</option>
-                                        <option value="Jefe de departamento">Jefe de departamento</option>
-                                        <option value="Adjunto del Jefe de departamento">Adjunto del Jefe de departamento</option>
-                                        <option value="Secretario de departamento">Secretario de departamento</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="seccion active" id="seccion3">
-                            <div class="modal-header justify-content-center">
-                                <h5 class="modal-title">Datos para iniciar sesión</h5>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-6 mb-0">
-                                    <label for="nombreOCorreoUsuarioProfesor" class="form-label">Nombre de usuario o correo</label>
-                                    <input type="text" class="form-control" id="nombreOCorreoUsuarioProfesor" placeholder="Ej: usuario o ejemplo@email.com" required>
-                                    <label id="errorNombreOCorreoUsuarioProfesor" class="errorMensaje"></label>
-                                </div>
-
-                                <div class="col-6">
-                                    <label for="rolesUsuarioProfesor" class="form-label">Roles</label>
-                                    <select class="form-select" id="rolesUsuarioProfesor">
-                                        <option value="Ninguno">Seleccione...</option>
-                                        <option value="Profesor">Profesor</option>
-                                        <option value="Estudiante">Estudiante</option>
-                                    </select>
-                                    <label id="errorRolesUsuarioProfesor" class="errorMensaje"></label>
-                                </div>
-                            </div>
-
-                            <div class="mt-3">
-                                <h6 class="modal-title">Seleccione metodo de envío de las credenciales</h6>
-
-                                <div class="row container">
-                                    <!-- Opción SMS -->
-                                    <div class="col-3 form-check">
-                                        <input class="form-check-input" type="checkbox" value="sms" id="envioSMS">
-                                        <label class="form-check-label" for="smsCheck">
-                                            <i class="bi bi-chat-dots text-success"></i> 
-                                            Enviar por SMS
-                                            <span class="badge bg-success ms-2">Móvil</span>
-                                        </label>
-                                        <div class="form-text text-muted ms-4">
-                                            Envío de credenciales vía mensaje de texto
-                                        </div>
-                                    </div>
-
-                                    <!-- Opción Correo -->
-                                    <div class="col-3 form-check">
-                                        <input class="form-check-input" type="checkbox" value="email" id="envioCorreo">
-                                        <label class="form-check-label" for="emailCheck">
-                                            <i class="bi bi-envelope text-primary"></i> 
-                                            Enviar por Correo
-                                            <span class="badge bg-primary ms-2">Email</span>
-                                        </label>
-                                        <div class="form-text text-muted ms-4">
-                                            Envío de credenciales vía correo electrónico
-                                        </div>
-                                    </div>
-
-                                    <!-- Opción Ambos (alternativa en un solo checkbox) -->
-                                    <div class="col-3 form-check">
-                                        <input class="form-check-input" type="checkbox" value="both" id="envioAmbos">
-                                        <label class="form-check-label fw-bold" for="bothCheck">
-                                            <i class="bi bi-check-all text-info"></i> 
-                                            Las dos opciones
-                                        </label>
-                                        <div class="form-text text-muted ms-4">
-                                            Envío de credenciales por ambas vías
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="anterior" style="display: none;">Anterior</button>
-                    <button type="button" class="btn btn-primary" id="siguiente">Siguiente</button>
-                    <button type="submit" class="btn btn-success" id="btnGuardarProfesor" style="display: none;">Guardar Profesor</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Modal para ver detalles de profesores -->
-    <div class="modal fade" id="modalVerDetallesProfesor" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-sm">
-            <div class="modal-content">
-
-                <div class="modal-body"> 
-                    <!-- Tarjeta basica para mostrar los detalles -->
-                    <div class="card shadow">
-
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary"> Información del Profesor </h6>
-                        </div>
-
-                        <div class="card-body">
-                            <!--Foto carnet-->
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="imgCarnet mb-3">
-                                    <img src="../../../public/img/undraw_profile.svg" alt="Foto carnet">
-                                </div>
-
-                                <div class="d-flex justify-content-start align-items-start">
-                                    <div class="">
-                                        <span id="nombreCompletoDetallesProf" class="form-label fs-4">Samuel Elá</span><br>
-                                        <span id="correoDetallesProf" class="form-label fs-6">profesor@email.com</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <!--aqui se muestran todos los datos introducidos en el formulario, dinamicamente-->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>
-
 
     <!-- Logout Modal-->
     <div class="importandoModalCierreSesion"> </div>
     
-
-    <script src="../../../public/nomodules/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../../../public/nomodules/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../public/nomodules/node_modules/jquery.easing/jquery.easing.min.js"></script>
-    <script src="../../../public/nomodules/node_modules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
-    <script src="../../../public/nomodules/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="../../../public/nomodules/node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../../../public/nomodules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script type="module" src="../../controlador/c_profesor.js"></script>
 </body>
 </html>

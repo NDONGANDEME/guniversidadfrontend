@@ -108,12 +108,11 @@
                                     <input type="text" class="form-control" id="nombreCarrera" placeholder="Nombre de la carrera" required>
                                     <label id="errorNombreCarrera" class="errorMensaje"></label>
                                 </div>
-                                <div class="col-6">
-                                    <select class="form-select" id="departamentosCarrera">
-                                        <option value="Ninguno">Seleccione el departamento...</option>
-                                        <!-- Dinamicamente -->
-                                    </select>
-                                    <label id="errorDepartamentosCarrera" class="errorMensaje"></label>
+                                <div class="col-6 filter-group">
+                                    <div class="combo-input-wrapper">
+                                        <input type="text" id="comboDepartamentoCarrera" class="form-control" placeholder="Buscar o seleccionar departamento">
+                                        <div class="dropdown-options" id="opcionesDepartamentosCarrera"></div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -146,7 +145,7 @@
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar" data-id="idCarrera"> 
-                                                        <i class="fas fa-ban"></i>
+                                                        <i class="fas fa-toggle-off"></i>
                                                     </button>
                                                 </div>
                                             </td>

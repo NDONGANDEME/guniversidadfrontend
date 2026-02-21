@@ -9,10 +9,51 @@ textarea{
   min-height: 40vh !important;
   resize: none;
 }
+#descripcionAsignatura{
+  min-height: 15vh !important;
+  resize: none;
+}
 
 .imgCarnet{
   height: 15%;
   width: 15%;
+}
+
+
+/***************************************************************************/
+/* MANEJO DE CAMPOS COMBO (INPUTS + SELECT) */
+/***************************************************************************/
+.combo-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ced4da;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+}
+
+.dropdown-options.active {
+  display: block;
+}
+
+.dropdown-option {
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.dropdown-option:hover {
+  background-color: #f8f9fa;
 }
 
 

@@ -17,23 +17,23 @@ export class m_archivo
         tablaReferencia: con la tabla que esta trabajando: noticias, titulos...
     */
 
-    static async obtenerArchivos(actor) {
-        return await fetchArchivo.obtenerArchivosDelBackend(actor);
+    static async obtenerArchivos() {
+        return await fetchArchivo.obtenerArchivosDelBackend();
     }
 
-    static async insertarArchivo(objeto, actor) {
-        return await fetchArchivo.insertarArchivoEnBDD(objeto, actor);
+    static async insertarArchivo(objeto) {
+        return await fetchArchivo.insertarArchivoEnBDD(objeto);
     }
 
-    static async actualizarArchivo(objeto, actor) {
-        return await fetchArchivo.actualizarArchivoEnBDD(objeto, actor);
+    static async actualizarArchivo(objeto) {
+        return await fetchArchivo.actualizarArchivoEnBDD(objeto);
     }
 
-    static async eliminarArchivo(id, actor) {
-        return await fetchArchivo.eliminarArchivoEnBDD(id, actor);
+    static async eliminarArchivo(id) {
+        return await fetchArchivo.eliminarArchivoEnBDD(id);
     }
 
-    static async obtenerArchivosPorNoticia(idNoticia, actor) {
-        return await fetchArchivo.obtenerArchivosPorNoticiaEnBDD(idNoticia, actor);
+    static async obtenerArchivosPorNoticia(idNoticia) {
+        return await fetchArchivo.obtenerArchivosPorNoticiaEnBDD(idNoticia);
     }
 }

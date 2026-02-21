@@ -2,11 +2,13 @@ import { fetchFacultad } from "../servicios/fetchFacultad.js";
 
 export class m_facultad
 {
-    constructor(idFacultad, nombreFacultad, direccionFacultad)
+    constructor(idFacultad, nombreFacultad, direccionFacultad, correo, telefono)
     {
         this.idFacultad = idFacultad;
         this.nombreFacultad = nombreFacultad;
         this.direccionFacultad = direccionFacultad;
+        this.correo = correo;
+        this.telefono = telefono;
     }
 
     static async obtenerFacultades() {
@@ -25,7 +27,7 @@ export class m_facultad
         return await fetchFacultad.deshabilitarFacultadEnBackend(id);
     }
 
-    static async habilitarFacultad(objeto) {
-        return await fetchFacultad.habilitarFacultadEnBackend(objeto);
+    static async habilitarFacultad(id) {
+        return await fetchFacultad.habilitarFacultadEnBackend(id);
     }
 }

@@ -1,9 +1,9 @@
 export class m_aula
 {
-    constructor(idAula, nombre, capacidad, idFacultad)
+    constructor(idAula, nombreAula, capacidad, idFacultad)
     {
         this.idAula = idAula;
-        this.nombre = nombre;
+        this.nombreAula = nombreAula;
         this.capacidad = capacidad;
         this.idFacultad = idFacultad;
     }

@@ -99,18 +99,45 @@
                         </h1>
                     </div>
 
-                    <!-- Botones -->
-                    <div class="mb-2 d-flex justify-content-end align-items-center">
-                        <button class="btn btn-success nueva" data-bs-toggle="modal" data-bs-target="#modalNuevaFacultad"> 
-                            <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span> <span class="text"> Nueva </span>
-                        </button>
+                    <!-- Formulario -->
+                    <div class="mb-3 p-3 border border-3 border-black rounded-1">
+                        <div class="h4"> Formulario </div>
+                        <form id="formFacultad">
+                            <div class="row mb-2">
+                                <div class="col-3">
+                                    <label for="nombreFacultad" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="nombreFacultad" placeholder="Ej: Ingenierías" required>
+                                    <label id="errorNombreFacultad" class="errorMensaje"></label>
+                                </div>
+                                <div class="col-3">
+                                    <label for="direccionFacultad" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="direccionFacultad" placeholder="Ej: Al lado de ..." required>
+                                    <label id="errorDireccionFacultad" class="errorMensaje"></label>
+                                </div>
+                                <div class="col-3">
+                                    <label for="correoFacultad" class="form-label">Correo</label>
+                                    <input type="text" class="form-control" id="correoFacultad" placeholder="Ej: facultad@email.com" required>
+                                    <label id="errorCorreoFacultad" class="errorMensaje"></label>
+                                </div>
+                                <div class="col-3">
+                                    <label for="telefonoFacultad" class="form-label">Teléfono</label>
+                                    <input type="text" class="form-control" id="telefonoFacultad" placeholder="Ej: +240 222 123 456" required>
+                                    <label id="errorTelefonoFacultad" class="errorMensaje"></label>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="text-end">
+                            <button class="btn btn-success btnGuardarFacultad"> 
+                                <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Tabla de facultades -->
                     <div class="border border-3 border-black mb-5 rounded-1">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover text-center" id="tablaFacultades">
+                                <table class="table table-hover text-center tabla" id="tablaFacultades">
                                 <thead>
                                     <tr>
                                         <th width="25%">Nombre</th>
@@ -124,60 +151,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para agregar/editar una nueva facultad -->
-    <div class="modal fade" id="modalNuevaFacultad" tabindex="-1" aria-labelledby="modalNuevaFacultadLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalNuevaFacultadLabel">Agregar nueva facultad</h5>
-                </div>
-
-                <div class="modal-body">
-                    <form id="formFacultad">
-                        <div class="row mb-2">
-                            <div class="col-6">
-                                <label for="nombreFacultad" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="nombreFacultad" placeholder="Ej: Ingenierías" required>
-                                <label id="errorNombreFacultad" class="errorMensaje"></label>
-                            </div>
-
-                            <div class="col-6">
-                                <label for="direccionFacultad" class="form-label">Dirección</label>
-                                <input type="text" class="form-control" id="direccionFacultad" placeholder="Ej: Al lado de ..." required>
-                                <label id="errorDireccionFacultad" class="errorMensaje"></label>
-                            </div>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Contactos</label>
-                            <div id="contactosContainer">
-                                <!-- Contenedor dinámico para contactos -->
-                                <div class="input-group mb-2 contacto-item" data-index="0">
-                                    <input type="text" class="form-control contacto-input" placeholder="Ej: +240 222 123 456 o facultad@email.com" required>
-                                    <button class="btn btn-outline-danger btn-sm eliminar-contacto" type="button" title="Eliminar contacto" style="display: none;">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="d-flex justify-content-end">
-                                <button type="button" class="mt-2 btn btn-sm btn-outline-warning" id="btnAgregarContacto" title="Añadir más contactos"> 
-                                    <i class="fas fa-plus"></i> Añadir otro contacto
-                                </button>
-                            </div>
-                            <label id="errorContactoFacultad" class="errorMensaje"></label>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success" id="btnGuardarFacultad">Guardar Facultad</button>
                 </div>
             </div>
         </div>
