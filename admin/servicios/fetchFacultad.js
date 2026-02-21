@@ -15,10 +15,7 @@ export class fetchFacultad
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else {
-                Alerta.notificarError(`Error: ${respuesta.mensaje}. [fetchFacultad]`, 3000);
-                return [];
-            }
+            else return [];
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFacultad]. ${error}`, 3000);
             return [];
@@ -30,7 +27,7 @@ export class fetchFacultad
      * @param {m_facultad} objeto - objeto que contiene los parametros de la clase facultad
      * @returns el nuevo id insertado en la BDD
      */
-    static async insertarFacultadEnBDD(objeto) {
+    static async insertarFacultadEnBackend(objeto) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=facultad&accion=insertarFacultad`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
@@ -38,10 +35,7 @@ export class fetchFacultad
             let respuesta = await solicitud.json();
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else {
-                Alerta.notificarError(`Error: ${respuesta.mensaje}. [fetchFacultad]`, 3000);
-                return null;
-            }
+            else return null;
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFacultad]. ${error}`, 3000);
             return null;
@@ -53,7 +47,7 @@ export class fetchFacultad
      * @param {m_facultad} objeto - objeto que contiene los parametros de la clase facultad
      * @returns el id del registro actualizado
      */
-    static async actualizarFacultadEnBDD(objeto) {
+    static async actualizarFacultadEnBackend(objeto) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=facultad&accion=actualizarNoticia`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
@@ -61,34 +55,46 @@ export class fetchFacultad
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else {
-                Alerta.notificarError(`Error: ${respuesta.mensaje}. [fetchFacultad]`, 3000);
-                return null;
-            }
+            else return null;
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFacultad]. ${error}`, 3000);
             return null;
         }
     }
 
-
-    // NO ESTA EN USO
-    static async deshabilitarFacultadEnBDD(id)
-    {
+    /**
+     * 
+     * @param {*} id 
+     * @returns booleano que indique se se ha desabilitado el registro del id pasado por la url
+     */
+    static async deshabilitarFacultadEnBackend(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=facultad&accion=deshabilitarFacultad&valor=${id}`);
-
-            if (!solicitud.ok) Alerta.error('Error', 'Fallo en la solicitud. [linea 90. fetchFacultad]');
-
             let respuesta = await solicitud.json();
+
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else {
-                Alerta.error('Error', `${respuesta.mensaje}. [linea 95. fetchFacultad]`);
-                return;
-            }
-        } catch(error){
+            else return false;
+        } catch(error) {
             Alerta.error('Error', `No se ha realizado la solicitud. [linea 99. fetchFacultad]. ${error}`);
-            return;
+            return false;
+        }
+    }
+
+    /**
+     * 
+     * @param {*} id 
+     * @returns booleano que indique se se ha desabilitado el registro del id pasado por la url
+     */
+    static async habilitarFacultadEnBackend(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=habilitarFacultad&valor=${id}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.error('Error', `No se ha realizado la solicitud. [linea 99. fetchFacultad]. ${error}`);
+            return false;
         }
     }
 }

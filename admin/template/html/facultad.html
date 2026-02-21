@@ -110,7 +110,7 @@
                     <div class="border border-3 border-black mb-5 rounded-1">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover text-center tabla" id="">
+                                <table class="table table-hover text-center" id="tablaFacultades">
                                 <thead>
                                     <tr>
                                         <th width="25%">Nombre</th>
@@ -119,23 +119,7 @@
                                         <th width="25%">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody class="tbodyTabla" id="tbodyTablaFacultades"> <!-- Añadir dinámicamente --> 
-                                    <tr>
-                                        <td class="align-middle">Ingenierías y Arquitectura</td>
-                                        <td class="align-middle">Al lado de la Biblioteca General</td>
-                                        <td class="align-middle">+240 222 123 456</td>
-                                        <td class="align-middle">
-                                            <div class="d-flex justify-content-center align-items-center gap-1">
-                                                <button class="btn btn-sm btn-outline-warning me-1 editar" data-bs-toggle="modal" data-bs-target="#modalNuevaFacultad" 
-                                                    title="Editar" data-id="idFacultad"> <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar" data-id="idFacultad"> 
-                                                    <i class="fas fa-ban"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                <tbody class="tbodyTabla" id="tbodyTablaFacultades"> <!-- Añadir dinámicamente --> </tbody>
                             </table>
                             </div>
                         </div>
@@ -169,14 +153,24 @@
                             </div>
                         </div>
 
-                        <div class="mb-0">
-                            <label for="contactoFacultad" class="form-label">Contacto</label>
-                            <input type="text" class="form-control" id="contactoFacultad" placeholder="Ej: +240 222 123 456 o facultad@email.com" required>
+                        <div class="mb-2">
+                            <label class="form-label">Contactos</label>
+                            <div id="contactosContainer">
+                                <!-- Contenedor dinámico para contactos -->
+                                <div class="input-group mb-2 contacto-item" data-index="0">
+                                    <input type="text" class="form-control contacto-input" placeholder="Ej: +240 222 123 456 o facultad@email.com" required>
+                                    <button class="btn btn-outline-danger btn-sm eliminar-contacto" type="button" title="Eliminar contacto" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="mt-2 btn btn-sm btn-outline-warning" id="btnAgregarContacto" title="Añadir más contactos"> 
+                                    <i class="fas fa-plus"></i> Añadir otro contacto
+                                </button>
+                            </div>
                             <label id="errorContactoFacultad" class="errorMensaje"></label>
-                        </div>
-
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="mt-2 btn btn-sm btn-outline-secondary" title="Añadir más contactos"> <i class="fas fa-plus"></i> </button>
                         </div>
                     </form>
                 </div>

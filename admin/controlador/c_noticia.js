@@ -10,3 +10,8 @@ document.addEventListener('DOMContentLoaded', function()
     u_utiles.botonesNavegacionAdministrador();
     u_utiles.manejoTabla();
 });
+
+export class c_noticia
+{
+    
+}

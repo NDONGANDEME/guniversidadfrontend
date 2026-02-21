@@ -63,6 +63,23 @@ export class u_utiles
         }
     }
 
+    /**
+     * Inicializa la tabla con DataTable
+     * @param {string} idTabla - ID de la tabla
+     * @returns {Object} Instancia de DataTable
+     */
+    static inicializarDataTable(idTabla) {
+        if ($.fn.dataTable.isDataTable(idTabla)) {
+            return $(idTabla).DataTable();
+        } else {
+            return $(idTabla).DataTable({
+                language: {
+                    url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
+                }
+            });
+        }
+    }
+
     static manejoTabla() {
         $(document).ready( () => $('.tabla').DataTable({
             language : { url : '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json' }

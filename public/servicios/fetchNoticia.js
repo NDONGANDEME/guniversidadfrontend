@@ -5,12 +5,13 @@ export class fetchNoticia
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * 
-     * @returns lista de todas las noticias recientes de la BDD
+     * Enviar solicitud para cargar las noticias mas recientes de la BDD
+     * @param {String} actor - indicar el modulo al que le hacemos la solicitud
+     * @returns array de noticias recientes
      */
-    static async obtenerNoticasRecientesDelBackend() {
+    static async obtenerNoticiasRecientesDelBackend(actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticasRecientes`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasRecientes&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -22,12 +23,31 @@ export class fetchNoticia
     }
 
     /**
-     * 
-     * @returns lista de noticias de tipo comunicado
+     * Enviar solicitud para cargar las noticas de tipo comunicado
+     * @param {String} actor 
+     * @returns array de noticias de tipo comunicado
      */
-    static async obtenerNoticiasPorComunicadoDelBackend() {
+    static async obtenerNoticiasPorComunicadoDelBackend(actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorComunicado`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorComunicado&actor=${actor}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar todas las noticias
+     * @param {String} actor 
+     * @returns array de noticias
+     */
+    static async obtenerNoticiasDelBackend(actor) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=noticia&action=obtenerNoticias&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -39,30 +59,14 @@ export class fetchNoticia
     }
 
     /**
-     * 
-     * @returns lista de todas noticias de la BDD
+     * Enviar solicitud para insertar una nueva noticia en la BDD
+     * @param {m_noticia} objeto 
+     * @param {String} actor 
+     * @returns id del nuevo registro insertado
      */
-    static async obtenerNoticiasDelBackend() {
+    static async insertarNoticiaEnBDD(objeto, actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&action=obtenerNoticias`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
-            return [];
-        }
-    }
-
-    /**
-     * 
-     * @param {*} objeto 
-     * @returns el id del nuevo registro insertado
-     */
-    static async insertarNoticiaEnBDD(objeto) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia`, {
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=${actor}`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -76,13 +80,14 @@ export class fetchNoticia
     }
 
     /**
-     * 
-     * @param {*} objeto 
-     * @returns 
+     * Enviar solicitud para actualizar una noticia de la BDD
+     * @param {m_noticia} objeto 
+     * @param {String} actor 
+     * @returns id del registro actualizado
      */
-    static async actualizarNoticiaEnBDD(objeto) {
+    static async actualizarNoticiaEnBDD(objeto, actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia`, {
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=${actor}`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -96,30 +101,32 @@ export class fetchNoticia
     }
 
     /**
-     * 
-     * @param {*} id 
-     * @returns 
+     * Envia solicitud para eliminar una noticia
+     * @param {Integer} id 
+     * @param {String} actor 
+     * @returns booleano
      */
-    static async eliminarNoticiaEnBDD(id) {
+    static async eliminarNoticiaEnBDD(id, actor) {
         try  {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=eliminarNoticia&valor=${id}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=eliminarNoticia&valor=${id}&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else return false;
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
-            return null;
+            return false;
         }
     }
 
     /**
-     * 
-     * @returns la cantidas de paginas a paginar
+     * Envia solicitud para obtener el numero de paginas a paginar
+     * @param {String} actor 
+     * @returns integer (entero)
      */
-    static async obtenerCantidadPaginacionEnBDD() {
+    static async obtenerCantidadPaginacionEnBDD(actor) {
         try  {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerCantidadPaginacion`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerCantidadPaginacion&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -131,13 +138,14 @@ export class fetchNoticia
     }
 
     /**
-     * 
-     * @param {*} id 
+     * Envia solicitud para cargar una noticia conociendo el id
+     * @param {Integer} id 
+     * @param {String} actor 
      * @returns 
      */
-    static async obtenerNoticiaByIdEnBDD(id) {
+    static async obtenerNoticiaPorIdEnBDD(id, actor) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticiaById&valor=${id}`);
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticiaPorId&valor=${id}&actor=${actor}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -145,69 +153,6 @@ export class fetchNoticia
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
             return null;
-        }
-    }
-
-
-    // NO ESTA EN USO
-    static async paginacionEnBDD(pagina = 1)
-    {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=paginacion&pagina=${pagina}`);
-
-            if (!solicitud.ok) Alerta.error('Error', 'Fallo en la solicitud. [linea 188. fetchNoticia]');
-
-            let respuesta = await solicitud.json();
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else {
-                Alerta.error('Error', `${respuesta.mensaje}. [linea 193. fetchNoticia]`);
-                return [];
-            }
-        } catch(error){
-            Alerta.error('Error', `No se ha realizado la solicitud. [linea 197. fetchNoticia]. ${error}`);
-            return [];
-        }
-    }
-
-
-    // NO ESTA EN USO
-    static async paginaSiguienteEnBDD(pagina = 1)
-    {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=paginaSiguiente&pagina=${pagina}`);
-
-            if (!solicitud.ok) Alerta.error('Error', 'Fallo en la solicitud. [linea 188. fetchNoticia]');
-
-            let respuesta = await solicitud.json();
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else {
-                Alerta.error('Error', `${respuesta.mensaje}. [linea 193. fetchNoticia]`);
-                return [];
-            }
-        } catch(error){
-            Alerta.error('Error', `No se ha realizado la solicitud. [linea 197. fetchNoticia]. ${error}`);
-            return [];
-        }
-    }
-
-
-    // NO ESTA EN USO
-    static async paginaAnteriorEnBDD(pagina = 1)
-    {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=paginaAnterior&pagina=${pagina}`);
-
-            if (!solicitud.ok) Alerta.error('Error', 'Fallo en la solicitud. [linea 188. fetchNoticia]');
-
-            let respuesta = await solicitud.json();
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else {
-                Alerta.error('Error', `${respuesta.mensaje}. [linea 193. fetchNoticia]`);
-                return [];
-            }
-        } catch(error){
-            Alerta.error('Error', `No se ha realizado la solicitud. [linea 197. fetchNoticia]. ${error}`);
-            return [];
         }
     }
 }

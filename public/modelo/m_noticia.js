@@ -15,25 +15,37 @@ export class m_noticia
     */
 
     // obtiene las noticias mas recientes del backend
-    static async obtenerNoticiasRecientes() {
-        return await fetchNoticia.obtenerNoticasRecientesDelBackend();
+    static async obtenerNoticiasRecientes(actor) {
+        return await fetchNoticia.obtenerNoticiasRecientesDelBackend(actor);
     }
 
     // obtiene todas las noticias del backend
-    static async obtenerNoticias() {
-        return await fetchNoticia.obtenerNoticiasDelBackend();
+    static async obtenerNoticias(actor) {
+        return await fetchNoticia.obtenerNoticiasDelBackend(actor);
     }
 
     // obtiene todas las noticias de tipo comunicado del backend
-    static async obtenerNoticiasPorComunicado() {
-        return await fetchNoticia.obtenerNoticiasPorComunicadoDelBackend(); 
+    static async obtenerNoticiasPorComunicado(actor) {
+        return await fetchNoticia.obtenerNoticiasPorComunicadoDelBackend(actor); 
     }
 
-    static async obtenerCantidadPaginacion() {
-        return await fetchNoticia.obtenerCantidadPaginacionEnBDD();
+    static async obtenerCantidadPaginacion(actor) {
+        return await fetchNoticia.obtenerCantidadPaginacionEnBDD(actor);
     }
 
-    static async obtenerNoticiaById(id) {
-        return await fetchNoticia.obtenerNoticiaByIdEnBDD(id)
+    static async obtenerNoticiaPorId(id) {
+        return await fetchNoticia.obtenerNoticiaPorIdEnBDD(id)
+    }
+
+    static async insertarNoticiaEn(objeto, actor) {
+        return await fetchNoticia.insertarNoticiaEnBDD(objeto, actor)
+    }
+
+    static async actualizarNoticia(objeto, actor) {
+        return await fetchNoticia.actualizarNoticiaEnBDD(objeto, actor)
+    }
+
+    static async eliminarNoticia(id, actor) {
+        return await fetchNoticia.eliminarNoticiaEnBDD(id, actor)
     }
 }

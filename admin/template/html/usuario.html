@@ -122,8 +122,8 @@
                             <div class="col-5">
                                 <select class="form-select" id="filtroPorEstado">
                                     <option value="Ninguno">Filtrar por estado</option>
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
+                                    <option value="Habilitado">Habilitado</option>
+                                    <option value="Inabilitado">Inabilitado</option>
                                 </select>
                             </div>
 
@@ -139,7 +139,7 @@
                     <div class="border border-3 border-black mb-5 rounded-1">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover text-center tabla">
+                                <table class="table table-hover text-center tabla" id="tablaUsuarios">
                                 <thead>
                                     <tr>
                                         <th>Imagen</th>
@@ -152,7 +152,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="tbodyTabla" id="tbodyTablaUsuarios"> <!-- Añadir dinámicamente --> 
-                                    <tr>
+                                    <!--<tr>
                                         <td class="align-middle text-muted">Sin imagen</td>
                                         <td class="align-middle">usuario22</td>
                                         <td class="align-middle">usuario@email.com</td>
@@ -169,7 +169,7 @@
                                                 </button>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr>-->
                                 </tbody>
                             </table>
                             </div>
@@ -188,24 +188,25 @@
                     <div class="border border-2 mb-5 rounded-1">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover text-center tabla">
+                                <table class="table table-hover text-center tabla" id="tablaAdministrativos">
                                     <thead>
                                         <tr>
                                             <th>Imagen</th>
                                             <th>Nombre</th>
-                                            <th>Contacto</th>
+                                            <th>Correo</th>
+                                            <th>Teléfono</th>
                                             <th>Rol</th>
                                             <th>Facultad</th>
                                         </tr>
                                     </thead>
                                     <tbody class="tbodyTabla" id="tbodyTablaSecretarios"> <!--Dinamicamente--> 
-                                        <tr>
+                                        <!--<tr>
                                             <td class="align-middle text-muted">Sin imagen</td>
                                             <td class="align-middle">Sandra Urano</td>
                                             <td class="align-middle">usuario@email.com / +240 222 123 456</td>
                                             <td class="align-middle">secretario</td>
                                             <td class="align-middle text-muted">Ninguna</td>
-                                        </tr>
+                                        </tr>-->
                                     </tbody>
                                 </table>
                             </div>
@@ -283,40 +284,50 @@
                             </div>
                         </div>
 
+                        <div class="mt-2 text-muted small">
+                            <label class="form-label text-danger">NOTA:
+                                <span class="text-black">El correo de inicio de sesión y el de los datos personales pueden ser iguales o diferentes</span>
+                            </label>
+                        </div>
+
                         <!-- Datos personales -->
-                        <div class="mt-4" id="panelDatosPersonales">
+                        <div class="mt-4 d-none" id="panelDatosPersonales">
                             <div class="modal-header justify-content-center">
                                 <h5 class="modal-title">Datos personales</h5>
                             </div>
 
                             <div class="row mt-2">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <label for="nombreUsuario" class="form-label">Nombre</label>
                                     <input type="text" class="form-control" id="nombreUsuario" placeholder="Ej: Lucio" required>
                                     <label id="errorNombreUsuario" class="errorMensaje"></label>
                                 </div>
 
-                                <div class="col-6">
+                                <div class="col-4">
                                     <label for="apellidosUsuario" class="form-label">Apellidos</label>
                                     <input type="text" class="form-control" id="apellidosUsuario" placeholder="Ej: Hernández" required>
                                     <label id="errorApellidosUsuario" class="errorMensaje"></label>
                                 </div>
-                            </div>
 
-                            <div class="row mt-1">
-                                <div class="col-6">
-                                    <label for="contactoUsuario" class="form-label">Contacto</label>
-                                    <input type="tel" class="form-control" id="contactoUsuario" placeholder="Ej: +240 222 *** *** o correo@email.com" required>
-                                    <label id="errorContactoUsuario" class="errorMensaje"></label>
-                                </div>
-
-                                <div class="col-6">
+                                <div class="col-4">
                                     <label for="facultadesUsuario" class="form-label">Facultades</label>
                                     <select class="form-select" id="facultadesUsuario">
-                                        <option value="Ninguno">Seleccione ...</option>
                                         <!-- Dinamicamente -->
                                     </select>
                                     <label id="errorFacultadesUsuario" class="errorMensaje"></label>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="correoUsuario" class="form-label">Correo</label>
+                                    <input type="text" class="form-control" id="correoUsuario" placeholder="Ej: administrativo@email.com" required>
+                                    <label id="errorCorreoUsuario" class="errorMensaje"></label>
+                                </div>
+                                <div class="col-6">
+                                    <label for="telefonoUsuario" class="form-label">Teléfono</label>
+                                    <input type="text" class="form-control" id="telefonoUsuario" placeholder="Ej: +240 222 123 456" required>
+                                    <label id="errorTelefonoUsuario" class="errorMensaje"></label>
                                 </div>
                             </div>
                         </div>
@@ -325,7 +336,7 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success" id="btnGuardarSecretario">Guardar Secretario</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarUsuario ">Guardar Usuario</button>
                 </div>
             </div>
         </div>
