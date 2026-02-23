@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Panel del Secretario Académico - Pagos</title>
+    <title> Panel del Secretario Académico - Noticias</title>
     <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg">
     <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="../css/secretario.css">
+    <link rel="stylesheet" href="../css/profesor.css">
     <link rel="stylesheet" href="../css/general.css">
 </head>
 <body id="page-top">
@@ -21,13 +21,13 @@
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <div class="sidebar-brand-text" id="secretarioAcademico"> Secretario Académico </div>
+                <div class="sidebar-brand-text" id="profesorPanel"> Profesor </div>
             </div>
 
             <hr class="sidebar-divider">
 
             <li class="nav-item">
-                <a class="nav-link tableroS">
+                <a class="nav-link tableroP">
                     <i class="fas fa-chalkboard"></i> <span> Tablero </span>
                 </a>
             </li>
@@ -35,38 +35,26 @@
             <hr class="sidebar-divider">
 
             <li class="nav-item">
-                <a class="nav-link planEstudio">
-                    <i class="fas fa-list-alt"></i> <span> Planes de Estudios </span>
+                <a class="nav-link horario">
+                    <i class="fas fa-calendar-alt"></i> <span> Horario </span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link matricula">
-                    <i class="fas fa-clipboard-list"></i> <span> Matrícula </span>
+                <a class="nav-link evaluacion">
+                    <i class="fas fa-tasks"></i> <span> Evaluaciones </span>
                 </a>
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link pago">
-                    <i class="fas fa-clipboard-list"></i> <span> Pago </span>
+                <a class="nav-link noticia">
+                    <i class="fas fa-newspaper"></i> <span> Noticias </span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link profesor">
-                    <i class="fas fa-chalkboard-teacher"></i> <span> Profesores </span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link estudiante">
-                    <i class="fas fa-user-graduate"></i> <span> Estudiantes </span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link horario">
-                    <i class="fas fa-calendar-alt"></i> <span> Horario </span>
+                <a class="nav-link consulta">
+                    <i class="fas fa-comments"></i> <span> Consultas </span>
                 </a>
             </li>
 
@@ -98,16 +86,43 @@
                     <!-- Page Heading -->
                     <div class="mb-4">
                         <h1 class="h3 mb-0 text-gray-800">
-                            <span class="text-warning ms-2"></span> Pagos
+                            <span class="text-warning ms-2"></span> Noticias
                         </h1>
                     </div>
 
-                    <div class="row">
-                        <div class="card w-100 shadow mb-4">
-                            <div class="card-header"> </div>
-                            <div class="card-body text-xl-center"> <h5>Implementar Después</h5> </div>
+                    <!--Parte de las noticias (vamos ha hacer paginacion como en la parte publica)-->
+                    <section>
+                        <div class="contenedorTarjetasNoticias mb-4">
+
+                            <!-- Carta de noticias -->
+                            <div id="contTarjetaNoticia" class="container">
+                                <div class="row" id="tarjetasNoticiasRow"> <!-- Las tarjetas se añadirán aquí dinámicamente --> </div>
+                            </div>
+
+                            <!-- Contenedor de paginación -->
+                            <div id="contPaginacion" class="container mt-4 d-flex justify-content-center">
+                                <!-- La paginación se añadirá aquí dinámicamente -->
+                            </div>
+                                
+                            <!-- Detalles de las noticias -->
+                            <div id="contDetallesNoticias" class="container"> <!-- Agregar de manera dinamica --> </div>
                         </div>
-                    </div>
+
+                        <!-- Modal -->
+                        <div id="modalNoticias" class="modal fade" tabindex="-1" aria-hidden="true">
+                            <div class="modal-contenido">
+                                <span class="cerrar w-100 text-end" id="cerrarModal"> &times; </span>
+
+                                <div class="modal-encabezado">
+                                    <h2 id="tituloNoticiaDetalle"> </h2>
+                                </div>
+                                
+                                <div class="modal-content mt-2 p-2">
+                                    <p id="contenidoNoticiadetalle"> </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
@@ -125,6 +140,6 @@
     <script src="../../../public/nomodules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
     <script src="../../../public/nomodules/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script type="module" src="../../controlador/c_pago.js"></script>
+    <script type="module" src="../../controlador/c_noticia.js"></script>
 </body>
 </html>

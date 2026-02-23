@@ -39,6 +39,23 @@ export class fetchNoticia
     }
 
     /**
+     * Enviar solicitud para cargar las noticas de tipo interna
+     * @returns array de noticias de tipo interna
+     */
+    static async obtenerNoticiasPorInternaDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorInterna&actor=global`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
      * Enviar solicitud para cargar todas las noticias
      * @returns array de noticias
      */

@@ -39,6 +39,7 @@ export class u_utiles
             
             if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador();
             if(document.querySelector('#secretarioAcademico')) u_utiles.botonesNavegacionSecretario();
+            if(document.querySelector('#profesorPanel')) u_utiles.botonesNavegacionProfesor();
         } catch(error) {
             Alerta.error('Error', `Fallo al hacer fetch para cargar los archivos de importacion, estoy en u_utiles: ${error}`);
         }
@@ -199,6 +200,27 @@ export class u_utiles
         u_utiles.redirigirA(document.querySelector('.parametro'), `${url}/parametros.html`);
 
         if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
+
+        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
+    }
+
+    /**********************************************************************************************************/
+    /* PARTE ADMIN */
+    /**********************************************************************************************************/
+
+    // navegacion para los botones de la parte del secretario academico
+    static botonesNavegacionProfesor() {
+        let url = '/guniversidadfrontend/profesor/template/html';
+
+        u_utiles.redirigirA(document.querySelector('.tableroP'), '/guniversidadfrontend/profesor/index.html');
+
+        u_utiles.redirigirA(document.querySelector('.evaluacion'), `${url}/evaluacion.html`);
+
+        u_utiles.redirigirA(document.querySelector('.horario'), `${url}/horario.html`);
+
+        u_utiles.redirigirA(document.querySelector('.noticia'), `${url}/noticia.html`);
+
+        u_utiles.redirigirA(document.querySelector('.consulta'), `${url}/consulta.html`);
 
         $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }

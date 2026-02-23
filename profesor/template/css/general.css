@@ -1,0 +1,342 @@
+/***************************************************************************/
+/* GLOBAL */
+/***************************************************************************/
+*{
+  padding: 0; margin: 0; font-family: Georgia;
+}
+
+.imgCarnet{
+  height: 15%;
+  width: 15%;
+}
+
+
+/***************************************************************************/
+/* MANEJO DE ERRORES */
+/***************************************************************************/
+.errorMensaje{
+  font-size: 12px;
+  margin-top: 5px;
+  color: red;
+}
+
+
+/***************************************************************************/
+/* MANEJO DE TABLAS */
+/***************************************************************************/
+.tbodyTabla tr {
+  height: 20px;
+}
+
+
+/***************************************************************************/
+/* MANEJO DE MODAL */
+/***************************************************************************/
+#modalNuevoEstudiante::-webkit-scrollbar, .modal-body::-webkit-scrollbar{
+  width: 0;
+}
+
+.camposForm{
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.seccion {
+  display: none;
+}
+
+.seccion.active {
+  display: block;
+}
+
+.seccion {
+  display: none;
+  position: absolute;
+  width: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.seccion.active {
+  display: block;
+  position: relative;
+}
+
+.seccion.izquierda {
+  transform: translateX(-100%);
+}
+
+.seccion.derecha {
+  transform: translateX(100%);
+}
+
+.seccion.anim-in {
+  animation: slideIn 0.5s forwards;
+}
+
+.seccion.anim-out {
+  animation: slideOut 0.5s forwards;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes slideInRev {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOutRev {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+.modal-body{
+  overflow: hidden;
+}
+
+/***************************************************************************/
+/* MANEJO DEL MODAL DE DETALLES */
+/***************************************************************************/
+.camposFormDatos{
+  grid-template-columns: repeat(1, 1fr);
+}
+
+
+/***************************************************************************/
+/* PARA LA PARTE DE LA SUBIDA DE ARCHIVO (MOD. FORMACION) */
+/***************************************************************************/
+.file-preview-item {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 5px;
+}
+.file-preview-item .file-name {
+  font-weight: 500;
+}
+.file-preview-item .file-size {
+  font-size: 12px;
+  color: #6c757d;
+}
+.file-icon {
+  width: 24px;
+  text-align: center;
+  margin-right: 8px;
+}
+.preview-container {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+.file-input-wrapper {
+  border: 2px dashed #007bff;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.file-input-wrapper:hover {
+  background-color: #f0f8ff;
+  border-color: #0056b3;
+}
+.file-input-wrapper i {
+  font-size: 48px;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+#fileInput {
+  display: none;
+}
+
+
+/****************************************************************************************/
+/* PARTE PARA CONTROLAR EL CURSOR EN FUNCION DEL ELEMENTO EN QUE SE POSICIONA */
+/****************************************************************************************/
+/* Todo pointer por defecto */
+* {
+  cursor: auto;
+}
+
+/* Excepciones para áreas de texto */
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
+textarea,
+[contenteditable="true"],
+pre,
+code {
+  cursor: text;
+}
+
+/* Contenido normal (párrafos, títulos, etc) */
+body, main, article, section, p, h1, h2, h3, h4, h5, h6 {
+  cursor: auto;
+}
+
+/* Deshabilitados */
+:disabled {
+  cursor: not-allowed;
+}
+
+/* Mantener selección de texto habilitada */
+::selection {
+  background: rgba(255, 214, 0, 0.3);
+}
+
+/* Evitar selección en elementos interactivos */
+button, a, .btn, .nav-link, [role="button"] {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Permitir selección en contenido */
+p, div, span, li, td {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+
+/***************************************************************************/
+/* VISTA DE HORARIO - ESTILOS ESPECÍFICOS */
+/***************************************************************************/
+.schedule-table {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.schedule-table th {
+  background-color: var(--color-primario) !important;
+  color: var(--color-secundario) !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  padding: 15px;
+  border-bottom: 2px solid var(--color-primario-oscuro);
+}
+
+.schedule-table td {
+  vertical-align: top;
+  padding: 12px;
+  min-height: 120px;
+  background-color: white;
+}
+
+.time-slot {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: var(--color-secundario);
+  width: 120px;
+  text-align: center;
+}
+
+.class-item {
+  background-color: #fff9e6;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.class-item:hover {
+  background-color: #fff3cd;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.break-row td {
+  background-color: #f8d7da !important;
+  color: #721c24;
+  font-weight: 700;
+  text-align: center;
+}
+
+.footer {
+  color: var(--color-secundario);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/***************************************************************************/
+/* MODAL DE CLASES */
+/***************************************************************************/
+.modal-header.bg-warning {
+  border-bottom: 3px solid var(--color-primario-oscuro);
+}
+
+.modal-title {
+  font-weight: 700;
+  color: var(--color-secundario);
+}
+
+.form-label.font-weight-bold {
+  color: var(--color-secundario);
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.border-left-warning {
+  border-left-color: var(--color-primario) !important;
+}
+
+/***************************************************************************/
+/* BOTONES DE ACCIÓN EN TABLA */
+/***************************************************************************/
+.btn-outline-warning {
+  border-color: var(--color-primario) !important;
+  color: var(--color-primario-oscuro) !important;
+}
+
+.btn-outline-warning:hover {
+  background-color: var(--color-primario) !important;
+  color: var(--color-secundario) !important;
+}
+
+.btn-outline-danger {
+  border-color: #dc3545 !important;
+  color: #dc3545 !important;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.gap-1 {
+  gap: 5px;
+}
+
+/***************************************************************************/
+/* RESPONSIVE PARA VISTA DE HORARIO */
+/***************************************************************************/
+@media (max-width: 768px) {
+  .schedule-table {
+      font-size: 0.8rem;
+  }
+  
+  .schedule-table td {
+      padding: 8px;
+  }
+  
+  .class-item {
+      padding: 6px !important;
+  }
+  
+  .time-slot {
+      width: 80px;
+  }
+}

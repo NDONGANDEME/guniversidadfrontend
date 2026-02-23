@@ -87,18 +87,19 @@ export class m_sesion
                 
                 let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
                 let administrador = (nuevaS.nombreOCorreo == 'admin' || nuevaS.nombreOCorreo == 'admin@email.com') && nuevaS.contraseña == 'admin1234';
+                let profesor = (nuevaS.nombreOCorreo == 'profesor' || nuevaS.nombreOCorreo == 'profesor@email.com') && nuevaS.contraseña == 'profesor1234';
 
-                if(secretario || administrador){
+                if(secretario || profesor){
                     intentos = 0;
                     m_sesion.guardarSesion('usuarioActivo', nuevaS);
 
-                    switch(administrador ? 'Administrador' : 'Secretario') // Reemplazar con variable rol
+                    switch(profesor ? 'Profesor' : 'Secretario') // Reemplazar con variable rol
                     {
                         case 'Administrador': 
                             Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
                             break;
                         case 'Profesor': 
-                            Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '#');
+                            Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/profesor/index.html');
                             break;
                         case 'Estudiante': 
                             Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '#');

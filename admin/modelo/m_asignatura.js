@@ -2,12 +2,13 @@ import { fetchAsignatura } from "../servicios/fetchAsignatura.js";
 
 export class m_asignatura
 {
-    constructor(idAsignatura, codigoAsignatura, nombreAsignatura, descripcion)
+    constructor(idAsignatura, codigoAsignatura, nombreAsignatura, descripcion, idFacultad)
     {
         this.idAsignatura = idAsignatura;
         this.codigoAsignatura = codigoAsignatura;
         this.nombreAsignatura = nombreAsignatura;
         this.descripcion = descripcion;
+        this.idFacultad = idFacultad;
     }
 
     /*

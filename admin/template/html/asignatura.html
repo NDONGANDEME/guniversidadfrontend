@@ -105,12 +105,23 @@
                         <form id="formAsignatura">
                             <div class="row">
                                 <div class="col-4">
-                                    <input type="text" class="form-control" id="nombreAsignatura" placeholder="Nombre de la asignatura" required>
-                                    <label id="errorNombreAsignatura" class="errorMensaje"></label>
+                                    <div class="">
+                                        <input type="text" class="form-control" id="nombreAsignatura" placeholder="Nombre de la asignatura" required>
+                                        <label id="errorNombreAsignatura" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <select class="form-select" id="facultadesDepartamento">
+                                            <option value="Ninguno">Seleccione la facultad ...</option>
+                                            <!-- Dinamicamente -->
+                                        </select>
+                                        <label id="errorFacultadesDepartamento" class="errorMensaje"></label>
+                                    </div>
                                 </div>
-                                    <div class="col-8">
-                                    <textarea class="form-control" id="descripcionAsignatura" placeholder="Descripción de la asignatura" required></textarea>
-                                    <label id="errorDescripcionAsignatura" class="errorMensaje"></label>
+                                <div class="col-8">
+                                    <div class="">
+                                        <textarea class="form-control" id="descripcionAsignatura" placeholder="Descripción de la asignatura" required></textarea>
+                                        <label id="errorDescripcionAsignatura" class="errorMensaje"></label>
+                                    </div>
                                 </div>
                             </div>
                         </form>

@@ -63,42 +63,4 @@ export class fetchAdministrativo
             return null;
         }
     }
-
-    /**
-     * 
-     * @param {*} id 
-     * @param {*} actor 
-     * @returns 
-     */
-    static async deshabilitarAdministrativoEnBackend(id, actor) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=deshabilitarAdministrativo&valor=${id}&actor=${actor}`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAdministrativo]. ${error}`, 3000);
-            return false;
-        }
-    }
-
-    /**
-     * 
-     * @param {*} id 
-     * @param {*} actor 
-     * @returns 
-     */
-    static async habilitarAdministrativoEnBackend(id, actor) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=habilitarAdministrativo&valor=${id}&actor=${actor}`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAdministrativo]. ${error}`, 3000);
-            return false;
-        }
-    }
 }

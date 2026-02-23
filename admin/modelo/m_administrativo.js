@@ -23,12 +23,4 @@ export class m_administrativo
     static async actualizarAdministrativo(objeto, actor) {
         return await fetchAdministrativo.actualizarAdministrativoEnBackend(objeto, actor);
     }
-
-    static async deshabilitarAdministrativo(id, actor) {
-        return await fetchAdministrativo.deshabilitarAdministrativoEnBackend(id, actor);
-    }
-
-    static async habilitarAdministrativo(id, actor) {
-        return await fetchAdministrativo.habilitarAdministrativoEnBackend(id, actor);
-    }
 }

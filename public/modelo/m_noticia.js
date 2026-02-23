@@ -29,6 +29,11 @@ export class m_noticia
         return await fetchNoticia.obtenerNoticiasPorComunicadoDelBackend(); 
     }
 
+    // obtiene todas las noticias de tipo interna del backend
+    static async obtenerNoticiasPorInterna() {
+        return await fetchNoticia.obtenerNoticiasPorInternaDelBackend(); 
+    }
+
     static async obtenerCantidadPaginacion() {
         return await fetchNoticia.obtenerCantidadPaginacionEnBDD();
     }

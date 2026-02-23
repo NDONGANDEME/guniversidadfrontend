@@ -2,11 +2,12 @@ import { fetchAula } from "../servicios/fetchAula.js";
 
 export class m_aula
 {
-    constructor(idAula, nombreAula, capacidad, idFacultad) {
+    constructor(idAula, nombreAula, capacidad, idFacultad, estado) {
         this.idAula = idAula;
         this.nombreAula = nombreAula;
         this.capacidad = capacidad;
         this.idFacultad = idFacultad;
+        this.estado = estado;
     }
 
     static async obtenerAulas() {
