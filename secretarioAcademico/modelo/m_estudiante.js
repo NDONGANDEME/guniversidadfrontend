@@ -34,6 +34,18 @@ export class m_estudiante
         return await fetchEstudiante.obtenerEstudiantesDelBackend();
     }
 
+    static async obtenerEstudiantesPorAsignatura() {
+        return await fetchEstudiante.obtenerEstudiantesPorAsignaturaDelBackend();
+    }
+
+    static async obtenerEstudiantesPorFacultad() {
+        return await fetchEstudiante.obtenerEstudiantesPorFacultadDelBackend();
+    }
+
+    static async obtenerDatosEspecificosEstudiantes() {
+        return await fetchEstudiante.obtenerDatosEspecificosEstudiantesDelBackend();
+    }
+
     static async insertarEstudiante(objeto) {
         return await fetchEstudiante.insertarEstudianteEnBDD(objeto);
     }

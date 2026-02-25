@@ -2,10 +2,10 @@ import { fetchMatriculaAsignatura } from "../servicios/fetchMatriculaAsignatura.
 
 export class m_matriculaAsignatura
 {
-    constructor (idMatriculaAsignatura, idMatricula, idPlanCursoAsignatura, convocatoria, notaFinal, estado, numeroVecesMatriculado) {
+    constructor (idMatriculaAsignatura, idMatricula, idPlanSemestreAsignatura, convocatoria, notaFinal, estado, numeroVecesMatriculado) {
         this.idMatriculaAsignatura = idMatriculaAsignatura;
         this.idMatricula = idMatricula;
-        this.idPlanCursoAsignatura = idPlanCursoAsignatura;
+        this.idPlanSemestreAsignatura = idPlanSemestreAsignatura;
         this.convocatoria = convocatoria;
         this.notaFinal = notaFinal;
         this.estado = estado;

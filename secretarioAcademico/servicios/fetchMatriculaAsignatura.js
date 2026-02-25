@@ -10,7 +10,7 @@ export class fetchMatriculaAsignatura
      */
     static async obtenerMatriculaAsignaturasDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=matriculaAsignatura&accion=obtenerMatriculaAsignaturas&actor=secretario`);
+            let solicitud = await fetch(`${this.url}?ruta=matricula&accion=obtenerMatriculaAsignaturas&actor=secretario`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -28,7 +28,7 @@ export class fetchMatriculaAsignatura
      */
     static async insertarMatriculaAsignaturaEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=matriculaAsignatura&accion=insertarMatriculaAsignatura&actor=secretario`, {
+            let solicitud = await fetch(`${this.url}?ruta=matricula&accion=insertarMatriculaAsignatura&actor=secretario`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -48,7 +48,7 @@ export class fetchMatriculaAsignatura
      */
     static async actualizarMatriculaAsignaturaEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=matriculaAsignatura&accion=actualizarMatriculaAsignatura&actor=secretario`, {
+            let solicitud = await fetch(`${this.url}?ruta=matricula&accion=actualizarMatriculaAsignatura&actor=secretario`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();

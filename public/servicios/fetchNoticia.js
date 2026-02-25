@@ -61,7 +61,7 @@ export class fetchNoticia
      */
     static async obtenerNoticiasDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&action=obtenerNoticias&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticias&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
