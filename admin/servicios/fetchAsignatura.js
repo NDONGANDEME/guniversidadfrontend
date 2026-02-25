@@ -22,6 +22,23 @@ export class fetchAsignatura
     }
 
     /**
+     * Enviar solicitud para cargar las asignaturas por facultad de la BDD
+     * @returns array de asignaturas de una facultad en especifico
+     */
+    static async obtenerAsignaturasPorFacultadDelBackend(idFacultad) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPorFacultad&actor=admin&valor=${idFacultad}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
      * Envia solicitud para insertar una nueva asignatura en la BDD
      * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
      * @returns id del nuevo registro insertado

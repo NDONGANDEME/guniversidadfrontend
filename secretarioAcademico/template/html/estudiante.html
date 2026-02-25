@@ -102,12 +102,185 @@
                         </h1>
                     </div>
 
-                    <div class="row">
-                        <div class="card w-100 shadow mb-4">
-                            <div class="card-header"> </div>
-                            <div class="card-body text-xl-center"> <h5>Implementar Después</h5> </div>
+                    <!--PARTE DEL ESTUDIANTES-->
+                    <div>
+                        <!-- Tabla de estudiantes -->
+                        <div class="border border-3 border-black mb-5 rounded-1">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center tabla" id="tablaEstudiantes">
+                                        <thead>
+                                            <tr>
+                                                <th width="16.7%">Estudiantes</th>
+                                                <th width="16.7%">Carrera</th>
+                                                <th width="10.4%">Curso</th>
+                                                <th width="10.4%">Semestre</th>
+                                                <th width="36%">Número de asignaturas que cursa</th>
+                                                <th width="10%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyTabla" id="tbodyTablaEstudiantes"> <!-- Añadir dinámicamente --> 
+                                            <tr>
+                                                <td class="align-middle">Jose Luis Mange</td>
+                                                <td class="align-middle">Informática</td>
+                                                <td class="align-middle">Primero</td>
+                                                <td class="align-middle">1</td>
+                                                <td class="align-middle">6</td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-info me-1 verDetalles" data-bs-toggle="modal" data-bs-target="#modalVerDetallesEstudiante" 
+                                                            title="Ver detalles" data-id="idMatriculaAsignatura"> <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-warning me-1 asignar" data-bs-toggle="modal" data-bs-target="#modalAsignarAsignatura" 
+                                                            title="Asignar asignaturas" data-id="idMatriculaAsignatura"> <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para asignar asignaturas -->
+    <div class="modal fade" id="modalAsignarAsignatura" tabindex="-1" aria-labelledby="modalAsignarAsignaturaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header justify-content-between align-items-center">
+                    <h5 class="modal-title" id="modalAsignarAsignaturaLabel">Asignar asignaturas</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formAsignacion">
+
+                        <div class="mb-3 p-3 border border-3 border-black rounded-1">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label for="convocatoriaAsignacion" class="form-label">Convocatorias</label>
+                                    <input type="number" min="0" class="form-control" id="convocatoriaAsignacion" placeholder="0" disabled>
+                                </div>
+                                <div class="col-4">
+                                    <label for="vecesMatriculadoAsignacion" class="form-label">Número de veces matriculado</label>
+                                    <input type="number" min="0" class="form-control" id="vecesMatriculadoAsignacion" placeholder="0" disabled>
+                                </div>
+                                <div class="col-4">
+                                    <label for="notaFinalAsignacion" class="form-label">Nota final</label>
+                                    <input type="number" min="0" class="form-control" id="notaFinalAsignacion" placeholder="0" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="row p-3">
+                                <!--parte de las asignaturas del semestre-->
+                                <div class="col-4">
+                                    <div class="contAsignaturasSemestre border border-2 border-black rounded-2">
+                                        <div class="card-header bg-warning">
+                                            <h6 class="mb-0">Asignaturas del semestre</h6>
+                                        </div>
+                                        <div id="contenedorAsignaturasSemestre">
+                                            <!--añadir dinamicamente-->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-8">
+                                    <!--parte de las asignaturas bloqueadas-->
+                                    <div class="contAsignaturasPendienteYBloqueadas border border-2 border-black rounded-2">
+                                        <div class="card-header bg-warning">
+                                            <h6 class="mb-0">Asignaturas Pendientes y bloquedas</h6>
+                                        </div>
+                                        <div id="contenedorAsignaturasPendienteYBloqueadas">
+                                            <!--añadir dinamicamente-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--para de las asignaturas a asignar-->
+                            <div class="contAsignaturasAsignar pt-3 px-3 mt-3 border border-2 border-black rounded-2">
+                                <h5 class="card-title">Asignaturas a asignar</h5>
+                                <div id="contenedorAsignaturasAsignar">
+                                    <!--añadir dinamicamente-->
+                                </div>
+                                <div class="text-end">
+                                    <strong class="small">Total de Créditos:<span id="totalCreditos">0</span></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btnGuardarAsignación">Guardar Asignación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalles de matricula -->
+    <div class="modal fade" id="modalVerDetallesEstudiante" tabindex="-1" aria-labelledby="modalVerDetallesEstudianteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-body"> 
+                    <!-- Tarjeta basica para mostrar los detalles -->
+                    <div class="card shadow">
+
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary"> Información del Estudiante </h6>
+                        </div>
+
+                        <div class="card-body">
+                            <!--Datos esenciales-->
+                            <div class="border border-2 border-black rounded-2 p-2">
+                                <div>
+                                    <label class="form-label">Nombre del estudiante: <span id="nombreCompletoDetalle"> </span></label>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Plan de estudios: <span id="planEstudioDetalle"> </span></label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Carrera: <span id="carreraDetalle"> </span></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Curso: <span id="cursoDetalle"> </span></label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Semestre: <span id="semestreDetalle"> </span></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Convocatorias: <span id="convocatoriaDetalle"> </span></label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Número de veces matriculado: <span id="vecesMatriculadoDetalle"> </span></label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Nota final: <span id="notaFinalDetalle"> </span></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--parte de cursos-->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>

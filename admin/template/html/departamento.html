@@ -48,11 +48,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item facultad">Facultad</a>
                         <a class="collapse-item departamento">Departamento</a>
-                        <a class="collapse-item carrera">Carrera</a>
                         <a class="collapse-item curso">Curso</a>
-                        <a class="collapse-item semestre">Semestre</a>
                         <a class="collapse-item asignatura">Asignatura</a>
-                        <a class="collapse-item aula">Aula</a>
                     </div>
                 </div>
             </li>
@@ -93,65 +90,137 @@
 
                 <div class="container-fluid">
                     <!-- Page Heading -->
-                    <div class="mb-4">
+                    <div class="mb-5">
                         <h1 class="h3 mb-0 text-gray-800">
                             <span class="text-warning ms-2"></span> Departamentos
                         </h1>
                     </div>
 
-                    <!-- Formulario -->
-                    <div class="mb-3 p-3 border border-3 border-black rounded-1">
-                        <div class="h4"> Formulario </div>
-                        <form id="formDepartamento">
-                            <div class="row mb-2">
-                                <div class="col-6">
-                                    <input type="text" class="form-control" id="nombreDepartamento" placeholder="Nombre del departamento" required>
-                                    <label id="errorNombreDepartamento" class="errorMensaje"></label>
+                    <!--PARTE DE DEPARTAMENTOS-->
+                    <div class="mb-4 row">
+                        <!-- Formulario -->
+                        <div class="col-3 mb-3 p-3">
+                            <div class="h4"> Formulario </div>
+                            <form id="formDepartamento">
+                                <div class="mb-2">
+                                    <div class="">
+                                        <label for="nombreDepartamento" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombreDepartamento" placeholder="Infromática" required>
+                                        <label id="errorNombreDepartamento" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <label for="facultadesDepartamento" class="form-label">Facultades</label>
+                                        <select class="form-select" id="facultadesDepartamento">
+                                            <!-- Dinamicamente -->
+                                        </select>
+                                        <label id="errorFacultadesDepartamento" class="errorMensaje"></label>
+                                    </div>
                                 </div>
-                                <div class="col-6">
-                                    <select class="form-select" id="facultadesDepartamento">
-                                        <!-- Dinamicamente -->
-                                    </select>
-                                    <label id="errorFacultadesDepartamento" class="errorMensaje"></label>
+                            </form>
+                            <div class="text-end">
+                                <button class="btn btn-success" id="btnGuardarDepartamento"> 
+                                    <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de departamentos -->
+                        <div class="col-9 border border-3 border-black mb-5 rounded-1 shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center" id="tablaDepartamentos">
+                                        <thead>
+                                            <tr>
+                                                <th width="33.3%">Nombre</th>
+                                                <th width="33.3%">Facultad</th>
+                                                <th width="33.3%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyTabla" id="tbodyTablaDepartamentos"> <!-- Añadir dinámicamente --> 
+                                            <!--<tr>
+                                                <td class="align-middle">Informática</td>
+                                                <td class="align-middle text-muted">Ninguna</td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-info me-1 editar" title="Editar" data-id="idDepartamento"> 
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>-->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </form>
-                        <div class="text-end">
-                            <button class="btn btn-success btnGuardarDepartamento"> 
-                                <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Tabla de departamentos -->
-                    <div class="border border-3 border-black mb-5 rounded-1">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center" id="tablaDepartamentos">
-                                    <thead>
-                                        <tr>
-                                            <th width="33.3%">Nombre</th>
-                                            <th width="33.3%">Facultad</th>
-                                            <th width="33.3%">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="tbodyTabla" id="tbodyTablaDepartamentos"> <!-- Añadir dinámicamente --> 
-                                        <!--<tr>
-                                            <td class="align-middle">Informática</td>
-                                            <td class="align-middle text-muted">Ninguna</td>
-                                            <td class="align-middle">
-                                                <div class="d-flex justify-content-center align-items-center gap-1">
-                                                    <button class="btn btn-sm btn-outline-info me-1 editar" title="Editar" data-id="idDepartamento"> 
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar" data-id="idDepartamento"> 
-                                                        <i class="fas fa-toggle-off"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>-->
-                                    </tbody>
-                                </table>
+                    <div class="mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <span class="text-warning ms-2"></span> Carreras
+                        </h1>
+                    </div>
+
+                    <!--PARTE DE CARRERAS-->
+                    <div class="row">
+                        <!-- Tabla de carreras -->
+                        <div class="col-9 border border-3 border-black mb-5 rounded-1 shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center tabla" id="tablaCarreras">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">Nombre</th>
+                                                <th width="25%">Departamento</th>
+                                                <th width="25%">Estado</th>
+                                                <th width="25%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyTabla" id="tbodyTablaCarreras"> <!-- Añadir dinámicamente --> 
+                                            <!--<tr>
+                                                <td class="align-middle">Informática</td>
+                                                <td class="align-middle text-muted">Ninguna</td>
+                                                <td class="align-middle">Habilitado</td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-warning me-1 editar" title="Editar" data-id="idCarrera"> 
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar" data-id="idCarrera"> 
+                                                            <i class="fas fa-toggle-off"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario -->
+                        <div class="col-3 p-3">
+                            <div class="h4"> Formulario </div>
+                            <form id="formCarrera">
+                                <div class="">
+                                    <div class="">
+                                        <label for="nombreCarrera" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombreCarrera" placeholder="Informática" required>
+                                        <label id="errorNombreCarrera" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="filter-group">
+                                        <div class="combo-input-wrapper">
+                                            <label for="comboDepartamentoCarrera" class="form-label">Departamentos</label>
+                                            <input type="text" id="comboDepartamentoCarrera" class="form-control" placeholder="Buscar o seleccionar departamento" required>
+                                            <div class="dropdown-options" id="opcionesDepartamentosCarrera"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="mt-2 text-end">
+                                <button class="btn btn-success" id="btnGuardarCarrera"> 
+                                    <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                                </button>
                             </div>
                         </div>
                     </div>

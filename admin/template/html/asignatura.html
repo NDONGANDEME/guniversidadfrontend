@@ -48,11 +48,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item facultad">Facultad</a>
                         <a class="collapse-item departamento">Departamento</a>
-                        <a class="collapse-item carrera">Carrera</a>
                         <a class="collapse-item curso">Curso</a>
-                        <a class="collapse-item semestre">Semestre</a>
                         <a class="collapse-item asignatura">Asignatura</a>
-                        <a class="collapse-item aula">Aula</a>
                     </div>
                 </div>
             </li>
@@ -106,11 +103,13 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="">
+                                        <label for="nombreAsignatura" class="form-label">Nombre</label>
                                         <input type="text" class="form-control" id="nombreAsignatura" placeholder="Nombre de la asignatura" required>
                                         <label id="errorNombreAsignatura" class="errorMensaje"></label>
                                     </div>
                                     <div class="">
-                                        <select class="form-select" id="facultadesDepartamento">
+                                        <label for="facultadesDepartamento" class="form-label">Facultades</label>
+                                        <select class="form-select" id="facultadesDepartamento" required>
                                             <option value="Ninguno">Seleccione la facultad ...</option>
                                             <!-- Dinamicamente -->
                                         </select>
@@ -119,6 +118,7 @@
                                 </div>
                                 <div class="col-8">
                                     <div class="">
+                                        <label for="descripcionAsignatura" class="form-label">Descripción</label>
                                         <textarea class="form-control" id="descripcionAsignatura" placeholder="Descripción de la asignatura" required></textarea>
                                         <label id="errorDescripcionAsignatura" class="errorMensaje"></label>
                                     </div>
@@ -126,7 +126,7 @@
                             </div>
                         </form>
                         <div class="text-end mt-2">
-                            <button class="btn btn-success btnGuardarAsignatura"> 
+                            <button class="btn btn-success" id="btnGuardarAsignatura"> 
                                 <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
                             </button>
                         </div>
@@ -136,25 +136,26 @@
                     <div class="border border-3 border-black mb-5 rounded-1">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover text-center" id="tablaAsignaturas">
+                                <table class="table table-hover text-center tabla" id="tablaAsignaturas">
                                 <thead>
                                     <tr>
-                                        <th width="20%">Código</th>
-                                        <th width="20%">Nombre</th>
+                                        <th width="16.7%">Código</th>
+                                        <th width="16.7%">Nombre</th>
                                         <th width="40%">Descripción</th>
-                                        <th width="20%">Acciones</th>
+                                        <th width="16.7%">Facultad</th>
+                                        <th width="10%">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody class="tbodyTabla" id="tbodyTablaAsignaturas"> <!-- Añadir dinámicamente --> 
                                     <!--<tr>
+                                        <td class="align-middle">FI-087-RED</td>
                                         <td class="align-middle">Redes</td>
+                                        <td class="align-middle">Bla bla bla</td>
+                                        <td class="align-middle">Ingenierias</td>
                                         <td class="align-middle">
                                             <div class="d-flex justify-content-center align-items-center gap-1">
                                                 <button class="btn btn-sm btn-outline-warning me-1 editar" title="Editar" data-id="idAsignatura"> 
                                                     <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar" data-id="idAsignatura"> 
-                                                    <i class="fas fa-toggle-off"></i>
                                                 </button>
                                             </div>
                                         </td>

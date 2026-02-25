@@ -89,7 +89,7 @@ export class m_sesion
                 let administrador = (nuevaS.nombreOCorreo == 'admin' || nuevaS.nombreOCorreo == 'admin@email.com') && nuevaS.contraseña == 'admin1234';
                 let profesor = (nuevaS.nombreOCorreo == 'profesor' || nuevaS.nombreOCorreo == 'profesor@email.com') && nuevaS.contraseña == 'profesor1234';
 
-                if(secretario || profesor){
+                if(secretario || profesor || administrador){
                     intentos = 0;
                     m_sesion.guardarSesion('usuarioActivo', nuevaS);
 

@@ -48,11 +48,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item facultad">Facultad</a>
                         <a class="collapse-item departamento">Departamento</a>
-                        <a class="collapse-item carrera">Carrera</a>
                         <a class="collapse-item curso">Curso</a>
-                        <a class="collapse-item semestre">Semestre</a>
                         <a class="collapse-item asignatura">Asignatura</a>
-                        <a class="collapse-item aula">Aula</a>
                     </div>
                 </div>
             </li>
@@ -120,43 +117,39 @@
                         </div>
                     </div>
 
-                    <!-- Tabla de facultades -->
-                    <div class="border border-3 border-black mb-5 rounded-1">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center" id="tablaNoticias">
-                                <thead>
-                                    <tr>
-                                        <th width="20%">Imagen</th>
-                                        <th width="30%">Asunto</th>
-                                        <th width="30%">Tipo</th>
-                                        <th width="20%">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="tbodyTabla" id="tbodyTablaNoticia"> <!-- Añadir dinámicamente --> 
-                                    <!--<tr>
-                                        <td class="align-middle text-muted">Sin imagen</td>
-                                        <td class="align-middle">Comienzo del nuevo curso académico</td>
-                                        <td class="align-middle">Comunicado</td>
-                                        <td class="align-middle">
-                                            <div class="d-flex justify-content-center align-items-center gap-1">
-                                                <button class="btn btn-sm btn-outline-info me-1 verDetalles" data-bs-toggle="modal" data-bs-target="#modalVerDetallesNoticia" 
-                                                    title="Ver detalles" data-id="idNoticia"> <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning me-1 editar" data-bs-toggle="modal" data-bs-target="#modalNuevaNoticia" 
-                                                    title="Editar" data-id="idNoticia"> <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger me-1 eliminar" title="Eliminar" data-id="idNoticia"> 
-                                                    <i class="fas fa-tash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>-->
-                                </tbody>
-                            </table>
+                    <!-- Paginacion de las noticias -->
+                    <section>
+                        <div class="contenedorTarjetasNoticias mb-4">
+
+                            <!-- Carta de noticias -->
+                            <div id="contTarjetaNoticia" class="container">
+                                <div class="row" id="tarjetasNoticiasRow"> <!-- Las tarjetas se añadirán aquí dinámicamente --> </div>
+                            </div>
+
+                            <!-- Contenedor de paginación -->
+                            <div id="contPaginacion" class="container mt-4 d-flex justify-content-center">
+                                <!-- La paginación se añadirá aquí dinámicamente -->
+                            </div>
+                                
+                            <!-- Detalles de las noticias -->
+                            <div id="contDetallesNoticias" class="container"> <!--añadir dinamicamente--> </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div id="modalNoticias" class="modal fade" tabindex="-1" aria-hidden="true">
+                            <div class="modal-contenido">
+                                <span class="cerrar w-100 text-end" id="cerrarModal"> &times; </span>
+
+                                <div class="modal-encabezado">
+                                    <h2 id="tituloNoticiaDetalle"> <!--añadir dinamicamente--> </h2>
+                                </div>
+                                
+                                <div class="modal-content mt-2 p-2">
+                                    <p id="contenidoNoticiadetalle"> <!--añadir dinamicamente--> </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </div>
         </div>
@@ -204,9 +197,6 @@
                                 <label class="font-weight-bold">
                                     <i class="fas fa-paperclip mr-1"></i> Imagen de la noticia
                                 </label>
-                                <button type="button" class="btn btn-sm btn-danger" id="btnEliminarImagenes" disabled>
-                                    <i class="fas fa-times"></i> Descartar imágenes
-                                </button>
                             </div>
                             
                             <!-- Área para arrastrar y soltar -->
@@ -220,6 +210,28 @@
                             
                             <!-- Input file oculto -->
                             <input type="file" id="campoArchivoFoto" multiple accept=".png,.jpg,.jpeg">
+
+                            <!-- Contador de archivos -->
+                            <div class="alert alert-light border d-flex justify-content-between align-items-center">
+                                <span>
+                                    <i class="fas fa-file-alt mr-2"></i>
+                                    <span id="contadorArchivos">0 archivos seleccionados</span>
+                                </span>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="btnLimpiarArchivos">
+                                    <i class="fas fa-times mr-1"></i>Limpiar
+                                </button>
+                            </div>
+                            
+                            <!-- Previsualización -->
+                            <div class="preview-container mt-3" id="previewContainer">
+                                <h6 class="border-bottom pb-2 mb-3">
+                                    <i class="fas fa-images mr-2"></i>
+                                    Vista previa de archivos
+                                </h6>
+                                <div id="previewArchivos">
+                                    <!-- Aquí se mostrarán los archivos -->
+                                </div>
+                            </div>
                             
                             <small class="text-muted">
                                 <i class="fas fa-info-circle"></i> Puedes seleccionar múltiples imágenes

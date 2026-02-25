@@ -14,6 +14,10 @@ export class m_aula
         return await fetchAula.obtenerAulasDelBackend();
     }
 
+    static async obtenerAulasPorFacultad(idFacultad) {
+        return await fetchAula.obtenerAulasPorFacultadDelBackend(idFacultad);
+    }
+
     static async insertarAula(objeto) {
         return await fetchAula.insertarAulaEnBackend(objeto);
     }
@@ -28,5 +32,9 @@ export class m_aula
 
     static async habilitarAula(id) {
         return await fetchAula.habilitarAulaEnBackend(id);
+    }
+
+    static async eliminarAula(id) {
+        return await fetchAula.eliminarAulaEnBackend(id);
     }
 }

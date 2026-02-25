@@ -48,11 +48,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item facultad">Facultad</a>
                         <a class="collapse-item departamento">Departamento</a>
-                        <a class="collapse-item carrera">Carrera</a>
                         <a class="collapse-item curso">Curso</a>
-                        <a class="collapse-item semestre">Semestre</a>
                         <a class="collapse-item asignatura">Asignatura</a>
-                        <a class="collapse-item aula">Aula</a>
                     </div>
                 </div>
             </li>
@@ -99,57 +96,131 @@
                         </h1>
                     </div>
 
-                    <!-- Formulario -->
-                    <div class="mb-3 p-3 border border-3 border-black rounded-1">
-                        <div class="h4"> Formulario </div>
-                        <form id="formCurso">
-                            <div class="row mb-2">
-                                <div class="col-6">
-                                    <input type="text" class="form-control" id="nombreCurso" placeholder="Nombre del curso. Ej: primero" required>
-                                    <label id="errorNombreCurso" class="errorMensaje"></label>
+                    <!--PARTE DE CURSO -->
+                    <div class="mb-5 row">
+                        <!-- Formulario -->
+                        <div class="col-3 p-3">
+                            <div class="h4"> Formulario </div>
+                            <form id="formCurso">
+                                <div class="mb-2">
+                                    <div class="">
+                                        <label for="nombreCurso" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombreCurso" placeholder="Ej: primero" required>
+                                        <label id="errorNombreCurso" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <label for="nivelCurso" class="form-label">Nivel</label>
+                                        <input type="number" min="0" class="form-control" id="nivelCurso" placeholder="Ej: 1" required>
+                                        <label id="errorNivelCurso" class="errorMensaje"></label>
+                                    </div>
                                 </div>
-                                <div class="col-6">
-                                    <input type="number" min="0" class="form-control" id="nivelCurso" placeholder="Nivel del curso. Ej: 1" required>
-                                    <label id="errorNivelCurso" class="errorMensaje"></label>
+                            </form>
+                            <div class="text-end">
+                                <button class="btn btn-success" id="btnGuardarCurso"> 
+                                    <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de cursos -->
+                        <div class="col-9 border border-3 border-black rounded-1 shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center tabla" id="tablaCursos">
+                                        <thead>
+                                            <tr>
+                                                <th width="33.3%">Nombre</th>
+                                                <th width="33.3%">Nivel</th>
+                                                <th width="33.3%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyTabla" id="tbodyTablaCursos"> <!-- Añadir dinámicamente --> 
+                                            <!--<tr>
+                                                <td class="align-middle">Primero</td>
+                                                <td class="align-middle">1</td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-warning me-1 editar" title="Editar" data-id="idCurso"> 
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger me-1 eliminar" title="Eliminar" data-id="idCurso"> 
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>-->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </form>
-                        <div class="text-end">
-                            <button class="btn btn-success btnGuardarCurso"> 
-                                <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Tabla de cursos -->
-                    <div class="border border-3 border-black mb-5 rounded-1">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center tabla">
-                                    <thead>
-                                        <tr>
-                                            <th width="33.3%">Nombre</th>
-                                            <th width="33.3%">Nivel</th>
-                                            <th width="33.3%">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="tbodyTabla" id="tbodyTablaCursos"> <!-- Añadir dinámicamente --> 
-                                        <!--<tr>
-                                            <td class="align-middle">Primero</td>
-                                            <td class="align-middle">1</td>
-                                            <td class="align-middle">
-                                                <div class="d-flex justify-content-center align-items-center gap-1">
-                                                    <button class="btn btn-sm btn-outline-warning me-1 editar" title="Editar" data-id="idCurso"> 
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger me-1 deshabilitar" title="Deshabilitar" data-id="idCurso"> 
-                                                        <i class="fas fa-toggle-off"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>-->
-                                    </tbody>
-                                </table>
+                    <div class="mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <span class="text-warning ms-2"></span> Semestres
+                        </h1>
+                    </div>
+
+                    <!--PARTE DE SEMESTRE-->
+                    <div class="row">
+                        <!-- Tabla de semestres -->
+                        <div class="col-9 border border-3 border-black mb-5 rounded-1 shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center tabla" id="tablaSemestres">
+                                        <thead>
+                                            <tr>
+                                                <th width="25%">Número</th>
+                                                <th width="25%">Tipo</th>
+                                                <th width="25%">Curso</th>
+                                                <th width="25%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyTabla" id="tbodyTablaSemestres"> <!-- Añadir dinámicamente --> 
+                                            <!--<tr>
+                                                <td class="align-middle">1</td>
+                                                <td class="align-middle">Impar</td>
+                                                <td class="align-middle">Primero</td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-warning me-1 editar" title="Editar" data-id="idSemestre"> 
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger me-1 eliminar" title="Eliminar" data-id="idSemestre"> 
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario -->
+                        <div class="col-3 p-3">
+                            <div class="h4"> Formulario </div>
+                            <form id="formSemestre">
+                                <div class="">
+                                    <label for="numeroSemestre" class="form-label">Número de semestre</label>
+                                    <input type="number" min="0" class="form-control" id="numeroSemestre" placeholder="Ej: 1" required>
+                                    <label id="errorNumeroSemestre" class="errorMensaje"></label>
+                                </div>
+                                <div class="">
+                                    <label for="cursoSemestre" class="form-label">Curso perteneciente</label>
+                                    <select class="form-select" id="cursoSemestre" required>
+                                        <option value="Ninguno">Seleccione</option>
+                                        <!--añadir dinamicamente-->                          
+                                    </select>
+                                    <label id="errorCursoSemestre" class="errorMensaje"></label>
+                                </div>
+                            </form>
+                            <div class="mt-2 text-end">
+                                <button class="btn btn-success" id="btnGuardarSemestre">
+                                    <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                                </button>
                             </div>
                         </div>
                     </div>

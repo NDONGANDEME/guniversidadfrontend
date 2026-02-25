@@ -48,11 +48,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item facultad">Facultad</a>
                         <a class="collapse-item departamento">Departamento</a>
-                        <a class="collapse-item carrera">Carrera</a>
                         <a class="collapse-item curso">Curso</a>
-                        <a class="collapse-item semestre">Semestre</a>
                         <a class="collapse-item asignatura">Asignatura</a>
-                        <a class="collapse-item aula">Aula</a>
                     </div>
                 </div>
             </li>
@@ -233,65 +230,44 @@
                         </div>
 
                         <div class="row mt-2">
-                            <div class="col-6">
-                                <label for="nombreOCorreoUsuario" class="form-label">Nombre de usuario o correo</label>
-                                <input type="tel" class="form-control" id="nombreOCorreoUsuario" placeholder="Ej: usuario@email.com o usuario123" required>
-                                <label id="errorNombreOCorreoUsuario" class="errorMensaje"></label>
-                            </div>
-
-                            <div class="col-6">
-                                <label for="rolUsuario" class="form-label">Rol</label>
-                                <select class="form-select" id="rolUsuario" required>
-                                    <option value="Ninguno">Seleccione...</option>
-                                    <option value="Estudiante">Estudiante</option>
-                                    <option value="Profesor">Profesor</option>
-                                    <option value="Secretario">Secretario</option>
-                                    <option value="Administrador">Administrador</option>
-                                </select>
-                                <label id="errorRolUsuario" class="errorMensaje"></label>
-                            </div>
-                        </div>
-
-                        <!-- método de envío de las credenciales -->
-                        <div class="mt-1">
-                            <h6 class="modal-title">Seleccione metodo de envío de las credenciales</h6>
-
-                            <div class="row container">
-                                <!-- Opción SMS -->
-                                <div class="col-6 form-check">
-                                    <input class="form-check-input" type="radio" name="formaEnvio" value="sms" id="envioSMS">
-                                    <label class="form-check-label" for="smsCheck">
-                                        <i class="bi bi-chat-dots text-success"></i> 
-                                        Enviar por SMS
-                                        <span class="badge bg-success ms-2">Móvil</span>
-                                    </label>
-                                    <div class="form-text text-muted ms-4">
-                                        Envío de credenciales vía mensaje de texto
-                                    </div>
+                            <div class="col-3">
+                                <!--Area para mostrar la imagen-->
+                                <div class="mb-2 rounded-3 text-center" id="contenedorFotoPerfil">
+                                    <i class="fas fa-user"></i>
                                 </div>
 
-                                <!-- Opción Correo -->
-                                <div class="col-6 form-check">
-                                    <input class="form-check-input" type="radio" name="formaEnvio" value="email" id="envioCorreo">
-                                    <label class="form-check-label" for="emailCheck">
-                                        <i class="bi bi-envelope text-primary"></i> 
-                                        Enviar por Correo
-                                        <span class="badge bg-primary ms-2">Email</span>
-                                    </label>
-                                    <div class="form-text text-muted ms-4">
-                                        Envío de credenciales vía correo electrónico
-                                    </div>
+                                <!-- Área para añadir la imagen -->
+                                <div class="file-input-wrapper2 mb-1 text-center" id="añadirImagen">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                
+                                <!-- Input file oculto -->
+                                <input type="file" id="campoArchivoFotoPerfil" multiple accept=".png,.jpg,.jpeg">
+                            </div>
+
+                            <div class="col-9">
+                                <div class="">
+                                    <label for="nombreOCorreoUsuario" class="form-label">Nombre de usuario o correo</label>
+                                    <input type="tel" class="form-control" id="nombreOCorreoUsuario" placeholder="Ej: usuario@email.com o usuario123" required>
+                                    <label id="errorNombreOCorreoUsuario" class="errorMensaje"></label>
+                                </div>
+
+                                <div class="mt-1">
+                                    <label for="rolUsuario" class="form-label">Rol</label>
+                                    <select class="form-select" id="rolUsuario" required>
+                                        <option value="Ninguno">Seleccione...</option>
+                                        <option value="Estudiante">Estudiante</option>
+                                        <option value="Profesor">Profesor</option>
+                                        <option value="Secretario">Secretario</option>
+                                        <option value="Administrador">Administrador</option>
+                                    </select>
+                                    <label id="errorRolUsuario" class="errorMensaje"></label>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="mt-2 text-muted small">
-                            <label class="form-label text-danger">NOTA:
-                                <span class="text-black">El correo de inicio de sesión y el de los datos personales pueden ser iguales o diferentes</span>
-                            </label>
                         </div>
 
                         <!-- Datos personales -->
+                        <!--solo se saca el d-none si el rol es distinto de ninguno, estudiante y profesor-->
                         <div class="mt-4 d-none" id="panelDatosPersonales">
                             <div class="modal-header justify-content-center">
                                 <h5 class="modal-title">Datos personales</h5>

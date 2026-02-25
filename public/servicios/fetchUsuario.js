@@ -81,26 +81,6 @@ export class fetchUsuario
     }
 
     /**
-     * Envia solicitud para verificar si la contraseña pasada como parametro ya existe en la BDD
-     * @param {String} contraseña 
-     * @returns booleano
-     */
-    static async verificarContraseñaExistenteEnBackend(contraseña) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=verificarContraseñaExistente&actor=admin`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({contrasena: contraseña})
-            });
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario]. ${error}`, 3000);
-            return false;
-        }
-    }
-
-    /**
      * Envia solicitud para listar todos los usuarios de la BDD
      * @returns array de usuarios
      */

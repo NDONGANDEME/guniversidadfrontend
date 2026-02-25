@@ -48,11 +48,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item facultad">Facultad</a>
                         <a class="collapse-item departamento">Departamento</a>
-                        <a class="collapse-item carrera">Carrera</a>
                         <a class="collapse-item curso">Curso</a>
-                        <a class="collapse-item semestre">Semestre</a>
                         <a class="collapse-item asignatura">Asignatura</a>
-                        <a class="collapse-item aula">Aula</a>
                     </div>
                 </div>
             </li>
@@ -99,55 +96,155 @@
                         </h1>
                     </div>
 
-                    <!-- Formulario -->
-                    <div class="mb-3 p-3 border border-3 border-black rounded-1">
-                        <div class="h4"> Formulario </div>
-                        <form id="formFacultad">
-                            <div class="row mb-2">
-                                <div class="col-3">
-                                    <label for="nombreFacultad" class="form-label">Nombre</label>
-                                    <input type="text" class="form-control" id="nombreFacultad" placeholder="Ej: Ingenierías" required>
-                                    <label id="errorNombreFacultad" class="errorMensaje"></label>
+                    <!--PARTE DE FACULTADES-->
+                    <div class="mb-5 row">
+                        <!-- Formulario -->
+                        <div class="col-3 mb-5 p-3">
+                            <div class="h4"> Formulario </div>
+                            <form id="formFacultad">
+                                <div class="mb-2">
+                                    <div class="">
+                                        <label for="nombreFacultad" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombreFacultad" placeholder="Ej: Ingenierías" required>
+                                        <label id="errorNombreFacultad" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <label for="direccionFacultad" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccionFacultad" placeholder="Ej: Al lado de ..." required>
+                                        <label id="errorDireccionFacultad" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <label for="correoFacultad" class="form-label">Correo</label>
+                                        <input type="text" class="form-control" id="correoFacultad" placeholder="Ej: facultad@email.com" required>
+                                        <label id="errorCorreoFacultad" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <label for="telefonoFacultad" class="form-label">Teléfono</label>
+                                        <input type="text" class="form-control" id="telefonoFacultad" placeholder="Ej: +240 222 123 456" required>
+                                        <label id="errorTelefonoFacultad" class="errorMensaje"></label>
+                                    </div>
                                 </div>
-                                <div class="col-3">
-                                    <label for="direccionFacultad" class="form-label">Dirección</label>
-                                    <input type="text" class="form-control" id="direccionFacultad" placeholder="Ej: Al lado de ..." required>
-                                    <label id="errorDireccionFacultad" class="errorMensaje"></label>
-                                </div>
-                                <div class="col-3">
-                                    <label for="correoFacultad" class="form-label">Correo</label>
-                                    <input type="text" class="form-control" id="correoFacultad" placeholder="Ej: facultad@email.com" required>
-                                    <label id="errorCorreoFacultad" class="errorMensaje"></label>
-                                </div>
-                                <div class="col-3">
-                                    <label for="telefonoFacultad" class="form-label">Teléfono</label>
-                                    <input type="text" class="form-control" id="telefonoFacultad" placeholder="Ej: +240 222 123 456" required>
-                                    <label id="errorTelefonoFacultad" class="errorMensaje"></label>
+                            </form>
+                            <div class="text-end">
+                                <button class="btn btn-success" id="btnGuardarFacultad"> 
+                                    <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de facultades -->
+                        <div class="col-9 border border-3 border-black mb-5 rounded-1 shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center tabla" id="tablaFacultades">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%">Nombre</th>
+                                            <th width="25%">Dirección</th>
+                                            <th width="25%">Contacto</th>
+                                            <th width="25%">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tbodyTabla" id="tbodyTablaFacultades"> <!-- Añadir dinámicamente --> 
+                                        <!--<tr>
+                                                <td class="align-middle">Ingenierias</td>
+                                                <td class="align-middle">Al lado de</td>
+                                                <td class="align-middle">Ninguna</td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-warning me-1 editar"
+                                                            title="Editar" data-id="idFacultad"> <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger me-1 eliminar"
+                                                            title="Eliminar" data-id="idFacultad"> <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>-->
+                                    </tbody>
+                                </table>
                                 </div>
                             </div>
-                        </form>
-                        <div class="text-end">
-                            <button class="btn btn-success btnGuardarFacultad"> 
-                                <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Tabla de facultades -->
-                    <div class="border border-3 border-black mb-5 rounded-1">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center tabla" id="tablaFacultades">
-                                <thead>
-                                    <tr>
-                                        <th width="25%">Nombre</th>
-                                        <th width="25%">Dirección</th>
-                                        <th width="25%">Contacto</th>
-                                        <th width="25%">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="tbodyTabla" id="tbodyTablaFacultades"> <!-- Añadir dinámicamente --> </tbody>
-                            </table>
+                    <div class="mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <span class="text-warning ms-2"></span> Aulas
+                        </h1>
+                    </div>
+
+                    <!--PARTE DE AULAS-->
+                    <div class="row">
+                        <!-- Tabla de aulas -->
+                        <div class="col-9 border border-3 border-black mb-5 rounded-1 shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center tabla" id="tablaAula">
+                                        <thead>
+                                            <tr>
+                                                <th width="20%">Nombre</th>
+                                                <th width="20%">Capacidad</th>
+                                                <th width="20%">Facultad</th>
+                                                <th width="20%">Estado</th>
+                                                <th width="20%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyTabla" id="tbodyTablaAulas"> <!-- Añadir dinámicamente --> 
+                                            <!--<tr>
+                                                <td class="align-middle">F1</td>
+                                                <td class="align-middle">40</td>
+                                                <td class="align-middle text-muted">Ninguna</td>
+                                                <td class="align-middle">Habilitado</td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-warning me-1 editar" 
+                                                            title="Editar" data-id="idAula"> <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-dark me-1 deshabilitar" 
+                                                            title="Deshabilitar" data-id="idAula"> <i class="fas fa-toggle-off"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger me-1 eliminar"
+                                                            title="Eliminar" data-id="idAula"> <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario -->
+                        <div class="col-3 p-3">
+                            <div class="h4"> Formulario </div>
+                            <form id="formAula">
+                                <div class="">
+                                    <div class="">
+                                        <label for="nombreAula" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombreAula" placeholder="Ej: F1" required>
+                                        <label id="errorNombreAula" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <label for="capacidadAula" class="form-label">Capacidad máxima del aula</label>
+                                        <input type="number" min="0" class="form-control" id="capacidadAula" placeholder="Ej: 40" required>
+                                        <label id="errorCapacidadAula" class="errorMensaje"></label>
+                                    </div>
+                                    <div class="">
+                                        <label for="facultadesAula" class="form-label">Facultades</label>
+                                        <select class="form-select" id="facultadesAula">
+                                            <option value="Ninguno">Seleccione...</option>
+                                            <!-- Dinamicamente -->
+                                        </select>
+                                        <label id="errorFacultadesAula" class="errorMensaje"></label>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="text-end">
+                                <button class="btn btn-success" id="btnGuardarAula">
+                                    <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                                </button>
                             </div>
                         </div>
                     </div>

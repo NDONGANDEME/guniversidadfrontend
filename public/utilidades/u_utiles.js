@@ -160,11 +160,11 @@ export class u_utiles
 
         u_utiles.redirigirA(document.querySelector('.matricula'), `${url}/matricula.html`);
 
-        u_utiles.redirigirA(document.querySelector('.pago'), `${url}/pago.html`);
-
         u_utiles.redirigirA(document.querySelector('.estudiante'), `${url}/estudiante.html`);
 
         u_utiles.redirigirA(document.querySelector('.profesor'), `${url}/profesor.html`);
+
+        if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
         $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
@@ -185,15 +185,9 @@ export class u_utiles
 
         u_utiles.redirigirA(document.querySelector('.departamento'), `${url}/departamento.html`);
 
-        u_utiles.redirigirA(document.querySelector('.carrera'), `${url}/carrera.html`);
-
         u_utiles.redirigirA(document.querySelector('.curso'), `${url}/curso.html`);
 
-        u_utiles.redirigirA(document.querySelector('.semestre'), `${url}/semestre.html`);
-
         u_utiles.redirigirA(document.querySelector('.asignatura'), `${url}/asignatura.html`);
-
-        u_utiles.redirigirA(document.querySelector('.aula'), `${url}/aula.html`);
 
         u_utiles.redirigirA(document.querySelector('.noticia'), `${url}/noticia.html`);
 
@@ -205,7 +199,7 @@ export class u_utiles
     }
 
     /**********************************************************************************************************/
-    /* PARTE ADMIN */
+    /* PARTE PROFESOR */
     /**********************************************************************************************************/
 
     // navegacion para los botones de la parte del secretario academico
@@ -221,6 +215,8 @@ export class u_utiles
         u_utiles.redirigirA(document.querySelector('.noticia'), `${url}/noticia.html`);
 
         u_utiles.redirigirA(document.querySelector('.consulta'), `${url}/consulta.html`);
+
+        if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
         $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }

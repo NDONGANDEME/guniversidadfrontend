@@ -62,31 +62,13 @@ export class fetchCurso
     }
 
     /**
-     * Envia solicitud para deshabilitar un registro de la BDD
+     * Envia solicitud para eliminar un registro de la BDD
      * @param {Integer} id 
      * @returns booleano
      */
-    static async deshabilitarCursoEnBackend(id) {
+    static async eliminarCursoEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=curso&accion=deshabilitarCurso&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchCurso]. ${error}`);
-            return false;
-        }
-    }
-
-    /**
-     * Envia solicitud para habilitar un registro de la BDD
-     * @param {Integer} id 
-     * @returns booleano
-     */
-    static async habilitarCursoEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=curso&accion=habilitarCurso&valor=${id}&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=curso&accion=eliminarCurso&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

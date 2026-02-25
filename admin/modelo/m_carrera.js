@@ -2,11 +2,12 @@ import { fetchCarrera } from "../servicios/fetchCarrera.js";
 
 export class m_carrera
 {
-    constructor(idCarrera, nombreCarrera, idDepartamento)
+    constructor(idCarrera, nombreCarrera, idDepartamento, estado)
     {
         this.idCarrera = idCarrera;
         this.nombreCarrera = nombreCarrera;
         this.idDepartamento = idDepartamento;
+        this.estado = estado;
     }
 
     static async obtenerCarreras() {

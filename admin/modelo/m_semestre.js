@@ -2,11 +2,17 @@ import { fetchSemestre } from "../servicios/fetchSemestre.js";
 
 export class m_semestre
 {
-    constructor (idSemestre, numeroSemestre, tipoSemestre) {
+    constructor (idSemestre, numeroSemestre, tipoSemestre, idCurso) {
         this.idSemestre = idSemestre;
         this.numeroSemestre = numeroSemestre;
         this.tipoSemestre = tipoSemestre;
+        this.idCurso = idCurso;
     }
+
+    /*
+        en las funcionalidades: el tipo de semestre lo generará una funcion que se llamará: determinarTipoSemestre(numeroSemestre): que devolvera un string que diga si el 
+        numero es par o impar.
+    */
 
     static async obtenerSemestres() {
         return await fetchSemestre.obtenerSemestresDelBackend();
@@ -20,11 +26,7 @@ export class m_semestre
         return await fetchSemestre.actualizarSemestreEnBackend(objeto);
     }
 
-    static async deshabilitarSemestre(id) {
-        return await fetchSemestre.deshabilitarSemestreEnBackend(id);
-    }
-
-    static async habilitarSemestre(id) {
-        return await fetchSemestre.habilitarSemestreEnBackend(id);
+    static async eliminarSemestre(id) {
+        return await fetchSemestre.eliminarSemestreEnBackend(id);
     }
 }

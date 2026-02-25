@@ -3,8 +3,7 @@ import { fetchEstudiante } from "../servicios/fetchEstudiante.js";
 export class m_estudiante
 {
     constructor (idEstudiante, idUsuario, codigoEstudiante, nombre, apellidos, dipEstudiante, fechaNacimiento, sexo, nacionalidad, direccion, 
-        localidad, provincia, pais, telefono, correoEstudiante, centroProcedencia, estudiosAcceso, notaMediaAcceso, 
-        titulacionAcceso, universidadProcedencia, esBecado) 
+        localidad, provincia, pais, telefono, correoEstudiante, centroProcedencia, universidadProcedencia, esBecado) 
     {
         this.idEstudiante = idEstudiante;
         this.idUsuario = idUsuario;
@@ -22,13 +21,15 @@ export class m_estudiante
         this.telefono = telefono;
         this.correoEstudiante = correoEstudiante;
         this.centroProcedencia = centroProcedencia;
-        this.estudiosAcceso = estudiosAcceso;
-        this.notaMediaAcceso = notaMediaAcceso;
-        this.titulacionAcceso = titulacionAcceso;
         this.universidadProcedencia = universidadProcedencia;
         this.esBecado = esBecado;
     }
 
+    /*
+        el codigo del estudiante se generará automaticamente en el metodo generarCodigoEstudiante(nombreFacultad, nombreCarrera){} y devolverá un string del formato:
+        facultad-numero-carrera. ejemplo: FI-0001-INF (faciltad de ingenierias, numero 0001, carrera: informatica).
+    */
+       
     static async obtenerEstudiantes() {
         return await fetchEstudiante.obtenerEstudiantesDelBackend();
     }

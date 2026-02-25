@@ -63,31 +63,13 @@ export class fetchFacultad
     }
 
     /**
-     * 
-     * @param {*} id 
-     * @returns booleano que indique se se ha desabilitado el registro del id pasado por la url
+     * Envia solicitud para eliminar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
      */
-    static async deshabilitarFacultadEnBackend(id) {
+    static async eliminarFacultadEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=deshabilitarFacultad&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [linea 99. fetchFacultad]. ${error}`);
-            return false;
-        }
-    }
-
-    /**
-     * 
-     * @param {*} id 
-     * @returns booleano que indique se se ha desabilitado el registro del id pasado por la url
-     */
-    static async habilitarFacultadEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=habilitarFacultad&valor=${id}&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=eliminarFacultad&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

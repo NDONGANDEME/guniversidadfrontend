@@ -22,6 +22,23 @@ export class fetchAula
     }
 
     /**
+     * Enviar solicitud para cargar las aulas de la BDD
+     * @returns array de aulas
+     */
+    static async obtenerAulasPorFacultadDelBackend(idFacultad) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=aula&accion=obtenerAulasPorFacultad&actor=admin&valor=${idFacultad}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAula]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
      * Envia solicitud para insertar una nueva aula en la BDD
      * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase aula
      * @returns id del nuevo registro insertado
@@ -87,6 +104,24 @@ export class fetchAula
     static async habilitarAulaEnBackend(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=aula&accion=habilitarAula&valor=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchAula]. ${error}`);
+            return false;
+        }
+    }
+
+    /**
+     * Envia solicitud para eliminar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
+     */
+    static async eliminarAulaEnBackend(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=aula&accion=eliminarAula&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
