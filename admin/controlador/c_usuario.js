@@ -26,7 +26,7 @@ export class c_usuario {
     // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
-            sesiones.verificarExistenciaSesion();
+            //sesiones.verificarExistenciaSesion();
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
             await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
             u_utiles.botonesNavegacionAdministrador();

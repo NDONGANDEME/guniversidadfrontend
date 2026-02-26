@@ -2,12 +2,13 @@ import { fetchNoticia } from "../servicios/fetchNoticia.js";
 
 export class m_noticia
 {
-    constructor(idNoticia, asunto, descripcion, tipo, fechaPublicacion){
+    constructor(idNoticia, asunto, descripcion, tipo, fechaPublicacion, fotos=[]){
         this.idNoticia = idNoticia;
         this.asunto = asunto;
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.fechaPublicacion = fechaPublicacion;
+        this.fotos = fotos;
     }
 
     /*
@@ -45,12 +46,12 @@ export class m_noticia
         return await fetchNoticia.obtenerNoticiaPorIdEnBDD(id)
     }
 
-    static async insertarNoticiaEn(objeto) {
-        return await fetchNoticia.insertarNoticiaEnBDD(objeto)
+    static async insertarNoticia(formData) {
+        return await fetchNoticia.insertarNoticiaEnBDD(formData)
     }
 
-    static async actualizarNoticia(objeto) {
-        return await fetchNoticia.actualizarNoticiaEnBDD(objeto)
+    static async actualizarNoticia(formData) {
+        return await fetchNoticia.actualizarNoticiaEnBDD(formData)
     }
 
     static async eliminarNoticia(id) {

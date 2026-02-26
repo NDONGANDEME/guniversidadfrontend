@@ -6,13 +6,13 @@ export class sesiones
     static async verificarExistenciaSesion()
     {
         try {
-            let usuarioRegistrado = m_sesion.leerSesion('usuarioActivo');
+            let usuarioRegistrado = m_sesion.leerSesion('usuarioActivo'); console.log(usuarioRegistrado)
 
-            let estatico = !usuarioRegistrado || usuarioRegistrado.nombreOCorreo == null || usuarioRegistrado.contraseña == null;
-            //let dinamico = !usuarioRegistrado || usuarioRegistrado.nombreUsuario == null || usuarioRegistrado.correo == null;
+            //let estatico = !usuarioRegistrado || usuarioRegistrado.nombreOCorreo == null || usuarioRegistrado.contraseña == null;
+            let dinamico = !usuarioRegistrado || usuarioRegistrado.nombreUsuario == null || usuarioRegistrado.correo == null;
 
             // Si no hay usuario registrado o los campos están vacíos
-            if (estatico) {
+            if (dinamico) {
                 // Mostrar alerta y redirigir cuando se cierre
                 let confirmacion = await Alerta.advertencia('Atención', 'Por favor, inicie sesión para poder acceder a la interfaz.', true);
                 if (confirmacion) Alerta.cargarSimple(3000, 'Redirigiendo, espere por favor...', '/guniversidadfrontend/public/template/html/iniciarSesion.html');

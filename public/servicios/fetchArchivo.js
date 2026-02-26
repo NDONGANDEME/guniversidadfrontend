@@ -31,7 +31,7 @@ export class fetchArchivo
             let solicitud = await fetch(`${this.url}?ruta=archivos&accion=insertarArchivo&actor=global`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

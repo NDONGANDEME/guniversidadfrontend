@@ -85,7 +85,7 @@ export class m_sesion
                 const nuevaS = new m_sesion(correoONombre.value.trim(), contraseña.value.trim());
 
                 
-                let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
+                /*let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
                 let administrador = (nuevaS.nombreOCorreo == 'admin' || nuevaS.nombreOCorreo == 'admin@email.com') && nuevaS.contraseña == 'admin1234';
                 let profesor = (nuevaS.nombreOCorreo == 'profesor' || nuevaS.nombreOCorreo == 'profesor@email.com') && nuevaS.contraseña == 'profesor1234';
 
@@ -120,32 +120,41 @@ export class m_sesion
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}.`, 3000);
                         return;
                     }
-                }
+                }*/
 
-                /*PARTE REAL
-                let usuarioVerificado = await fetchSesion.verificarCredencialesEnBackend(nuevaS);
+                //*PARTE REAL
+                let usuarioVerificado = await fetchSesion.verificarCredencialesEnBackend(nuevaS); console.log(usuarioVerificado);
+
                 if (usuarioVerificado) {
                     intentos = 0;   // Reiniciar contador de intentos al iniciar sesión exitosamente
 
-                    m_sesion.guardarSesion('usuarioActivo', usuarioVerificado);
+                    m_sesion.guardarSesion('usuarioActivo', usuarioVerificado[0]);
 
-                    let rol = usuarioVerificado.rol;
-                    switch (rol) {
-                        case 'Administrador':
-                            Alerta.cargarSimple(1500, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
-                            break;
-                        case 'Profesor':
-                            Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '#');
-                            break;
-                        case 'Estudiante':
-                            Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '#');
-                            break;
-                        case 'Secretario':
-                            Alerta.cargarSimple(1500, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/secretarioAcademico/index.html');
-                            break;
+                    let estado = usuarioVerificado[0].estado; console.log(usuarioVerificado[0].estado)
+
+                    if (estado == 'activo') {
+                        let rol = usuarioVerificado[0].rol;
+
+                        switch (rol) {
+                            case 'Administrador':
+                                Alerta.cargarSimple(1500, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
+                                break;
+                            case 'Profesor':
+                                Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '#');
+                                break;
+                            case 'Estudiante':
+                                Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '#');
+                                break;
+                            case 'Secretario':
+                                Alerta.cargarSimple(1500, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/secretarioAcademico/index.html');
+                                break;
+                        }
+
+                        formIniciarSesion.reset();
+                    } else {
+                        Alerta.informacion('Usuario inactivo', 'Usted no cuenta con el permiso de acceder al sistema. Porfavor, contacte con el administrador.');
                     }
 
-                    formIniciarSesion.reset();
                 }else {
                     if(intentos >= maxIntentos) {
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}. Por favor, contacte a soporte.`, 3000);
@@ -155,7 +164,7 @@ export class m_sesion
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}.`, 3000);
                         return;
                     }
-                }*/
+                }
             } catch(error) {
                 Alerta.notificarError(`Error de verificación [m_sesion]: ${error}.`, 3000);
                 return;

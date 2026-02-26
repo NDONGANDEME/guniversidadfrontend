@@ -25,6 +25,7 @@ export class c_facultad {
         try {
             sesiones.verificarExistenciaSesion();
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
+            await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
             u_utiles.botonesNavegacionAdministrador();
             
             this.inicializarDataTables();
@@ -151,7 +152,7 @@ export class c_facultad {
 
     async guardarFacultad() {
         if (!this.formularioFacultadEsValido()) {
-            Alerta.advertencia('Campos inválidos', 'Complete correctamente los campos');
+            Alerta.notificarAdvertencia('Complete correctamente los campos');
             return;
         }
         

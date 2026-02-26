@@ -64,7 +64,7 @@ export class u_verificaciones
         if (pass.length < 8 || pass.length > 128) return false;
         
         // Contiene caracteres peligrosos para SQL?
-        if (/['"\\;()]|(--)|\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|OR|AND)\b/i.test(pass)) {
+        if (/['"()]|(--)|\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|OR|AND)\b/i.test(pass)) {
             return false;
         }
         return true;

@@ -73,40 +73,52 @@ export class fetchNoticia
     }
 
     /**
-     * Enviar solicitud para insertar una nueva noticia en la BDD
-     * @param {m_noticia} objeto 
-     * @returns id del nuevo registro insertado
+     * Enviar solicitud para actualizar una noticia existente en la BDD
+     * @param {FormData} formData - Objeto FormData con los datos de la noticia y archivos
+     * @returns resultado de la operación
      */
-    static async insertarNoticiaEnBDD(objeto) {
+    static async actualizarNoticiaEnBDD(formData) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=admin`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=admin&debug=1`, {
+                method: 'POST',
+                body: formData
             });
-            let respuesta = await solicitud.json();
             
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            let respuesta = await solicitud.text(); console.log(respuesta)
+            
+            if (respuesta.estado == 'exito') return respuesta.resultado;
+            else {
+                console.error('Error del servidor:', respuesta);
+                return null;
+            }
         } catch(error) {
+            console.error('Error en fetchNoticia.actualizarNoticiaEnBDD:', error);
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
-     * Enviar solicitud para actualizar una noticia de la BDD
-     * @param {m_noticia} objeto 
-     * @returns id del registro actualizado
+     * Enviar solicitud para actualizar una noticia existente en la BDD
+     * @param {FormData} formData - Objeto FormData con los datos de la noticia y archivos
+     * @returns resultado de la operación
      */
-    static async actualizarNoticiaEnBDD(objeto) {
+    static async insertarNoticiaEnBDD(formData) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=admin`, {
-                method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=admin&debug=1`, {
+                method: 'POST',
+                body: formData
             });
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            
+            let respuesta = await solicitud.text(); console.log(respuesta)
+            
+            if (respuesta.estado == 'exito') return respuesta.resultado;
+            else {
+                console.error('Error del servidor:', respuesta);
+                return null;
+            }
         } catch(error) {
+            console.error('Error en fetchNoticia.actualizarNoticiaEnBDD:', error);
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
             return null;
         }

@@ -32,7 +32,7 @@ export class fetchFacultad
             let solicitud = await fetch(`${this.url}?ruta=facultad&accion=insertarFacultad&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta);
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

@@ -107,6 +107,7 @@ export class u_noticia_admin {
 
         // Validar formato
         const formatosPermitidos = ['image/png', 'image/jpeg', 'image/jpg'];
+        console.log(archivos)
         
         for (let archivo of archivos) {
             if (!formatosPermitidos.includes(archivo.type)) {
@@ -122,6 +123,7 @@ export class u_noticia_admin {
                 tamaño: archivo.size,
                 preview: URL.createObjectURL(archivo)
             });
+            console.log(this.archivosSeleccionados)
         }
 
         this.actualizarPrevisualizacion();
@@ -210,7 +212,9 @@ export class u_noticia_admin {
         // Obtener la primera foto si existe
         let fotoHtml = '<i class="fas fa-newspaper fa-3x text-muted"></i>';
         if (noticia.fotos && noticia.fotos.length > 0) {
-            fotoHtml = `<img src="${noticia.fotos[0].url}" class="card-img-top" style="height: 180px; object-fit: cover;">`;
+            // Asumiendo que las fotos vienen con una propiedad 'url' o 'ruta'
+            const fotoUrl = noticia.fotos[0].url || noticia.fotos[0].ruta || '';
+            fotoHtml = `<img src="${fotoUrl}" class="card-img-top" style="height: 180px; object-fit: cover;">`;
         }
 
         // Formatear fecha
@@ -336,8 +340,8 @@ export class u_noticia_admin {
         $('#tipoNoticia').val(noticia.tipo || 'Ninguno');
         this.mostrarDescripcionTipo(noticia.tipo);
         
-        // Si hay fotos, podríamos mostrarlas pero no permitir editarlas por ahora
-        // Para simplificar, en edición no cargamos las fotos existentes
+        // En edición, no cargamos las fotos existentes para simplificar
+        // El usuario puede subir nuevas fotos si lo desea
         this.limpiarArchivos();
     }
 
@@ -359,7 +363,7 @@ export class u_noticia_admin {
             descripcion: item.descripcion,
             tipo: item.tipo || 'Comunicado',
             fechaPublicacion: item.fechaPublicacion,
-            fotos: item.fotos || []
+            fotos: item.fotos || [] // Ahora las fotos vienen directamente del backend
         }));
     }
 }

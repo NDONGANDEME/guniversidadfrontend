@@ -1,5 +1,4 @@
 import { sesiones } from "../../public/core/sesiones.js";
-import { m_archivo } from "../../public/modelo/m_archivo.js";
 import { m_noticia } from "../../public/modelo/m_noticia.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
@@ -27,7 +26,7 @@ export class c_noticia_admin {
     // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
-            sesiones.verificarExistenciaSesion();
+            //sesiones.verificarExistenciaSesion();
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
             await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
             u_utiles.botonesNavegacionAdministrador();
@@ -60,19 +59,8 @@ export class c_noticia_admin {
                 return;
             }
 
-            // Convertir a objetos noticia
+            // Convertir a objetos noticia (las fotos vienen incluidas del backend ahora)
             const todasNoticias = await u_noticia_admin.convertirANoticias(datosBackend);
-
-            // Cargar fotos para cada noticia
-            for (const noticia of todasNoticias) {
-                try {
-                    const archivos = await m_archivo.obtenerArchivosPorNoticia(noticia.idNoticia);
-                    noticia.fotos = archivos || [];
-                } catch (error) {
-                    console.warn(`Error cargando fotos de noticia ${noticia.idNoticia}:`, error);
-                    noticia.fotos = [];
-                }
-            }
 
             this.noticias = todasNoticias;
             
@@ -167,46 +155,48 @@ export class c_noticia_admin {
 
     async guardarNoticia() {
         if (!this.formularioNoticiaEsValido()) {
-            Alerta.advertencia('Campos inválidos', 'Complete correctamente los campos');
+            Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
             return;
         }
         
         try {
-            const asunto = $('#asuntoNoticia').val().trim();
-            const descripcion = $('#descripcionNoticia').val().trim();
-            const tipo = $('#tipoNoticia').val();
+            // Crear FormData
+            const formData = new FormData();
             
-            const datos = {
-                asunto: asunto,
-                descripcion: descripcion,
-                tipo: tipo,
-                fechaPublicacion: new Date().toISOString()
-            };
+            // Agregar campos del formulario
+            formData.append('asunto', $('#asuntoNoticia').val().trim());
+            formData.append('descripcion', $('#descripcionNoticia').val().trim());
+            formData.append('tipo', $('#tipoNoticia').val());
+            formData.append('fechaPublicacion', new Date().toISOString());
+            
+            // Si estamos en modo edición, agregar el ID
+            if (this.modoEdicion) {
+                formData.append('idNoticia', this.noticiaActual.idNoticia);
+            }
+            
+            // Agregar archivos al FormData
+            const archivos = u_noticia_admin.obtenerArchivosParaEnviar();
+            archivos.forEach((archivo, index) => {
+                //console.log(archivo)
+                formData.append('fotos', archivo);
+            });
+
+            console.log(Object.fromEntries(formData));
             
             let resultado;
-            let idNoticia;
             
             if (this.modoEdicion) {
                 // Actualizar noticia existente
-                datos.idNoticia = this.noticiaActual.idNoticia;
-                resultado = await m_noticia.actualizarNoticia(datos);
-                idNoticia = this.noticiaActual.idNoticia;
+                resultado = await m_noticia.actualizarNoticia(formData);
             } else {
                 // Insertar nueva noticia
-                resultado = await m_noticia.insertarNoticiaEn(datos);
-                // Suponiendo que el backend devuelve el ID de la noticia creada
-                idNoticia = resultado.idNoticia || resultado.id;
-            }
-            
-            // Subir archivos si hay
-            const archivos = u_noticia_admin.obtenerArchivosParaEnviar();
-            if (archivos.length > 0 && idNoticia) {
-                // Aquí iría la lógica para subir los archivos al servidor
-                // Por ejemplo: await m_archivo.subirArchivos(idNoticia, archivos);
-                console.log(`Subir ${archivos.length} archivos para noticia ${idNoticia}`);
+                resultado = await m_noticia.insertarNoticia(formData);
             }
             
             if (resultado) {
+                // Limpiar archivos después de guardar
+                u_noticia_admin.limpiarArchivos();
+                
                 await this.cargarNoticias();
                 if (this.modalInstance) {
                     this.modalInstance.hide();
@@ -215,7 +205,7 @@ export class c_noticia_admin {
             }
         } catch (error) {
             console.error('Error al guardar noticia:', error);
-            Alerta.error('Error', 'No se pudo guardar la noticia');
+            Alerta.notificarError(`No se pudo guardar la noticia: ${error}`, 1500);
         }
     }
 
@@ -247,9 +237,6 @@ export class c_noticia_admin {
             const resultado = await m_noticia.eliminarNoticia(id);
             
             if (resultado) {
-                // Eliminar también los archivos asociados si es necesario
-                // await m_archivo.eliminarArchivosPorNoticia(id);
-                
                 await this.cargarNoticias();
                 Alerta.exito('Éxito', 'Noticia eliminada');
             }
