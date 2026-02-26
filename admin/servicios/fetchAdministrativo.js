@@ -11,7 +11,7 @@ export class fetchAdministrativo
      */
     static async obtenerAdministrativosDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&action=obtenerAdministrativos&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=obtenerAdministrativos&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 

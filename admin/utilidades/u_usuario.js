@@ -10,7 +10,6 @@ export class u_usuario {
         const minusculas = 'abcdefghijklmnopqrstuvwxyz';
         const numeros = '0123456789';
         const especiales = '!@#$%^&*';
-        
         let contrasena = '';
         
         // Asegurar al menos un carácter de cada tipo
@@ -32,7 +31,7 @@ export class u_usuario {
     // ========== VALIDACIONES ==========
     static validarNombreUsuario(valor) {
         if (!valor) return false;
-        return valor.trim().length >= 3;
+        return u_verificaciones.validarNombreOCorreo(valor);
     }
     
     static validarCorreo(valor) {
@@ -64,7 +63,7 @@ export class u_usuario {
     }
 
     // ========== VALIDACIONES EN TIEMPO REAL ==========
-    static configurarValidaciones() {
+    static  configurarValidaciones() {
         // Validación del nombre de usuario o correo
         $('#nombreOCorreoUsuario').off('input').on('input', function() {
             const valor = $(this).val().trim();
@@ -98,8 +97,7 @@ export class u_usuario {
                 $('#panelDatosPersonales').addClass('d-none');
                 // Limpiar validaciones de datos personales
                 $('#nombreUsuario, #apellidosUsuario, #correoUsuario, #telefonoUsuario, #facultadesUsuario').removeClass('border-success border-danger');
-                $('#errorNombreUsuario, #errorApellidosUsuario, #errorCorreoUsuario, #errorTelefonoUsuario, #errorFacultadesUsuario')
-                    .text('').addClass('d-none');
+                $('#errorNombreUsuario, #errorApellidosUsuario, #errorCorreoUsuario, #errorTelefonoUsuario, #errorFacultadesUsuario').text('').addClass('d-none');
             }
         });
 
@@ -146,16 +144,23 @@ export class u_usuario {
             if (archivo) {
                 // Validar que sea imagen
                 if (!archivo.type.match('image.*')) {
-                    Alerta.advertencia('Formato inválido', 'Solo se permiten imágenes PNG, JPG o JPEG');
+                    Alerta.notificarAdvertencia('Solo se permiten imágenes PNG, JPG o JPEG', 1500);
+                    $(this).val('');
                     return;
                 }
                 
                 // Validar tamaño (máximo 2MB)
                 if (archivo.size > 2 * 1024 * 1024) {
-                    Alerta.advertencia('Imagen muy grande', 'La imagen no debe superar los 2MB');
+                    Alerta.notificarAdvertencia('La imagen no debe superar los 2MB', 1500);
+                    $(this).val('');
                     return;
                 }
                 
+                // Guardar el archivo en el data del formulario para usarlo después
+                console.log(archivo);
+                $('#formUsuario').data('imagen-perfil', archivo.name);
+                
+                // Mostrar preview
                 const lector = new FileReader();
                 lector.onload = function(e) {
                     $('#contenedorFotoPerfil').html(`<img src="${e.target.result}" class="img-fluid rounded-3" style="max-height: 100px; max-width: 100%;">`);
@@ -168,7 +173,11 @@ export class u_usuario {
     static limpiarImagen() {
         $('#contenedorFotoPerfil').html('<i class="fas fa-user" style="font-size: 3rem;"></i>');
         $('#campoArchivoFotoPerfil').val('');
+        $('#formUsuario').removeData('imagen-perfil'); // Limpiar archivo guardado
     }
+
+    // ========== OBTENER IMAGEN PARA SUBIR ==========
+    static obtenerImagenParaSubir() { return $('#formUsuario').data('imagen-perfil'); }
 
     // ========== MODO EDICIÓN ==========
     static configurarModoEdicion(activo) {
@@ -183,9 +192,9 @@ export class u_usuario {
 
     // ========== GENERAR BOTONES PARA USUARIO ==========
     static generarBotonesUsuario(id, estado) {
-        const iconoToggle = estado === 'Habilitado' ? 'fa-toggle-on' : 'fa-toggle-off';
-        const claseToggle = estado === 'Habilitado' ? 'btn-outline-danger' : 'btn-outline-success';
-        const textoToggle = estado === 'Habilitado' ? 'Deshabilitar' : 'Habilitar';
+        const iconoToggle = estado === 'Activo' ? 'fa-toggle-on' : 'fa-toggle-off';
+        const claseToggle = estado === 'Activo' ? 'btn-outline-danger' : 'btn-outline-success';
+        const textoToggle = estado === 'Activo' ? 'Deshabilitar' : 'Habilitar';
         
         return `
             <div class="d-flex justify-content-center gap-1">
@@ -206,7 +215,7 @@ export class u_usuario {
         dataTable.clear();
         
         usuarios.forEach(u => {
-            const estadoTexto = u.estado == 1 ? 'Habilitado' : 'Deshabilitado';
+            const estadoTexto = u.estado; // u.estado == 1 ? 'Activo' : 'Inactivo';
             
             let imagenHtml = '<span class="text-muted">Sin imagen</span>';
             if (u.foto) {
@@ -214,13 +223,8 @@ export class u_usuario {
             }
             
             const fila = [
-                imagenHtml,
-                u.nombreUsuario || 'Sin nombre',
-                u.correo || 'Sin correo',
-                '********',
-                u.rol || 'Sin rol',
-                estadoTexto,
-                this.generarBotonesUsuario(u.idUsuario, estadoTexto)
+                imagenHtml, u.nombreUsuario || 'Sin nombre', u.correo || 'Sin correo', '**********',
+                u.rol || 'Sin rol', estadoTexto, this.generarBotonesUsuario(u.idUsuario, estadoTexto)
             ];
             
             const nodoFila = dataTable.row.add(fila).draw().node();
@@ -251,12 +255,8 @@ export class u_usuario {
             }
             
             const fila = [
-                imagenHtml,
-                `${a.nombreAdministrativo || ''} ${a.apellidosAdministrativo || ''}`,
-                a.correo || usuario?.correo || 'Sin correo',
-                a.telefono || 'Sin teléfono',
-                usuario?.rol || 'Sin rol',
-                nombreFacultad
+                imagenHtml, `${a.nombreAdministrativo || ''} ${a.apellidosAdministrativo || ''}`, 
+                a.correo || usuario?.correo || 'Sin correo', a.telefono || 'Sin teléfono', usuario?.rol || 'Sin rol', nombreFacultad
             ];
             
             dataTable.row.add(fila).draw();
@@ -337,19 +337,17 @@ export class u_usuario {
         const nuevaContrasena = this.generarContrasena(10);
         $('#formUsuario').data('contrasena-generada', nuevaContrasena);
         
-        // Solo para depuración en desarrollo
+        // Solo para depuración en desarrollo (cambiar despues)
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             console.log('Contraseña generada:', nuevaContrasena);
         }
     }
 
     // ========== OBTENER CONTRASEÑA GENERADA ==========
-    static obtenerContrasenaGenerada() {
-        return $('#formUsuario').data('contrasena-generada');
-    }
+    static obtenerContrasenaGenerada() { return $('#formUsuario').data('contrasena-generada'); }
 
     // ========== VALIDAR FORMULARIO COMPLETO ==========
-    static validarFormularioCompleto(modoEdicion = false) {
+    static validarFormularioCompleto(_modoEdicion = false) {
         const nombreOCorreo = $('#nombreOCorreoUsuario').val().trim();
         const rol = $('#rolUsuario').val();
         
@@ -378,7 +376,7 @@ export class u_usuario {
             if (!u_usuario.validarApellidos(apellidos)) return false;
             if (!u_usuario.validarCorreo(correo)) return false;
             if (!u_usuario.validarTelefono(telefono)) return false;
-            if (!u_usuario.validarFacultad(facultad)) return false;
+            //if (u_usuario.validarFacultad(facultad)) return false;
         }
         
         return true;

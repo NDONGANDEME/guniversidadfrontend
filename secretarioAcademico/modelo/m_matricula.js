@@ -1,4 +1,4 @@
-import { fetchMatricula } from "../servicios/fetchMatricula";
+import { fetchMatricula } from "../servicios/fetchMatricula.js";
 
 export class m_matricula
 {

@@ -17,12 +17,14 @@ export class m_usuario
         return await fetchUsuario.obtenerUsuariosEnBDD();
     }
 
-    static async insertarUsuario(objeto) {
-        return await fetchUsuario.insertarUsuarioEnBDD(objeto);
+    static async insertarUsuario(formData) {
+        // formData puede ser un objeto plano o un FormData
+        return await fetchUsuario.insertarUsuarioEnBDD(formData);
     }
 
-    static async actualizarUsuario(objeto) {
-        return await fetchUsuario.actualizarUsuarioEnBDD(objeto);
+    static async actualizarUsuario(formData) {
+        // formData puede ser un objeto plano o un FormData
+        return await fetchUsuario.actualizarUsuarioEnBDD(formData);
     }
 
     static async deshabilitarUsuario(id) {

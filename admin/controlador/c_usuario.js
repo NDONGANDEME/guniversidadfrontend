@@ -26,14 +26,9 @@ export class c_usuario {
     // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
-            // Verificar sesión
             sesiones.verificarExistenciaSesion();
-            
-            // Cargar componentes HTML
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
             await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
-            
-            // Configurar navegación
             u_utiles.botonesNavegacionAdministrador();
             
             // Inicializar DataTables
@@ -52,8 +47,7 @@ export class c_usuario {
             u_usuario.configurarSubidaImagen();
             
         } catch (error) {
-            console.error('Error al inicializar:', error);
-            Alerta.error('Error', 'No se pudo inicializar el módulo');
+            Alerta.error('Error', `No se pudo inicializar el módulo: ${error}`);
         }
     }
 
@@ -84,7 +78,7 @@ export class c_usuario {
             this.facultades = datos || [];
             u_usuario.cargarFacultadesEnSelect(this.facultades);
         } catch (error) {
-            console.error('Error al cargar facultades:', error);
+            Alerta.notificarError(`Error al cargar facultades: ${error}`, 1500);
             this.facultades = [];
         }
     }
@@ -95,8 +89,7 @@ export class c_usuario {
             this.usuarios = datos || [];
             this.actualizarTablaUsuarios();
         } catch (error) {
-            console.error('Error al cargar usuarios:', error);
-            Alerta.error('Error', 'Fallo al cargar usuarios');
+            Alerta.error('Error', `Fallo al cargar usuarios: ${error}`);
             this.usuarios = [];
         }
     }
@@ -107,16 +100,13 @@ export class c_usuario {
             this.administrativos = datos || [];
             this.actualizarTablaAdministrativos();
         } catch (error) {
-            console.error('Error al cargar administrativos:', error);
-            Alerta.error('Error', 'Fallo al cargar administrativos');
+            Alerta.error('Error', `Fallo al cargar administrativos: ${error}`);
             this.administrativos = [];
         }
     }
 
     // ========== VALIDACIONES ==========
-    configurarValidaciones() {
-        u_usuario.configurarValidaciones();
-    }
+    configurarValidaciones() { u_usuario.configurarValidaciones(); }
 
     // ========== EVENTOS ==========
     configurarEventos() {
@@ -161,7 +151,7 @@ export class c_usuario {
     async guardarUsuario() {
         // Validar formulario
         if (!u_usuario.validarFormularioCompleto(this.modoEdicion)) {
-            Alerta.advertencia('Campos inválidos', 'Complete correctamente todos los campos');
+            Alerta.notificarAdvertencia('Complete correctamente todos los campos', 1500);
             return;
         }
         
@@ -171,67 +161,64 @@ export class c_usuario {
             
             const esCorreo = nombreOCorreo.includes('@');
             
-            // Preparar datos del usuario
-            const datosUsuario = {
-                nombreUsuario: esCorreo ? nombreOCorreo.split('@')[0] : nombreOCorreo,
-                correo: esCorreo ? nombreOCorreo : `${nombreOCorreo}@sistema.com`,
-                rol: rol,
-                estado: 1
-            };
+            // Crear FormData para enviar los datos al backend
+            const formData = new FormData();
             
-            // Si es nuevo usuario, usar la contraseña generada
+            // Añadir datos del usuario al FormData
+            formData.append('nombreUsuario', esCorreo ? nombreOCorreo.split('@')[0] : nombreOCorreo);
+            formData.append('correo', esCorreo ? nombreOCorreo : `${nombreOCorreo}@sistema.com`);
+            formData.append('rol', rol);
+            
+            // Si es nuevo usuario, añadir contraseña
             if (!this.modoEdicion) {
                 const contrasenaGenerada = u_usuario.obtenerContrasenaGenerada();
                 if (!contrasenaGenerada) {
-                    Alerta.error('Error', 'Error al generar la contraseña');
+                    Alerta.notificarError('Error al generar la contraseña', 1000);
                     return;
                 }
-                datosUsuario.contrasena = contrasenaGenerada;
-            } else {
-                // En edición, mantener la contraseña actual
-                datosUsuario.contrasena = this.usuarioActual.contrasena;
+                formData.append('contrasena', contrasenaGenerada);
             }
             
-            // Procesar imagen si existe (simplificado)
-            const archivoImagen = $('#campoArchivoFotoPerfil')[0].files[0];
+            // Si es modo edición, añadir el ID
+            if (this.modoEdicion) {
+                formData.append('idUsuario', this.usuarioActual.idUsuario);
+            }
+            
+            // Añadir imagen si existe
+            const archivoImagen = u_usuario.obtenerImagenParaSubir();
             if (archivoImagen) {
-                // Aquí iría la lógica para subir la imagen al servidor
-                // Por ahora, simulamos que se guarda la imagen en base64
-                const lector = new FileReader();
-                datosUsuario.foto = await new Promise((resolve) => {
-                    lector.onload = (e) => resolve(e.target.result);
-                    lector.readAsDataURL(archivoImagen);
-                });
+                formData.append('foto', archivoImagen || null); // El backend recibirá el archivo con el nombre 'foto'
             }
             
             let resultado;
             let idUsuario;
             
             if (this.modoEdicion) {
-                datosUsuario.idUsuario = this.usuarioActual.idUsuario;
-                resultado = await m_usuario.actualizarUsuario(datosUsuario);
+                // Actualizar usuario (enviar FormData)
+                resultado = await m_usuario.actualizarUsuario(formData);
                 idUsuario = this.usuarioActual.idUsuario;
             } else {
-                resultado = await m_usuario.insertarUsuario(datosUsuario);
+                // Insertar nuevo usuario (enviar FormData)
+                console.log(formData)
+                resultado = await m_usuario.insertarUsuario(formData);
                 idUsuario = resultado?.idUsuario || resultado;
             }
             
             // Guardar datos personales si es administrativo
-            if ((rol === 'Secretario' || rol === 'Administrador') && idUsuario) {
-                const datosAdministrativo = {
-                    idUsuario: idUsuario,
-                    nombreAdministrativo: $('#nombreUsuario').val().trim(),
-                    apellidosAdministrativo: $('#apellidosUsuario').val().trim(),
-                    correo: $('#correoUsuario').val().trim(),
-                    telefono: $('#telefonoUsuario').val().trim(),
-                    idFacultad: $('#facultadesUsuario').val()
-                };
+            if ((rol === 'Secretario' || rol === 'Administrador') || idUsuario) {
+                const formDataAdmin = new FormData();
+                formDataAdmin.append('idUsuario', idUsuario);
+                formDataAdmin.append('nombreAdministrativo', $('#nombreUsuario').val().trim());
+                formDataAdmin.append('apellidosAdministrativo', $('#apellidosUsuario').val().trim());
+                formDataAdmin.append('correo', $('#correoUsuario').val().trim());
+                formDataAdmin.append('telefono', $('#telefonoUsuario').val().trim());
+                formDataAdmin.append('idFacultad', $('#facultadesUsuario').val());
                 
                 if (this.modoEdicion && this.administrativoActual) {
-                    datosAdministrativo.idAdministrativos = this.administrativoActual.idAdministrativos;
-                    await m_administrativo.actualizarAdministrativo(datosAdministrativo);
+                    formDataAdmin.append('idAdministrativos', this.administrativoActual.idAdministrativos);
+                    await m_administrativo.actualizarAdministrativo(formDataAdmin);
                 } else {
-                    await m_administrativo.insertarAdministrativo(datosAdministrativo);
+                    await m_administrativo.insertarAdministrativo(formDataAdmin);
                 }
             }
             
@@ -256,8 +243,7 @@ export class c_usuario {
                 Alerta.exito('Éxito', this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado');
             }
         } catch (error) {
-            console.error('Error al guardar usuario:', error);
-            Alerta.error('Error', 'No se pudo guardar el usuario');
+            Alerta.notificarError(`No se pudo guardar el usuario: ${error}`, 1500);
         }
     }
 
@@ -294,27 +280,18 @@ export class c_usuario {
             if (resultado) {
                 usuario.estado = nuevoEstado;
                 this.actualizarTablaUsuarios();
-                Alerta.exito('Éxito', `Usuario ${accion}do`);
+                Alerta.notificarExito(`Usuario ${accion}do`, 1000);
             }
         } catch (error) {
-            console.error(`Error al ${accion} usuario:`, error);
-            Alerta.error('Error', `No se pudo ${accion} el usuario`);
+            Alerta.error('Error', `No se pudo ${accion} el usuario: ${error}`);
         }
     }
 
-    actualizarTablaUsuarios() {
-        u_usuario.actualizarTablaUsuarios(this.dataTableUsuarios, this.usuarios);
-    }
+    actualizarTablaUsuarios() { u_usuario.actualizarTablaUsuarios(this.dataTableUsuarios, this.usuarios); }
 
     // ========== FUNCIONES PARA ADMINISTRATIVOS ==========
-    
     actualizarTablaAdministrativos() {
-        u_usuario.actualizarTablaAdministrativos(
-            this.dataTableAdministrativos, 
-            this.administrativos, 
-            this.usuarios, 
-            this.facultades
-        );
+        u_usuario.actualizarTablaAdministrativos(this.dataTableAdministrativos, this.administrativos, this.usuarios, this.facultades);
     }
 
     // ========== FILTROS ==========
@@ -328,7 +305,7 @@ export class c_usuario {
         // Aplicar filtros personalizados
         if (rol !== 'Ninguno' || estado !== 'Ninguno') {
             $.fn.dataTable.ext.search.push(
-                function(settings, data, dataIndex) {
+                function(_settings, data, dataIndex) {
                     const row = $(this.dataTableUsuarios.row(dataIndex).node());
                     const rolUsuario = data[4]; // Columna del rol
                     const estadoUsuario = data[5]; // Columna del estado

@@ -3,7 +3,7 @@ export class u_verificaciones
     // metodo para validar el correo. Solo letras, números, @ y punto, sin espacios ni otros símbolos
     static validarCorreo(correo) 
     {
-        const regex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/;
+        const regex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{3,}$/;
         return regex.test(correo.trim());
     }
     
@@ -25,7 +25,7 @@ export class u_verificaciones
     // metodo para validar el nombre: solo se aceptan caracteres y como min 3
     static validarNombre(nombre) 
     {
-        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,50}/;
+        const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,20}/;
         return regex.test(nombre.trim());
     }
 
@@ -74,7 +74,7 @@ export class u_verificaciones
     // metodo para validar nombre o correo
     static validarNombreOCorreo(nombreOCorreo)
     {
-        const regexCorreo = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/;
+        const regexCorreo = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{3,}$/;
         const regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s0-9_]{3,20}/;
 
         if (regexCorreo.test(nombreOCorreo)){

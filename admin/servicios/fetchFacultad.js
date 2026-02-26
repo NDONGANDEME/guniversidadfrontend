@@ -11,7 +11,7 @@ export class fetchFacultad
      */
     static async obtenerFacultadesDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&action=obtenerFacultades&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=obtenerFacultades&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
