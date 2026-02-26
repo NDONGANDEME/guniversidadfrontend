@@ -14,7 +14,7 @@ export class fetchSesion
             let solicitud = await fetch(`${this.url}?ruta=sesion&accion=verificarCredenciales&actor=global`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json(); console.log(respuesta);
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return[];

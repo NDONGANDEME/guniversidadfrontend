@@ -5,6 +5,26 @@ export class fetchUsuario
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
+     * Envia solicitud para insertar un nuevo usuario en la BDD 
+     * @param {m_usuario} objeto 
+     * @returns id del nuevo registro insertado
+     */
+    static async insertarUsuarioEnBDD(objeto) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=insertarUsuario&actor=admin`, {
+                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
+            });
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return null;
+        } catch(error){
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario]. ${error}`, 3000);
+            return null;
+        }
+    }
+
+    /**
      * Envia solicitud para actualizar un registro existente de la BDD
      * @param {m_usuario} objeto 
      * @returns id del registro actualizado
@@ -14,7 +34,7 @@ export class fetchUsuario
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=actualizarUsuario&actor=admin`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -32,7 +52,7 @@ export class fetchUsuario
     static async deshabilitarUsuarioEnBDD(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=deshabilitarUsuario&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
@@ -50,7 +70,7 @@ export class fetchUsuario
     static async habilitarUsuarioEnBDD(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=habilitarUsuario&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
@@ -67,7 +87,7 @@ export class fetchUsuario
     static async obtenerUsuariosEnBDD() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=obtenerUsuarios&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];

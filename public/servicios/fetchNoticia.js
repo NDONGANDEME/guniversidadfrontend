@@ -109,14 +109,10 @@ export class fetchNoticia
                 method: 'POST',
                 body: formData
             });
-            
-            let respuesta = await solicitud.text(); console.log(respuesta)
-            
-            if (respuesta.estado == 'exito') return respuesta.resultado;
-            else {
-                console.error('Error del servidor:', respuesta);
-                return null;
-            }
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return null;
         } catch(error) {
             console.error('Error en fetchNoticia.actualizarNoticiaEnBDD:', error);
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
@@ -132,7 +128,7 @@ export class fetchNoticia
     static async eliminarNoticiaEnBDD(id) {
         try  {
             let solicitud = await fetch(`${this.url}?ruta=noticia&accion=eliminarNoticia&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
