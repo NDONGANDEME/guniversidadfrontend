@@ -81,7 +81,7 @@ export class fetchUsuario
             }
             
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=insertarUsuario&actor=admin`, options);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -103,7 +103,7 @@ export class fetchUsuario
             const esFormData = objeto instanceof FormData;
             
             const options = {
-                method: 'PUT',
+                method: 'POST', // Cambiar a POST en lugar de PUT
                 body: esFormData ? objeto : JSON.stringify(objeto)
             };
             
@@ -112,12 +112,23 @@ export class fetchUsuario
                 options.headers = { 'Content-Type': 'application/json' };
             }
             
-            // El ID va en el body, no en la URL
-            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=actualizarUsuario&actor=admin`, options);
-            let respuesta = await solicitud.text();
+            // Importante: Pasar el ID en la URL también para que el gateway lo tenga disponible
+            let url = `${this.url}?ruta=usuario&accion=actualizarUsuario&actor=admin`;
+            
+            // Si es FormData, el idUsuario debe estar en el FormData
+            // Si es objeto plano, agregar id a la URL
+            if (!esFormData && objeto.idUsuario) {
+                url += `&idUsuario=${objeto.idUsuario}`;
+            }
+            
+            let solicitud = await fetch(url, options);
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                console.error('Error en actualización:', respuesta);
+                return null;
+            }
         } catch(error){
             Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario. actualizacion]. ${error}`, 3000);
             return null;

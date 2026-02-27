@@ -288,21 +288,25 @@ export class c_departamento {
     }
 
     editarCarrera(id) {
-        const carrera = this.carreras.find(c => c.idCarrera == id);
+        const carrera = this.carreras.find(c => c.idCarrera == id); console.log(carrera)
         if (!carrera) return;
         
         this.modoEdicionCarrera = true;
         this.carreraActual = carrera;
         
         $('#nombreCarrera').val(carrera.nombreCarrera || '');
-        $('#comboDepartamentoCarrera').val(carrera.nombreDepartamento || '');
         
-        // Buscar el nombre del departamento
-        /*const depto = this.departamentosParaCarreras.find(d => d.idDepartamento == carrera.idDepartamento);
-        if (depto) {
-            $('#comboDepartamentoCarrera').val(depto.nombre);
+        // Buscar el departamento correspondiente
+        //const depto = this.departamentosParaCarreras.find(d => d.idDepartamento == carrera.idDepartamento); console.log(depto)
+        if (1) {
+            $('#comboDepartamentoCarrera').val(carrera.nombreDepartamento);
             $('#comboDepartamentoCarrera').data('id-seleccionado', carrera.idDepartamento);
-        }*/
+            $('#comboDepartamentoCarrera').removeClass('border-danger').addClass('border-success');
+        } 
+        //else {
+           // $('#comboDepartamentoCarrera').val('');
+           // $('#comboDepartamentoCarrera').data('id-seleccionado', null);
+        //}
         
         u_departamento.configurarModoEdicion(true, 'carrera');
     }

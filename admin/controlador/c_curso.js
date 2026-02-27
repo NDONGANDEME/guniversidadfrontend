@@ -256,7 +256,6 @@ export class c_curso {
                 datos.idSemestre = this.semestreActual.idSemestre;
                 resultado = await m_semestre.actualizarSemestre(datos);
             } else {
-                console.log(datos)
                 resultado = await m_semestre.insertarSemestre(datos);
             }
             

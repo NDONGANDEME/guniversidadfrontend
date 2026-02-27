@@ -59,10 +59,11 @@ export class fetchAsignatura
     /**
      * Enviar solicitud para cargar las asignaturas por facultad de la BDD
      * @returns array de asignaturas de una facultad en especifico
+     * Ya es funcional
      */
     static async obtenerAsignaturasPorFacultadDelBackend(idFacultad) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPorFacultad&actor=admin&valor=${idFacultad}`);
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPorFacultad&actor=admin&idFacultad=${idFacultad}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 

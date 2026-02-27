@@ -13,23 +13,23 @@ export class u_departamento
     // ========== VALIDACIONES EN TIEMPO REAL ==========
     static configurarValidaciones() {
         // Validar nombre del departamento
-        $('#nombreDepartamento').on('input', function() {
+        $('#nombreDepartamento').off('input').on('input', function() {
             const valor = $(this).val().trim();
             const valido = u_departamento.validarNombre(valor);
             u_utiles.colorearCampo(valido, '#nombreDepartamento', '#errorNombreDepartamento', 'Mínimo 3 caracteres');
         });
 
         // Validar facultad seleccionada
-        $('#facultadesDepartamento').on('change', function() {
+        $('#facultadesDepartamento').off('change').on('change', function() {
             const valor = $(this).val();
             const valido = u_departamento.validarFacultad(valor);
             u_utiles.colorearCampo(valido, '#facultadesDepartamento', '#errorFacultadesDepartamento', 'Seleccione una facultad');
         });
 
         // Validar nombre de carrera
-        $('#nombreCarrera').on('input', function() {
+        $('#nombreCarrera').off('input').on('input', function() {
             const valor = $(this).val().trim();
-            const valido = u_departamento.validarNombre(valor) //valor.length >= 3;
+            const valido = u_departamento.validarNombre(valor);
             u_utiles.colorearCampo(valido, '#nombreCarrera', '#errorNombreCarrera', 'Mínimo 3 caracteres');
         });
     }
@@ -90,6 +90,10 @@ export class u_departamento
         // Guardar departamentos en un data attribute para acceder desde cualquier método
         $input.data('departamentos', departamentos);
         
+        // Limpiar eventos anteriores para evitar duplicados
+        $input.off('focus click input');
+        $opciones.off('click');
+        
         // Al hacer focus en el input, mostrar opciones
         $input.on('focus click', function(e) {
             e.stopPropagation();
@@ -109,11 +113,14 @@ export class u_departamento
         });
         
         // Ocultar al hacer click fuera
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.combo-input-wrapper').length) {
-                $opciones.hide();
-            }
-        });
+        $(document).off('click', u_departamento.ocultarOpciones);
+        $(document).on('click', u_departamento.ocultarOpciones);
+    }
+
+    static ocultarOpciones(e) {
+        if (!$(e.target).closest('.combo-input-wrapper').length) {
+            $('#opcionesDepartamentosCarrera').hide();
+        }
     }
 
     /**
@@ -126,24 +133,15 @@ export class u_departamento
             return;
         }
         
-        // Si la búsqueda está vacía, mostrar todos los departamentos
-        if (!busqueda || busqueda === '') {
-            let html = '';
-            departamentos.forEach(d => {
-                html += `<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombreDepartamento}</div>`;
-            });
-            $opciones.html(html).show();
-            
-            // Asignar eventos a las opciones
-            u_departamento.asignarEventosOpciones($opciones, onSeleccionar);
-            return;
-        }
-        
         // Filtrar departamentos por la búsqueda
-        const filtrados = departamentos.filter(d => 
-            d.nombreDepartamento.toLowerCase().includes(busqueda)
-        );
-        
+        let filtrados = [];
+        if (!busqueda || busqueda === '') {
+            filtrados = departamentos;
+        } else {
+            filtrados = departamentos.filter(d => 
+                d.nombreDepartamento && d.nombreDepartamento.toLowerCase().includes(busqueda)
+            );
+        }
         
         // Si no hay resultados
         if (filtrados.length === 0) {
@@ -154,7 +152,7 @@ export class u_departamento
         // Generar HTML de las opciones encontradas
         let html = '';
         filtrados.forEach(d => {
-            html += `<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombre}</div>`;
+            html += `<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombreDepartamento}</div>`;
         });
         
         $opciones.html(html).show();
@@ -199,10 +197,6 @@ export class u_departamento
 
     // ========== TABLA DE DEPARTAMENTOS ==========
     static generarBotonesDepartamento(id) {
-        /*<button class="btn btn-sm btn-outline-info toggle-estado-departamento" title="Cambiar estado" data-id="${id}">
-                    <i class="fas fa-sync-alt"></i>
-                </button>*/
-
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-departamento" title="Editar" data-id="${id}">
@@ -243,10 +237,6 @@ export class u_departamento
         const iconoToggle = estado == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
         const claseToggle = estado == 1 ? 'btn-outline-danger' : 'btn-outline-success';
         const textoToggle = estado == 1 ? 'Deshabilitar' : 'Habilitar';
-
-        /*<button class="btn btn-sm ${claseToggle} toggle-estado-carrera" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
-                </button>*/
         
         return `
             <div class="d-flex justify-content-center gap-1">
@@ -263,7 +253,7 @@ export class u_departamento
         dataTable.clear();
         
         carreras.forEach(c => {
-            const nombreDepto = c.nombreDepartamento;
+            const nombreDepto = c.nombreDepartamento || 'Sin departamento';
             const estadoTexto = c.estado == 'Habilitado' ? 'Habilitado' : 'Deshabilitado';
             
             const fila = [

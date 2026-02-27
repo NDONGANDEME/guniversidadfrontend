@@ -230,19 +230,36 @@
                         </div>
 
                         <div class="row mt-2">
-                            <div class="col-3">
-                                <!--Area para mostrar la imagen-->
+                            <!--<div class="col-3">
+                                <--Area para mostrar la imagen--
                                 <div class="mb-2 rounded-3 text-center" id="contenedorFotoPerfil">
                                     <i class="fas fa-user"></i>
                                 </div>
 
-                                <!-- Área para añadir la imagen -->
+                                !-- Área para añadir la imagen --
                                 <div class="file-input-wrapper2 mb-1 text-center" id="añadirImagen">
                                     <i class="fas fa-plus"></i>
                                 </div>
                                 
-                                <!-- Input file oculto -->
+                                <!- Input file oculto --
                                 <input type="file" id="campoArchivoFotoPerfil" multiple accept=".png,.jpg,.jpeg">
+                            </div>-->
+
+                            <div class="col-3">
+                                <!-- Área para mostrar la imagen -->
+                                <div class="mb-2 rounded-3 text-center" id="contenedorFotoPerfil">
+                                    <div class="d-flex justify-content-center align-items-center bg-light rounded-3 border w-100" style="width: 120px; height: 120px;">
+                                        <i class="fas fa-user text-secondary" style="font-size: 3rem;"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Botón para añadir imagen -->
+                                <div class="file-input-wrapper2 mb-1 text-center" id="añadirImagen" style="cursor: pointer;">
+                                    <i class="fas fa-plus"></i> Añadir imagen
+                                </div>
+                                
+                                <!-- Input file oculto -->
+                                <input type="file" id="campoArchivoFotoPerfil" accept=".png,.jpg,.jpeg" style="display: none;">
                             </div>
 
                             <div class="col-9">
@@ -259,6 +276,7 @@
                                         <option value="Estudiante">Estudiante</option>
                                         <option value="Profesor">Profesor</option>
                                         <option value="Secretario">Secretario</option>
+                                        <option value="administrador">Administrador</option>
                                     </select>
                                     <label id="errorRolUsuario" class="errorMensaje"></label>
                                 </div>

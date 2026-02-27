@@ -1,4 +1,5 @@
-import { fetchPrerequisito } from "../../admin/servicios/fetchPrerequisitos";
+import { fetchPrerequisito } from "../servicios/fetchPrerequisitos.js";
+
 
 export class m_prerequisito
 {
@@ -8,15 +9,15 @@ export class m_prerequisito
         this.idAsignaturaRequerida = idAsignaturaRequerida;
     }
 
-    static async obtenerMatriculas() {
+    static async obtenerPrerequisito() {
         return await fetchPrerequisito.obtenerPrerequisitosDelBackend();
     }
 
-    static async insertarMatricula(objeto) {
+    static async insertarPrerequisito(objeto) {
         return await fetchPrerequisito.insertarPrerequisitoEnBDD(objeto);
     }
 
-    static async actualizarMatricula(objeto) {
+    static async actualizarPrerequisito(objeto) {
         return await fetchPrerequisito.actualizarPrerequisitoEnBDD(objeto);
     }
 }

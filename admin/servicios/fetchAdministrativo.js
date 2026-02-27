@@ -28,36 +28,60 @@ export class fetchAdministrativo
      * @returns id del nuevo registro insertado
      */
     static async insertarAdministrativoEnBackend(objeto) {
+        console.log(objeto)
         try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=insertarAdministrativo&actor=admin`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
-            let respuesta = await solicitud.json();
+            // Detectar si es FormData
+            const esFormData = objeto instanceof FormData;
             
+            const options = {
+                method: 'POST',
+                body: esFormData ? objeto : JSON.stringify(objeto)
+            };
+            
+            // Solo agregar headers si NO es FormData
+            if (!esFormData) {
+                options.headers = { 'Content-Type': 'application/json' };
+            }
+            
+            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=insertarAdministrativo&actor=admin`, options);
+            let respuesta = await solicitud.json();
+
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAdministrativo]. ${error}`, 3000);
+        } catch(error){
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchAdministrativo. insercion]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
      * Envia solicitud para actualizar un administrativo existente de la BDD
-     * @param {m_administrativo} objeto 
+     * @param {m_administrativo|FormData} objeto
      * @returns id del registro actualizado
      */
     static async actualizarAdministrativoEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=actualizarAdministrativo&actor=admin`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
+            // Detectar si es FormData
+            const esFormData = objeto instanceof FormData;
+            
+            const options = {
+                method: 'POST',
+                body: esFormData ? objeto : JSON.stringify(objeto)
+            };
+            
+            // Solo agregar headers si NO es FormData
+            if (!esFormData) {
+                options.headers = { 'Content-Type': 'application/json' };
+            }
+            
+            // El ID va en el body, no en la URL
+            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=actualizarAdministrativo&actor=admin`, options);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAdministrativo]. ${error}`, 3000);
+        } catch(error){
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchAdministrativo. actualizacion]. ${error}`, 3000);
             return null;
         }
     }

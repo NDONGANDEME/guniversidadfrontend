@@ -149,14 +149,34 @@ export class u_usuario {
                     return;
                 }
                 
+                // Validar tamaño (máximo 2MB)
+                if (archivo.size > 2 * 1024 * 1024) {
+                    Alerta.notificarAdvertencia('La imagen no debe superar los 2MB', 1500);
+                    $(this).val('');
+                    return;
+                }
+                
                 // Guardar el archivo en el data del formulario para usarlo después
-                console.log(archivo);
                 $('#formUsuario').data('imagen-perfil', archivo);
                 
-                // Mostrar preview
+                // Mostrar preview con mejor estilo
                 const lector = new FileReader();
                 lector.onload = function(e) {
-                    $('#contenedorFotoPerfil').html(`<img src="${e.target.result}" class="img-fluid rounded-3" style="max-width: 100%;">`);
+                    $('#contenedorFotoPerfil').html(`
+                        <div class="position-relative">
+                            <img src="${e.target.result}" class="img-fluid rounded-3 border border-2 border-warning" 
+                                style="width: 120px; height: 120px; object-fit: cover;">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle p-0" 
+                                    style="width: 24px; height: 24px;" id="btnEliminarImagenTemp">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `);
+                    
+                    // Botón para eliminar la imagen temporal
+                    $('#btnEliminarImagenTemp').off('click').on('click', function() {
+                        u_usuario.limpiarImagen();
+                    });
                 };
                 lector.readAsDataURL(archivo);
             }
@@ -164,9 +184,14 @@ export class u_usuario {
     }
 
     static limpiarImagen() {
-        $('#contenedorFotoPerfil').html('<i class="fas fa-user" style="font-size: 1.5rem;"></i>');
+        $('#contenedorFotoPerfil').html(`
+            <div class="d-flex justify-content-center align-items-center bg-light rounded-3 border" 
+                style="width: 120px; height: 120px;">
+                <i class="fas fa-user text-secondary" style="font-size: 3rem;"></i>
+            </div>
+        `);
         $('#campoArchivoFotoPerfil').val('');
-        $('#formUsuario').removeData('imagen-perfil'); // Limpiar archivo guardado
+        $('#formUsuario').removeData('imagen-perfil');
     }
 
     // ========== OBTENER IMAGEN PARA SUBIR ==========
@@ -205,15 +230,18 @@ export class u_usuario {
     // ========== ACTUALIZAR TABLA DE USUARIOS ==========
     static actualizarTablaUsuarios(dataTable, usuarios) {
         if (!dataTable) return;
+
+        const baseUrl = '/guniversidadfrontend/public/img/';
         
         dataTable.clear();
         
         usuarios.forEach(u => {
+            let fotoNombre = baseUrl +  u.foto;
             const estadoTexto = u.estado == 'activo' ? 'Activo' : 'Inactivo';
             
             let imagenHtml = '<span class="text-muted">Sin imagen</span>';
-            if (u.foto) {
-                imagenHtml = `<img src="${u.foto}" class="img-thumbnail" style="max-width: 40px; max-height: 40px;">`;
+            if (fotoNombre) {
+                imagenHtml = `<img src="${fotoNombre}" class="img-thumbnail" style="max-width: 40px; max-height: 40px;">`;
             }
             
             const fila = [
@@ -235,17 +263,20 @@ export class u_usuario {
     // ========== ACTUALIZAR TABLA DE ADMINISTRATIVOS ==========
     static actualizarTablaAdministrativos(dataTable, administrativos, usuarios, facultades) {
         if (!dataTable) return;
+
+        const baseUrl = '/guniversidadfrontend/public/img/';
         
         dataTable.clear();
         
         administrativos.forEach(a => {
             const usuario = usuarios.find(u => u.idUsuario == a.idUsuario);
             const facultad = facultades.find(f => f.idFacultad == a.idFacultad);
+            let fotoNombre = baseUrl + usuario.foto;
             const nombreFacultad = facultad ? facultad.nombreFacultad : 'Ninguna';
             
             let imagenHtml = '<span class="text-muted">Sin imagen</span>';
-            if (usuario && usuario.foto) {
-                imagenHtml = `<img src="${usuario.foto}" class="img-thumbnail" style="max-width: 40px; max-height: 40px;">`;
+            if (usuario && fotoNombre) {
+                imagenHtml = `<img src="${fotoNombre}" class="img-thumbnail" style="max-width: 40px; max-height: 40px;">`;
             }
             
             const fila = [
@@ -293,6 +324,8 @@ export class u_usuario {
     static cargarDatosEnModal(usuario, administrativo, facultades) {
         // Limpiar primero
         this.limpiarModal();
+
+        const baseUrl = '/guniversidadfrontend/public/img/';
         
         // Cargar datos básicos
         $('#nombreOCorreoUsuario').val(usuario.nombreUsuario || '');
@@ -302,8 +335,16 @@ export class u_usuario {
         $('#nombreOCorreoUsuario').trigger('input');
         $('#rolUsuario').trigger('change');
         
+        // Mostrar imagen existente con mejor estilo
         if (usuario.foto) {
-            $('#contenedorFotoPerfil').html(`<img src="${usuario.foto}" class="img-fluid rounded-3" style="max-height: 100px; max-width: 100%;">`);
+            const fotoNombre = baseUrl + usuario.foto;
+            $('#contenedorFotoPerfil').html(`
+                <div class="position-relative">
+                    <img src="${fotoNombre}" class="img-fluid rounded-3 border border-2 border-warning" 
+                        style="width: 120px; height: 120px; object-fit: cover;"
+                        onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div class=\'d-flex justify-content-center align-items-center bg-light rounded-3 border\' style=\'width: 120px; height: 120px;\'><i class=\'fas fa-user text-secondary\' style=\'font-size: 3rem;\'></i></div>';">
+                </div>
+            `);
         }
         
         // Si es administrativo, cargar datos personales

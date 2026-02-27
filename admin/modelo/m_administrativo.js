@@ -16,11 +16,11 @@ export class m_administrativo
         return await fetchAdministrativo.obtenerAdministrativosDelBackend();
     }
 
-    static async insertarAdministrativo(objeto) {
-        return await fetchAdministrativo.insertarAdministrativoEnBackend(objeto);
+    static async insertarAdministrativo(formDataAdmin) {
+        return await fetchAdministrativo.insertarAdministrativoEnBackend(formDataAdmin);
     }
 
-    static async actualizarAdministrativo(objeto) {
-        return await fetchAdministrativo.actualizarAdministrativoEnBackend(objeto);
+    static async actualizarAdministrativo(formDataAdmin) {
+        return await fetchAdministrativo.actualizarAdministrativoEnBackend(formDataAdmin);
     }
 }

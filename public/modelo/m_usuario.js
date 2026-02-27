@@ -18,12 +18,10 @@ export class m_usuario
     }
 
     static async insertarUsuario(formData) {
-        // formData puede ser un objeto plano o un FormData
         return await fetchUsuario.insertarUsuarioEnBDD(formData);
     }
 
     static async actualizarUsuario(formData) {
-        // formData puede ser un objeto plano o un FormData
         return await fetchUsuario.actualizarUsuarioEnBDD(formData);
     }
 

@@ -7,10 +7,11 @@ export class fetchPrerequisito
     /**
      * Envia solicitud para listar los prerequisitos de la BDD
      * @returns array de prerequisitos
+     * Ya es funcional
      */
     static async obtenerPrerequisitosDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=prerequisito&accion=obtenerPrerequisitos&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=prerrequisito&accion=obtenerPrerrequisitos&actor=secretario`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -25,10 +26,11 @@ export class fetchPrerequisito
      * Envia solicitud para insertar un nuevo prerequisito en la BDD
      * @param {m_prerequisito} objeto 
      * @returns id del nuevo registro insertado
+     * Ya es funcional
      */
     static async insertarPrerequisitoEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=prerequisito&accion=insertarPrerequisito&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=prerrequisito&accion=insertarPrerrequisito&actor=secretario`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -45,10 +47,11 @@ export class fetchPrerequisito
      * Enviar solicitud para actualizar un prerequisito guardado en la BDD
      * @param {m_prerequisito} objeto 
      * @returns id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarPrerequisitoEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=prerequisito&accion=actualizarPrerequisito&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=prerrequisito&accion=actualizarPrrerequisito&actor=secretario`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();

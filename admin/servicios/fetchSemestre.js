@@ -12,7 +12,7 @@ export class fetchSemestre
     static async obtenerSemestresDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=semestre&accion=obtenerSemestres&actor=admin`);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];

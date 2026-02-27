@@ -175,9 +175,14 @@ export class c_usuario {
             formData.append('rol', rol);
             formData.append('estado', 'activo');
             
+            // Si es modo edición, añadir el ID
+            if (this.modoEdicion && this.usuarioActual) {
+                formData.append('idUsuario', this.usuarioActual.idUsuario);
+            }
+            
             // Si es nuevo usuario, añadir contraseña
             if (!this.modoEdicion) {
-                const contrasenaGenerada = u_usuario.obtenerContrasenaGenerada(); console.log(contrasenaGenerada)
+                const contrasenaGenerada = u_usuario.obtenerContrasenaGenerada();
                 if (!contrasenaGenerada) {
                     Alerta.notificarError('Error al generar la contraseña', 1000);
                     return;
@@ -185,16 +190,16 @@ export class c_usuario {
                 formData.append('contrasena', contrasenaGenerada);
             }
             
-            // Si es modo edición, añadir el ID
-            if (this.modoEdicion) {
-                formData.append('idUsuario', this.usuarioActual.idUsuario);
-            }
-            
-            // Añadir imagen si existe
-            const archivoImagen = u_usuario.obtenerImagenParaSubir(); console.log(archivoImagen)
+            // Añadir imagen si existe (solo si hay un archivo nuevo)
+            const archivoImagen = u_usuario.obtenerImagenParaSubir();
             if (archivoImagen) {
                 formData.append('foto', archivoImagen);
             }
+            
+            /*console.log('FormData a enviar:');
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }*/
             
             let resultado;
             let idUsuario;
@@ -203,6 +208,7 @@ export class c_usuario {
                 // Actualizar usuario
                 resultado = await m_usuario.actualizarUsuario(formData);
                 idUsuario = this.usuarioActual.idUsuario;
+                
             } else {
                 // Insertar nuevo usuario
                 resultado = await m_usuario.insertarUsuario(formData);
@@ -218,9 +224,11 @@ export class c_usuario {
                 formDataAdmin.append('correo', $('#correoUsuario').val().trim());
                 formDataAdmin.append('telefono', $('#telefonoUsuario').val().trim());
                 formDataAdmin.append('idFacultad', $('#facultadesUsuario').val());
+
+                
                 
                 if (this.modoEdicion && this.administrativoActual) {
-                    formDataAdmin.append('idAdministrativos', this.administrativoActual.idAdministrativos);
+                    formDataAdmin.append('idAdministrativo', this.administrativoActual.idAdministrativos);
                     await m_administrativo.actualizarAdministrativo(formDataAdmin);
                 } else {
                     await m_administrativo.insertarAdministrativo(formDataAdmin);
@@ -248,6 +256,7 @@ export class c_usuario {
                 Alerta.exito('Éxito', this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado');
             }
         } catch (error) {
+            console.error('Error en guardarUsuario:', error);
             Alerta.notificarError(`No se pudo guardar el usuario: ${error}`, 1500);
         }
     }

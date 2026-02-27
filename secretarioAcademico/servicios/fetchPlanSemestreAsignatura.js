@@ -11,7 +11,7 @@ export class fetchPlanSemestreAsignatura
     static async obtenerPlanSemestreAsignaturasDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=planSemestreAsignatura&accion=obtenerPlanSemestreAsignaturas&actor=secretario`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];
@@ -31,7 +31,7 @@ export class fetchPlanSemestreAsignatura
             let solicitud = await fetch(`${this.url}?ruta=planSemestreAsignatura&accion=insertarPlanSemestreAsignatura&actor=secretario`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -51,7 +51,7 @@ export class fetchPlanSemestreAsignatura
             let solicitud = await fetch(`${this.url}?ruta=planSemestreAsignatura&accion=actualizarPlanSemestreAsignatura&actor=secretario`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
