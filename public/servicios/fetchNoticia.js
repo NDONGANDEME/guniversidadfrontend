@@ -12,7 +12,7 @@ export class fetchNoticia
     static async obtenerNoticiasRecientesDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasRecientes&actor=global`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -89,7 +89,7 @@ export class fetchNoticia
                 body: formData
             });
             
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json(); console.log(respuesta)
             
             if (respuesta.estado == 'exito') return respuesta.resultado;
             else {

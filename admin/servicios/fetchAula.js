@@ -12,7 +12,7 @@ export class fetchAula
     static async obtenerAulasDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=aula&accion=obtenerAulas&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -29,7 +29,7 @@ export class fetchAula
     static async obtenerAulasPorFacultadDelBackend(idFacultad) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=aula&accion=obtenerAulasPorFacultad&actor=admin&valor=${idFacultad}`);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.text();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];

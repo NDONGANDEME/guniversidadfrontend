@@ -173,10 +173,11 @@ export class c_usuario {
             formData.append('nombreUsuario', esCorreo ? nombreOCorreo.split('@')[0] : nombreOCorreo);
             formData.append('correo', esCorreo ? nombreOCorreo : `${nombreOCorreo}@sistema.com`);
             formData.append('rol', rol);
+            formData.append('estado', 'activo');
             
             // Si es nuevo usuario, añadir contraseña
             if (!this.modoEdicion) {
-                const contrasenaGenerada = u_usuario.obtenerContrasenaGenerada();
+                const contrasenaGenerada = u_usuario.obtenerContrasenaGenerada(); console.log(contrasenaGenerada)
                 if (!contrasenaGenerada) {
                     Alerta.notificarError('Error al generar la contraseña', 1000);
                     return;
@@ -190,7 +191,7 @@ export class c_usuario {
             }
             
             // Añadir imagen si existe
-            const archivoImagen = u_usuario.obtenerImagenParaSubir();
+            const archivoImagen = u_usuario.obtenerImagenParaSubir(); console.log(archivoImagen)
             if (archivoImagen) {
                 formData.append('foto', archivoImagen);
             }
@@ -209,7 +210,7 @@ export class c_usuario {
             }
             
             // Guardar datos personales si es administrativo
-            if ((rol === 'Secretario' || rol === 'Administrador') && idUsuario) {
+            if ((rol === 'Secretario') && idUsuario) {
                 const formDataAdmin = new FormData();
                 formDataAdmin.append('idUsuario', idUsuario);
                 formDataAdmin.append('nombreAdministrativo', $('#nombreUsuario').val().trim());
@@ -263,7 +264,7 @@ export class c_usuario {
         u_usuario.configurarModoEdicion(true);
     }
 
-    async cambiarEstadoUsuario(id) {
+    /*async cambiarEstadoUsuario(id) {
         const usuario = this.usuarios.find(u => u.idUsuario == id);
         if (!usuario) return;
         
@@ -289,7 +290,7 @@ export class c_usuario {
         } catch (error) {
             Alerta.error('Error', `No se pudo ${accion} el usuario: ${error}`);
         }
-    }
+    }*/
 
     actualizarTablaUsuarios() { 
         u_usuario.actualizarTablaUsuarios(this.dataTableUsuarios, this.usuarios); 

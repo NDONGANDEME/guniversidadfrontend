@@ -89,7 +89,7 @@ export class u_usuario {
             u_utiles.colorearCampo(valido, '#rolUsuario', '#errorRolUsuario', 'Seleccione un rol');
             
             // Mostrar u ocultar panel de datos personales según el rol
-            if (valor === 'Secretario' || valor === 'Administrador') {
+            if (valor === 'Secretario') {
                 $('#panelDatosPersonales').removeClass('d-none');
                 // Activar validaciones de datos personales
                 $('#nombreUsuario, #apellidosUsuario, #correoUsuario, #telefonoUsuario, #facultadesUsuario').trigger('input');
@@ -149,21 +149,14 @@ export class u_usuario {
                     return;
                 }
                 
-                // Validar tamaño (máximo 2MB)
-                if (archivo.size > 2 * 1024 * 1024) {
-                    Alerta.notificarAdvertencia('La imagen no debe superar los 2MB', 1500);
-                    $(this).val('');
-                    return;
-                }
-                
                 // Guardar el archivo en el data del formulario para usarlo después
                 console.log(archivo);
-                $('#formUsuario').data('imagen-perfil', archivo.name);
+                $('#formUsuario').data('imagen-perfil', archivo);
                 
                 // Mostrar preview
                 const lector = new FileReader();
                 lector.onload = function(e) {
-                    $('#contenedorFotoPerfil').html(`<img src="${e.target.result}" class="img-fluid rounded-3" style="max-height: 100px; max-width: 100%;">`);
+                    $('#contenedorFotoPerfil').html(`<img src="${e.target.result}" class="img-fluid rounded-3" style="max-width: 100%;">`);
                 };
                 lector.readAsDataURL(archivo);
             }
@@ -171,7 +164,7 @@ export class u_usuario {
     }
 
     static limpiarImagen() {
-        $('#contenedorFotoPerfil').html('<i class="fas fa-user" style="font-size: 3rem;"></i>');
+        $('#contenedorFotoPerfil').html('<i class="fas fa-user" style="font-size: 1.5rem;"></i>');
         $('#campoArchivoFotoPerfil').val('');
         $('#formUsuario').removeData('imagen-perfil'); // Limpiar archivo guardado
     }
@@ -192,17 +185,18 @@ export class u_usuario {
 
     // ========== GENERAR BOTONES PARA USUARIO ==========
     static generarBotonesUsuario(id, estado) {
-        const iconoToggle = estado === 'Activo' ? 'fa-toggle-on' : 'fa-toggle-off';
-        const claseToggle = estado === 'Activo' ? 'btn-outline-danger' : 'btn-outline-success';
-        const textoToggle = estado === 'Activo' ? 'Deshabilitar' : 'Habilitar';
+        const iconoToggle = estado === 'activo' ? 'fa-toggle-on' : 'fa-toggle-off';
+        const claseToggle = estado === 'activo' ? 'btn-outline-danger' : 'btn-outline-success';
+        const textoToggle = estado === 'activo' ? 'Habilitar' : 'Deshabilitar';
+
+        /*<button class="btn btn-sm ${claseToggle} toggle-estado-usuario" title="${textoToggle}" data-id="${id}">
+                    <i class="fas ${iconoToggle}"></i>
+                </button>*/
         
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-usuario" title="Editar" data-id="${id}" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
                     <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm ${claseToggle} toggle-estado-usuario" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
                 </button>
             </div>
         `;
@@ -215,7 +209,7 @@ export class u_usuario {
         dataTable.clear();
         
         usuarios.forEach(u => {
-            const estadoTexto = u.estado; // u.estado == 1 ? 'Activo' : 'Inactivo';
+            const estadoTexto = u.estado == 'activo' ? 'Activo' : 'Inactivo';
             
             let imagenHtml = '<span class="text-muted">Sin imagen</span>';
             if (u.foto) {
@@ -313,7 +307,7 @@ export class u_usuario {
         }
         
         // Si es administrativo, cargar datos personales
-        if ((usuario.rol === 'Secretario' || usuario.rol === 'Administrador') && administrativo) {
+        if ((usuario.rol === 'Secretario') && administrativo) {
             $('#nombreUsuario').val(administrativo.nombreAdministrativo || '');
             $('#apellidosUsuario').val(administrativo.apellidosAdministrativo || '');
             $('#correoUsuario').val(administrativo.correo || '');
@@ -336,11 +330,6 @@ export class u_usuario {
         // Generar contraseña pero no mostrarla
         const nuevaContrasena = this.generarContrasena(10);
         $('#formUsuario').data('contrasena-generada', nuevaContrasena);
-        
-        // Solo para depuración en desarrollo (cambiar despues)
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            console.log('Contraseña generada:', nuevaContrasena);
-        }
     }
 
     // ========== OBTENER CONTRASEÑA GENERADA ==========
@@ -365,7 +354,7 @@ export class u_usuario {
         if (!u_usuario.validarRol(rol)) return false;
         
         // Si es administrativo, validar datos personales
-        if (rol === 'Secretario' || rol === 'Administrador') {
+        if (rol === 'Secretario') {
             const nombre = $('#nombreUsuario').val().trim();
             const apellidos = $('#apellidosUsuario').val().trim();
             const correo = $('#correoUsuario').val().trim();
@@ -376,7 +365,7 @@ export class u_usuario {
             if (!u_usuario.validarApellidos(apellidos)) return false;
             if (!u_usuario.validarCorreo(correo)) return false;
             if (!u_usuario.validarTelefono(telefono)) return false;
-            //if (u_usuario.validarFacultad(facultad)) return false;
+            if (!u_usuario.validarFacultad(facultad)) return false;
         }
         
         return true;

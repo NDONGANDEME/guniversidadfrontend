@@ -7,6 +7,13 @@ export class u_utiles
     /* METODOS GENERALES */
     /**********************************************************************************************************/
 
+    static manejoDatosSesion() {
+        let usuarioRegistrado = m_sesion.leerSesion('usuarioActivo');
+
+        if (document.querySelector('.nombreUsuarioTopBar')) document.querySelector('.nombreUsuarioTopBar').textContent = usuarioRegistrado.nombreUsuario || 'Nombre del usuario';
+        if (document.querySelector('.correoTopBar')) document.querySelector('.correoTopBar').textContent = usuarioRegistrado.correo || 'Correo del usuario';
+    }
+
     // valida todos los campos de un formulario
     static validarTodosCampos(objeto) {
         return Object.values(objeto).every(val => val === true);
@@ -36,6 +43,7 @@ export class u_utiles
             const html = await respuesta.text();
             document.querySelector(contenedorImportar).innerHTML = html;
             u_utiles.botonesNavegacion();
+            u_utiles.manejoDatosSesion();
             
             if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador();
             if(document.querySelector('#secretarioAcademico')) u_utiles.botonesNavegacionSecretario();

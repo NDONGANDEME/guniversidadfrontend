@@ -74,7 +74,7 @@ export class u_facultad {
                 $('#btnGuardarFacultad').text('Actualizar');
                 if ($('#btnCancelarEdicionFacultad').length === 0) {
                     $('#btnGuardarFacultad').after(`
-                        <button type="button" class="btn btn-secondary ms-2" id="btnCancelarEdicionFacultad">
+                        <button type="button" class="btn btn-secondary" id="btnCancelarEdicionFacultad">
                             <i class="fas fa-times"></i> Cancelar
                         </button>
                     `);

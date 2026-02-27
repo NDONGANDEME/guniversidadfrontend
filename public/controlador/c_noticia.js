@@ -82,7 +82,7 @@ export class c_noticia {
         if (!contenedorCarousel) return;
 
         try {
-            const datosCarousel = await m_noticia.obtenerNoticiasRecientes();
+            const datosCarousel = await m_noticia.obtenerNoticiasRecientes(); console.log(datosCarousel)
             
             if (!datosCarousel || datosCarousel.length === 0) {
                 contenedorCarousel.innerHTML = '<div class="text-center text-white py-5"><h3>No hay noticias</h3></div>';

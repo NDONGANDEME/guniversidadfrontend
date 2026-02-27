@@ -74,7 +74,7 @@ export class c_facultad {
     async cargarAulas() {
         try {
             const datos = await m_aula.obtenerAulas();
-            this.aulas = datos || []; console.log(this.aulas)
+            this.aulas = datos || [];
             this.actualizarTablaAulas();
         } catch (error) {
             Alerta.notificarError(`Fallo al cargar aulas: ${error}`, 1500);
@@ -176,7 +176,7 @@ export class c_facultad {
                 await this.cargarFacultades();
                 this.limpiarFormularioFacultad();
                 this.cancelarEdicionFacultad();
-                Alerta.exito('Éxito', this.modoEdicionFacultad ? 'Facultad actualizada' : 'Facultad creada');
+                Alerta.notificarExito(this.modoEdicionFacultad ? 'Facultad actualizada' : 'Facultad creada' ,1500)
             }
         } catch (error) {
             Alerta.error('Error', 'No se pudo guardar la facultad');
@@ -285,7 +285,7 @@ export class c_facultad {
                 await this.cargarAulas();
                 this.limpiarFormularioAula();
                 this.cancelarEdicionAula();
-                Alerta.exito('Éxito', this.modoEdicionAula ? 'Aula actualizada' : 'Aula creada');
+                Alerta.notificarExito(this.modoEdicionAula ? 'Aula actualizada' : 'Aula creada', 1500);
             }
         } catch (error) {
             Alerta.error('Error', 'No se pudo guardar el aula');

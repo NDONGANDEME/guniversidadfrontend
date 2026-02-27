@@ -1,21 +1,14 @@
-/**
- * Utilidades de Departamentos y Carreras - Versión simplificada
- * Maneja todo lo relacionado con el DOM
- */
+/* Utilidades de Departamentos y Carreras. Maneja todo lo relacionado con el DOM */
 
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
 
-export class u_departamento {
-    
+export class u_departamento 
+{    
     // ========== VALIDACIONES ==========
-    static validarNombre(valor) {
-        return u_verificaciones.validarTexto(valor);
-    }
+    static validarNombre(valor) { return u_verificaciones.validarNombre(valor); }
     
-    static validarFacultad(valor) {
-        return valor && valor !== 'Ninguno' && valor !== '';
-    }
+    static validarFacultad(valor) { return valor && valor !== 'Ninguno' && valor !== ''; }
 
     // ========== VALIDACIONES EN TIEMPO REAL ==========
     static configurarValidaciones() {
@@ -36,7 +29,7 @@ export class u_departamento {
         // Validar nombre de carrera
         $('#nombreCarrera').on('input', function() {
             const valor = $(this).val().trim();
-            const valido = valor.length >= 3;
+            const valido = u_departamento.validarNombre(valor) //valor.length >= 3;
             u_utiles.colorearCampo(valido, '#nombreCarrera', '#errorNombreCarrera', 'Mínimo 3 caracteres');
         });
     }
@@ -48,7 +41,7 @@ export class u_departamento {
                 $('#btnGuardarDepartamento').text('Actualizar');
                 if ($('#btnCancelarEdicionDepartamento').length === 0) {
                     $('#btnGuardarDepartamento').after(`
-                        <button type="button" class="btn btn-secondary ms-2" id="btnCancelarEdicionDepartamento">
+                        <button type="button" class="mt-1 btn btn-secondary ms-2" id="btnCancelarEdicionDepartamento">
                             <i class="fas fa-times"></i> Cancelar
                         </button>
                     `);

@@ -185,7 +185,7 @@ export class c_departamento {
                 await this.cargarDepartamentos();
                 this.limpiarFormularioDepartamento();
                 this.cancelarEdicionDepartamento();
-                Alerta.exito('Éxito', this.modoEdicionDepartamento ? 'Departamento actualizado' : 'Departamento creado');
+                Alerta.notificarExito(this.modoEdicionDepartamento ? 'Departamento actualizado' : 'Departamento creado', 1500);
             }
         } catch (error) {
             Alerta.error('Error', 'No se pudo guardar el departamento');
@@ -205,7 +205,7 @@ export class c_departamento {
         u_departamento.configurarModoEdicion(true, 'departamento');
     }
 
-    async cambiarEstadoDepartamento(id) {
+    /*async cambiarEstadoDepartamento(id) {
         const depto = this.departamentos.find(d => d.idDepartamento == id);
         if (!depto) return;
         
@@ -220,7 +220,7 @@ export class c_departamento {
         } catch (error) {
             Alerta.error('Error', 'No se pudo cambiar el estado');
         }
-    }
+    }*/
 
     cancelarEdicionDepartamento() {
         this.modoEdicionDepartamento = false;
@@ -280,7 +280,7 @@ export class c_departamento {
                 await this.cargarCarreras();
                 this.limpiarFormularioCarrera();
                 this.cancelarEdicionCarrera();
-                Alerta.exito('Éxito', this.modoEdicionCarrera ? 'Carrera actualizada' : 'Carrera creada');
+                Alerta.notificarExito(this.modoEdicionCarrera ? 'Carrera actualizada' : 'Carrera creada', 1500);
             }
         } catch (error) {
             Alerta.error('Error', 'No se pudo guardar la carrera');
@@ -328,7 +328,7 @@ export class c_departamento {
             if (resultado) {
                 carrera.estado = nuevoEstado;
                 this.actualizarTablaCarreras();
-                Alerta.exito('Éxito', `Carrera ${accion}da`);
+                Alerta.notificarExito(`Carrera ${accion}da`, 1500);
             }
         } catch (error) {
             Alerta.error('Error', `No se pudo ${accion} la carrera`);
