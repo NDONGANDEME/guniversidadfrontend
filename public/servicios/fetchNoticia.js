@@ -7,6 +7,7 @@ export class fetchNoticia
     /**
      * Enviar solicitud para cargar las noticias mas recientes de la BDD
      * @returns array de noticias recientes
+     * Ya es funcional
      */
     static async obtenerNoticiasRecientesDelBackend() {
         try {
@@ -24,10 +25,13 @@ export class fetchNoticia
     /**
      * Enviar solicitud para cargar las noticas de tipo comunicado
      * @returns array de noticias de tipo comunicado
+     * Ya es funcional
      */
     static async obtenerNoticiasPorComunicadoDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorComunicado&actor=global`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorTipo&actor=global`, {
+                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({tipo: 'comunicado', limite: 21 })
+            });
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -58,11 +62,12 @@ export class fetchNoticia
     /**
      * Enviar solicitud para cargar todas las noticias
      * @returns array de noticias
+     * Ya es funcional
      */
     static async obtenerNoticiasDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticias&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -141,13 +146,14 @@ export class fetchNoticia
     /**
      * Envia solicitud para obtener el numero de paginas a paginar
      * @returns integer (entero)
+     * Ya es funcional
      */
-    static async obtenerCantidadPaginacionEnBDD() {
+    static async obtenerTotalPaginasEnBDD() {
         try  {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerCantidadPaginacion&actor=global`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerTotalPaginas&actor=global`);
             let respuesta = await solicitud.json();
 
-            if(respuesta.estado == 'exito') return respuesta.resultado;
+            if(respuesta.estado == 'exito') return respuesta.resultado.total_paginas;
             else return 0;
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
@@ -158,11 +164,12 @@ export class fetchNoticia
     /**
      * Envia solicitud para cargar una noticia conociendo el id
      * @param {Integer} id 
-     * @returns 
+     * @returns la noticia solicitada
+     * Ya es funcional
      */
     static async obtenerNoticiaPorIdEnBDD(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticiaPorId&valor=${id}&actor=global`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiaPorId&id=${id}&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

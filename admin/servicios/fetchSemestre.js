@@ -7,10 +7,11 @@ export class fetchSemestre
     /**
      * Envia solicitud para cargar los semestres de la BDD
      * @returns array de semestres
+     * Ya es funcional
      */
     static async obtenerSemestresDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=semestre&action=obtenerSemestres&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=semestre&accion=obtenerSemestres&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -25,6 +26,7 @@ export class fetchSemestre
      * Envia solicitud para insertar un nuevo semestre a la BDD
      * @param {m_semestre} objeto - objeto que contiene los parametros de la clase semestre
      * @returns id del nuevo registro insertado
+     * Ya es funcional
      */
     static async insertarSemestreEnBackend(objeto) {
         try {
@@ -45,6 +47,7 @@ export class fetchSemestre
      * Envia solicitud para actualizar un registro existente de la BDD
      * @param {m_semestre} objeto - objeto que contiene los parametros de la clase semestre
      * @returns id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarSemestreEnBackend(objeto) {
         try {

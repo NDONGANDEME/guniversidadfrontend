@@ -8,6 +8,7 @@ export class fetchFacultad
     /**
      * Obtiene todas las facultades almacenadas en la BDD
      * @returns array de facultades
+     * Ya es funcional
      */
     static async obtenerFacultadesDelBackend() {
         try {
@@ -26,13 +27,14 @@ export class fetchFacultad
      * Guarda la nueva facultad creada en la BDD
      * @param {m_facultad} objeto - objeto que contiene los parametros de la clase facultad
      * @returns el nuevo id insertado en la BDD
+     * Ya es funcional
      */
     static async insertarFacultadEnBackend(objeto) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=facultad&accion=insertarFacultad&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.text(); console.log(respuesta);
+            let respuesta = await solicitud.json();
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -46,6 +48,7 @@ export class fetchFacultad
      * Modifica los campos, modificados por el usuario, en la BDD
      * @param {m_facultad} objeto - objeto que contiene los parametros de la clase facultad
      * @returns el id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarFacultadEnBackend(objeto) {
         try {
@@ -76,6 +79,42 @@ export class fetchFacultad
             else return false;
         } catch(error) {
             Alerta.error('Error', `No se ha realizado la solicitud. [linea 99. fetchFacultad]. ${error}`);
+            return false;
+        }
+    }
+
+    /**
+     * Envia solicitud para deshabilitar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
+     */
+    static async deshabilitarFacultadEnBackend(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=deshabilitarFacultad&valor=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
+            return false;
+        }
+    }
+
+    /**
+     * Envia solicitud para habilitar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
+     */
+    static async habilitarFacultadEnBackend(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=habilitarFacultad&valor=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
             return false;
         }
     }

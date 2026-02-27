@@ -85,14 +85,15 @@ export class u_curso {
         const iconoToggle = habilitado == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
         const claseToggle = habilitado == 1 ? 'btn-outline-danger' : 'btn-outline-success';
         const textoToggle = habilitado == 1 ? 'Deshabilitar' : 'Habilitar';
+
+        /*<button class="btn btn-sm ${claseToggle} toggle-estado-curso" title="${textoToggle}" data-id="${id}">
+                    <i class="fas ${iconoToggle}"></i>
+                </button>*/
         
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-curso" title="Editar" data-id="${id}">
                     <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm ${claseToggle} toggle-estado-curso" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
                 </button>
             </div>
         `;
@@ -103,14 +104,15 @@ export class u_curso {
         const iconoToggle = habilitado == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
         const claseToggle = habilitado == 1 ? 'btn-outline-danger' : 'btn-outline-success';
         const textoToggle = habilitado == 1 ? 'Deshabilitar' : 'Habilitar';
+
+        /*<button class="btn btn-sm ${claseToggle} toggle-estado-semestre" title="${textoToggle}" data-id="${id}">
+                    <i class="fas ${iconoToggle}"></i>
+                </button>*/
         
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-semestre" title="Editar" data-id="${id}">
                     <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm ${claseToggle} toggle-estado-semestre" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
                 </button>
             </div>
         `;

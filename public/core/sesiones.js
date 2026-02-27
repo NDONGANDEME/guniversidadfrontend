@@ -7,20 +7,19 @@ export class sesiones
     {
         try {
             let usuarioRegistrado = m_sesion.leerSesion('usuarioActivo');
-            console.log(usuarioRegistrado);
 
-            //let estatico = !usuarioRegistrado || usuarioRegistrado.nombreOCorreo == null || usuarioRegistrado.contraseña == null;
-            let dinamico = !usuarioRegistrado || usuarioRegistrado.nombreUsuario == null || usuarioRegistrado.correo == null;
+            // Verificar si el usuario existe y tiene los campos necesarios
+            let sesionValida = usuarioRegistrado && (usuarioRegistrado.nombreUsuario || usuarioRegistrado.correo);
 
-            // Si no hay usuario registrado o los campos están vacíos
-            if (estatico) {
-                // Mostrar alerta y redirigir cuando se cierre
+            // Si NO hay sesión válida
+            if (!sesionValida) {
                 let confirmacion = await Alerta.advertencia('Atención', 'Por favor, inicie sesión para poder acceder a la interfaz.', true);
+                
                 if (confirmacion) Alerta.cargarSimple(3000, 'Redirigiendo, espere por favor...', '/guniversidadfrontend/public/template/html/iniciarSesion.html');
             }
         } catch (error) {
             console.error('Error al verificar sesión:', error);
-            Alerta.cargarSimple(3000, 'Error al iniciar sesión. Redirigiendo...', '/guniversidadfrontend/public/template/html/iniciarSesion.html');
+            Alerta.cargarSimple(3000, 'Error al verificar sesión. Redirigiendo...', '/guniversidadfrontend/public/template/html/iniciarSesion.html');
         }
     }
 }

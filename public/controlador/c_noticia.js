@@ -1,8 +1,8 @@
 // c_noticia.js - Controlador para la parte pública de noticias
 import { m_noticia } from "../modelo/m_noticia.js";
-import { m_archivo } from "../modelo/m_archivo.js";
 import { u_noticias } from "../utilidades/u_noticias.js";
 import { u_utiles } from "../utilidades/u_utiles.js";
+import { Alerta } from "../utilidades/u_alertas.js";
 
 export class c_noticia {
     constructor() {
@@ -21,14 +21,10 @@ export class c_noticia {
     // Inicializa la página de inicio (con carousel)
     async inicializarInicio() {
         try {
-            // Cargar actor del sessionStorage si existe
-            const usuarioActual = sessionStorage.getItem('usuarioActual');
-            this.actor = usuarioActual ? JSON.parse(usuarioActual) : null;
-            
             await this.cargarCarousel();
             this.inicializarEventosComunes();
         } catch (error) {
-            console.error('Error al inicializar inicio:', error);
+            Alerta.notificarError(`Error al inicializar inicio: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar las noticias');
         }
     }
@@ -40,9 +36,8 @@ export class c_noticia {
             const contenedorTarjetas = document.getElementById('contTarjetaNoticia');
             if (!contenedorTarjetas) return;
 
-            // Cargar actor
-            const usuarioActual = sessionStorage.getItem('usuarioActual');
-            this.actor = usuarioActual ? JSON.parse(usuarioActual) : null;
+            // Inicializar modal de Bootstrap
+            this.inicializarModal();
 
             const idNoticia = u_noticias.obtenerIdDeURL();
             
@@ -57,8 +52,22 @@ export class c_noticia {
             this.inicializarEventosComunes();
 
         } catch (error) {
-            console.error('Error al inicializar noticias:', error);
+            Alerta.notificarError(`Error al inicializar noticias: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar las noticias');
+        }
+    }
+
+    // Inicializa el modal de Bootstrap correctamente
+    inicializarModal() {
+        const modalElement = document.getElementById('modalNoticias');
+        if (modalElement) {
+            // Asegurarse de que bootstrap está disponible
+            if (typeof bootstrap !== 'undefined') {
+                this.modalInstance = new bootstrap.Modal(modalElement, {
+                    backdrop: true,
+                    keyboard: true
+                });
+            }
         }
     }
 
@@ -76,24 +85,18 @@ export class c_noticia {
             const datosCarousel = await m_noticia.obtenerNoticiasRecientes();
             
             if (!datosCarousel || datosCarousel.length === 0) {
-                contenedorCarousel.innerHTML = '<div class="text-center py-5"><h3>No hay noticias</h3></div>';
+                contenedorCarousel.innerHTML = '<div class="text-center text-white py-5"><h3>No hay noticias</h3></div>';
                 return;
             }
             
             this.noticiasCarousel = await u_noticias.convertirANoticias(datosCarousel);
-            
-            // Cargar archivos para cada noticia
-            for (const noticia of this.noticiasCarousel) {
-                const archivos = await m_archivo.obtenerArchivosPorNoticia(noticia.idNoticia, this.actor);
-                noticia.fotos = archivos.filter(a => a.tipoArchivo === 'foto' || a.tipoArchivo === 'imagen');
-            }
 
             // Renderizar el carousel
             this.renderizarCarousel();
 
         } catch (error) {
-            console.error('Error cargando carousel:', error);
-            contenedorCarousel.innerHTML = '<div class="text-center py-5"><h3>Error al cargar noticias</h3></div>';
+            Alerta.notificarError(`Error cargando carousel: ${error}`, 1500);
+            contenedorCarousel.innerHTML = '<div class="text-center text-white py-5"><h3>Error al cargar noticias</h3></div>';
         }
     }
 
@@ -108,17 +111,11 @@ export class c_noticia {
                 return;
             }
 
-            // Obtener cantidad total para paginación
-            this.totalPaginas = await m_noticia.obtenerCantidadPaginacion();
-
             // Convertir a objetos noticia
             const todasNoticias = await u_noticias.convertirANoticias(datosBackend);
 
-            // Cargar fotos para cada noticia
-            for (const noticia of todasNoticias) {
-                const archivos = await m_archivo.obtenerArchivosPorNoticia(noticia.idNoticia, this.actor);
-                noticia.fotos = archivos.filter(a => a.tipoArchivo === 'foto' || a.tipoArchivo === 'imagen');
-            }
+            // Calcular total de páginas (simulado - ajusta según tu backend)
+            this.totalPaginas = await m_noticia.obtenerTotalPaginas();
 
             // Filtrar noticias de la página actual
             const noticiasPorPagina = 9; // 3 filas de 3 columnas
@@ -130,7 +127,7 @@ export class c_noticia {
             this.renderizarPaginacion();
 
         } catch (error) {
-            console.error('Error cargando lista de noticias:', error);
+            Alerta.notificarError(`Error cargando lista de noticias: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar las noticias');
         }
     }
@@ -146,16 +143,10 @@ export class c_noticia {
             }
 
             const noticiasArray = await u_noticias.convertirANoticias([datosNoticia]);
-            const noticia = noticiasArray[0];
-
-            // Cargar sus fotos
-            const archivos = await m_archivo.obtenerArchivosPorNoticia(id, this.actor);
-            noticia.fotos = archivos.filter(a => a.tipoArchivo === 'foto' || a.tipoArchivo === 'imagen');
-
-            return noticia;
+            return noticiasArray[0];
 
         } catch (error) {
-            console.error('Error cargando noticia:', error);
+            Alerta.notificarError(`Error cargando noticia: ${error}`, 1500);
             return null;
         }
     }
@@ -184,10 +175,6 @@ export class c_noticia {
             const noticiasArray = await u_noticias.convertirANoticias([datosNoticia]);
             const noticia = noticiasArray[0];
 
-            // Cargar sus fotos
-            const archivos = await m_archivo.obtenerArchivosPorNoticia(id, this.actor);
-            noticia.fotos = archivos.filter(a => a.tipoArchivo === 'foto' || a.tipoArchivo === 'imagen');
-
             // Ocultar tarjetas y paginación, mostrar detalles
             if (contenedorTarjetas) contenedorTarjetas.style.display = 'none';
             if (contenedorPaginacion) contenedorPaginacion.style.display = 'none';
@@ -196,7 +183,7 @@ export class c_noticia {
             contenedorDetalles.innerHTML = u_noticias.crearNoticiaCompletaHTML(noticia);
 
         } catch (error) {
-            console.error('Error mostrando noticia:', error);
+            Alerta.notificarError(`Error mostrando noticia: ${error}`, 1500);
             contenedorDetalles.innerHTML = '<div class="text-center py-5"><h3 class="text-danger">Error al cargar la noticia</h3></div>';
         }
     }
@@ -266,12 +253,6 @@ export class c_noticia {
                 }
             }
         });
-
-        // Inicializar modal de Bootstrap
-        const modalElement = document.getElementById('modalNoticias');
-        if (modalElement && !this.modalInstance) {
-            this.modalInstance = new bootstrap.Modal(modalElement);
-        }
     }
 
     // Inicializa eventos específicos de la página de noticias
@@ -280,7 +261,10 @@ export class c_noticia {
         document.addEventListener('click', async (e) => {
             if (e.target.classList.contains('btnLeerMasNoticias')) {
                 e.preventDefault();
+                e.stopPropagation(); // Evitar propagación
+                
                 const id = e.target.getAttribute('data-id');
+                
                 if (id) {
                     await this.abrirModalNoticia(id);
                 }
@@ -290,8 +274,16 @@ export class c_noticia {
         // Evento para cerrar modal y limpiar contenido
         const modal = document.getElementById('modalNoticias');
         if (modal) {
-            modal.addEventListener('hidden.bs.modal', () => {
-                u_noticias.limpiarModal();
+            modal.addEventListener('hidden.bs.modal', () => u_noticias.limpiarModal());
+        }
+
+        // Evento para botón de cerrar manual
+        const cerrarBtn = document.getElementById('cerrarModal');
+        if (cerrarBtn) {
+            cerrarBtn.addEventListener('click', () => {
+                if (this.modalInstance) {
+                    this.modalInstance.hide();
+                }
             });
         }
 
@@ -355,19 +347,24 @@ export class c_noticia {
             const noticia = await this.cargarNoticiaParaModal(id);
             
             if (noticia) {
+                // Mostrar los datos en el modal
                 document.getElementById('tituloNoticiaDetalle').innerHTML = noticia.asunto;
                 document.getElementById('contenidoNoticiadetalle').innerHTML = noticia.descripcion;
                 
-                // Aquí podrías agregar imágenes al modal si lo deseas
-                
+                // Abrir el modal
                 if (this.modalInstance) {
                     this.modalInstance.show();
+                } else {
+                    this.inicializarModal();
+                    if (this.modalInstance) {
+                        this.modalInstance.show();
+                    }
                 }
             } else {
                 u_noticias.mostrarMensajeError('No se pudo cargar la noticia');
             }
         } catch (error) {
-            console.error('Error abriendo modal:', error);
+            Alerta.notificarError(`Error abriendo modal: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar la noticia');
         }
     }

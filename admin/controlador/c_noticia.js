@@ -52,7 +52,7 @@ export class c_noticia_admin {
     async cargarNoticias() {
         try {
             const datosBackend = await m_noticia.obtenerNoticias();
-            
+            console.log(datosBackend)
             if (!datosBackend) {
                 this.noticias = [];
                 this.actualizarVista();
@@ -61,6 +61,7 @@ export class c_noticia_admin {
 
             // Convertir a objetos noticia (las fotos vienen incluidas del backend ahora)
             const todasNoticias = await u_noticia_admin.convertirANoticias(datosBackend);
+            console.log(todasNoticias)
 
             this.noticias = todasNoticias;
             
@@ -117,6 +118,12 @@ export class c_noticia_admin {
             this.eliminarNoticia($(e.currentTarget).data('id'));
         });
 
+        // Ver detalles de noticia
+        $(document).on('click', '.ver-detalles-noticia', (e) => {
+            e.stopPropagation();
+            this.verDetallesNoticia($(e.currentTarget).data('id'));
+        });
+
         // Filtro por tipo
         $('#filtroPorTipo').on('change', (e) => {
             this.filtroActual = e.target.value;
@@ -133,6 +140,21 @@ export class c_noticia_admin {
     }
 
     // ========== FUNCIONES PARA NOTICIAS ==========
+
+    // ========== VER DETALLES DE NOTICIA ==========
+    async verDetallesNoticia(id) {
+        const noticia = this.noticias.find(n => n.idNoticia == id);
+        if (!noticia) return;
+        
+        try {
+            const detallesHtml = u_noticia_admin.crearDetallesNoticiaHTML(noticia);
+            $('#modalVerDetallesNoticia .card-body').html(detallesHtml);
+            $('#modalVerDetallesNoticia').modal('show');
+        } catch (error) {
+            console.error('Error al ver detalles:', error);
+            Alerta.error('Error', 'No se pudieron cargar los detalles');
+        }
+    }
     
     formularioNoticiaEsValido() {
         const asunto = $('#asuntoNoticia').val().trim();
@@ -176,9 +198,10 @@ export class c_noticia_admin {
             
             // Agregar archivos al FormData
             const archivos = u_noticia_admin.obtenerArchivosParaEnviar();
+            console.log(archivos)
             archivos.forEach((archivo, index) => {
-                //console.log(archivo)
-                formData.append('fotos', archivo);
+                console.log(archivo)
+                formData.append('fotos[]', archivo);
             });
 
             console.log(Object.fromEntries(formData));

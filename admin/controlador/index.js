@@ -4,7 +4,7 @@ import { u_utiles } from "../../public/utilidades/u_utiles.js";
 document.addEventListener('DOMContentLoaded', function()
 {
     // verificamos que existe sesion
-    //sesiones.verificarExistenciaSesion();
+    sesiones.verificarExistenciaSesion();
     u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
     u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
     u_utiles.botonesNavegacionAdministrador();

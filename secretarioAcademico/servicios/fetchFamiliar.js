@@ -40,6 +40,24 @@ export class fetchFamiliar
     }
 
     /**
+     * Envia solicitud para cargar al familiar responsable de pago
+     * @param {Integer} idEstudiante 
+     * @returns el nombre del familiar responsable de pago
+     */
+    static async obtenerFamiliarPorEstudianteDelBackend(idEstudiante) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=familiar&accion=obtenerFamiliarPorEstudiante&actor=secretario&valor=${idEstudiante}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFamiliar]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
      * Envia solicitud para insertar un nuevo familiar en la BDD
      * @param {m_familiar} objeto 
      * @returns id del nuevo registro insertado

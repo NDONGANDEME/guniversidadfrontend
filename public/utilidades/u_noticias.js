@@ -24,7 +24,7 @@ export class u_noticias
             : noticia.descripcion;
 
         return `
-            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+            <div class="col-lg-4 col-md-6 col-sm-6 col-12 mb-2">
                 <div class="card h-100 shadow-sm tarjeta">
                     <img class="card-img-top imgNoticias" 
                         src="${foto}"
@@ -86,7 +86,7 @@ export class u_noticias
                         <img src="${noticia.fotos[i].url}"
                             class="img-fluid rounded" 
                             alt="Foto noticia" 
-                            style="height: 150px; width: 100%; object-fit: cover;">
+                            style="height: 120px; width: 100%; object-fit: cover;">
                     </div>
                 `;
             }
@@ -211,8 +211,11 @@ export class u_noticias
 
     // Limpia el contenido del modal
     static limpiarModal() {
-        document.getElementById('tituloNoticiaDetalle').innerHTML = '';
-        document.getElementById('contenidoNoticiadetalle').innerHTML = '';
+        const titulo = document.getElementById('tituloNoticiaDetalle');
+        const contenido = document.getElementById('contenidoNoticiadetalle');
+        
+        if (titulo) titulo.innerHTML = '';
+        if (contenido) contenido.innerHTML = '';
     }
 
     // Crea los botones de paginación

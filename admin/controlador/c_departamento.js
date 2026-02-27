@@ -169,7 +169,7 @@ export class c_departamento {
         
         try {
             const datos = {
-                nombre: $('#nombreDepartamento').val().trim(),
+                nombreDepartamento: $('#nombreDepartamento').val().trim(),
                 idFacultad: $('#facultadesDepartamento').val()
             };
             
@@ -197,9 +197,9 @@ export class c_departamento {
         if (!depto) return;
         
         this.modoEdicionDepartamento = true;
-        this.departamentoActual = depto;
+        this.departamentoActual = depto; console.log(depto.nombreDepartamento)
         
-        $('#nombreDepartamento').val(depto.nombre || '');
+        $('#nombreDepartamento').val(depto.nombreDepartamento || '');
         $('#facultadesDepartamento').val(depto.idFacultad || 'Ninguno');
         
         u_departamento.configurarModoEdicion(true, 'departamento');
@@ -264,7 +264,8 @@ export class c_departamento {
             const idDepartamento = $('#comboDepartamentoCarrera').data('id-seleccionado');
             const datos = {
                 nombreCarrera: $('#nombreCarrera').val().trim(),
-                idDepartamento: idDepartamento
+                idDepartamento: idDepartamento,
+                estado: 'Habilitado'
             };
             
             let resultado;
@@ -294,14 +295,14 @@ export class c_departamento {
         this.carreraActual = carrera;
         
         $('#nombreCarrera').val(carrera.nombreCarrera || '');
-        $('#comboDepartamentoCarrera').val('');
+        $('#comboDepartamentoCarrera').val(carrera.nombreDepartamento || '');
         
         // Buscar el nombre del departamento
-        const depto = this.departamentosParaCarreras.find(d => d.idDepartamento == carrera.idDepartamento);
+        /*const depto = this.departamentosParaCarreras.find(d => d.idDepartamento == carrera.idDepartamento);
         if (depto) {
             $('#comboDepartamentoCarrera').val(depto.nombre);
             $('#comboDepartamentoCarrera').data('id-seleccionado', carrera.idDepartamento);
-        }
+        }*/
         
         u_departamento.configurarModoEdicion(true, 'carrera');
     }
@@ -350,7 +351,7 @@ export class c_departamento {
     }
 
     actualizarTablaCarreras() {
-        u_departamento.actualizarTablaCarreras(this.dataTableCarreras, this.carreras, this.departamentosParaCarreras);
+        u_departamento.actualizarTablaCarreras(this.dataTableCarreras, this.carreras);
     }
 }
 

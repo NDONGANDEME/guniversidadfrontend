@@ -105,15 +105,15 @@ export class u_asignatura {
     }
 
     // ========== ACTUALIZAR TABLA DE ASIGNATURAS ==========
-    static actualizarTablaAsignaturas(dataTable, asignaturas, facultades) {
+    static actualizarTablaAsignaturas(dataTable, asignaturas) {
         if (!dataTable) return;
         
         dataTable.clear();
         
         asignaturas.forEach(a => {
             // Buscar el nombre de la facultad
-            const facultad = facultades.find(f => f.idFacultad == a.idFacultad);
-            const nombreFacultad = facultad ? facultad.nombreFacultad : 'Desconocida';
+            //const facultad = a.idFacultad; //facultades.find(f => f.idFacultad == a.idFacultad);
+            const nombreFacultad =  a.nombreFacultad; //facultad ? facultad.nombreFacultad : 'Desconocida';
             
             const fila = [
                 a.codigoAsignatura || 'Sin código',

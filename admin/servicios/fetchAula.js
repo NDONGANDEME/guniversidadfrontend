@@ -7,11 +7,12 @@ export class fetchAula
     /**
      * Enviar solicitud para cargar las aulas de la BDD
      * @returns array de aulas
+     * Ya es funcional
      */
     static async obtenerAulasDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=aula&accion=obtenerAulas&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -28,7 +29,7 @@ export class fetchAula
     static async obtenerAulasPorFacultadDelBackend(idFacultad) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=aula&accion=obtenerAulasPorFacultad&actor=admin&valor=${idFacultad}`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -42,6 +43,7 @@ export class fetchAula
      * Envia solicitud para insertar una nueva aula en la BDD
      * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase aula
      * @returns id del nuevo registro insertado
+     * Ya es funcional
      */
     static async insertarAulaEnBackend(objeto) {
         try {
@@ -62,6 +64,7 @@ export class fetchAula
      * Envia solicitud para actualizar un registro existente de la BDD
      * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase aula
      * @returns id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarAulaEnBackend(objeto) {
         try {

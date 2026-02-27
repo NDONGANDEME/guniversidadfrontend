@@ -53,15 +53,17 @@
 
         <!-- Modal -->
         <div id="modalNoticias" class="modal fade" tabindex="-1" aria-hidden="true">
-            <div class="modal-contenido">
-                <span class="cerrar w-100 text-end" id="cerrarModal"> &times; </span>
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
 
-                <div class="modal-encabezado">
-                    <h2 id="tituloNoticiaDetalle"> </h2>
-                </div>
-                
-                <div class="modal-content mt-2 p-2">
-                    <p id="contenidoNoticiadetalle"> </p>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloNoticiaDetalle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p id="contenidoNoticiadetalle"> <!--añadir dinamicamente--> </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,7 +72,7 @@
     <!-- Importacion del footer -->
     <div class="importandoFooter"> </div>
 
-    <script type="module" src="../../controlador/c_noticia.js"></script>
     <script src="../../nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../controlador/c_noticia.js"></script>
 </body>
 </html>

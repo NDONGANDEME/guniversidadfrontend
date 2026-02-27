@@ -51,7 +51,7 @@ export class c_matricula {
     // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
-            sesiones.verificarExistenciaSesion();
+            //sesiones.verificarExistenciaSesion();
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
             u_utiles.botonesNavegacionSecretario();
             

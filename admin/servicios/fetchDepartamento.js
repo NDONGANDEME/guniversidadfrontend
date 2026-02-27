@@ -8,10 +8,11 @@ export class fetchDepartamento
     /**
      * Envia solicitud para cargar los departamentos de la BDD
      * @returns array de departamento
+     * Ya es funcional
      */
     static async obtenerDepartamentosDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=departamento&action=obtenerDepartamentos&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=obtenerDepartamentos&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -43,8 +44,10 @@ export class fetchDepartamento
      * Guarda la nueva facultad creada en la BDD
      * @param {m_departamento} objeto - objeto que contiene los parametros de la clase facultad
      * @returns el nuevo id insertado en la BDD
+     * Ya es funcional
      */
     static async insertarDepartamentoEnBackend(objeto) {
+        console.log(objeto)
         try {
             let solicitud = await fetch(`${this.url}?ruta=departamento&accion=insertarDepartamento&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
@@ -63,6 +66,7 @@ export class fetchDepartamento
      * Modifica los campos, modificados por el usuario, en la BDD
      * @param {m_departamento} objeto - objeto que contiene los parametros de la clase facultad
      * @returns el id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarDepartamentoEnBackend(objeto) {
         try {

@@ -10,7 +10,7 @@ export class fetchPlanSemestreAsignatura
      */
     static async obtenerPlanSemestreAsignaturasDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=planEstudio&accion=obtenerPlanSemestreAsignaturas&actor=secretario`);
+            let solicitud = await fetch(`${this.url}?ruta=planSemestreAsignatura&accion=obtenerPlanSemestreAsignaturas&actor=secretario`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -28,7 +28,7 @@ export class fetchPlanSemestreAsignatura
      */
     static async insertarPlanSemestreAsignaturaEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=planEstudio&accion=insertarPlanSemestreAsignatura&actor=secretario`, {
+            let solicitud = await fetch(`${this.url}?ruta=planSemestreAsignatura&accion=insertarPlanSemestreAsignatura&actor=secretario`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -48,7 +48,7 @@ export class fetchPlanSemestreAsignatura
      */
     static async actualizarPlanSemestreAsignaturaEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=planEstudio&accion=actualizarPlanSemestreAsignatura&actor=secretario`, {
+            let solicitud = await fetch(`${this.url}?ruta=planSemestreAsignatura&accion=actualizarPlanSemestreAsignatura&actor=secretario`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();

@@ -7,6 +7,7 @@ export class fetchAsignatura
     /**
      * Enviar solicitud para cargar las asignaturas de la BDD
      * @returns array de asignaturas
+     * Ya es funcional
      */
     static async obtenerAsignaturasDelBackend() {
         try {
@@ -76,8 +77,10 @@ export class fetchAsignatura
      * Envia solicitud para insertar una nueva asignatura en la BDD
      * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
      * @returns id del nuevo registro insertado
+     * Ya es funcional
      */
     static async insertarAsignaturaEnBackend(objeto) {
+        console.log(objeto)
         try {
             let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=insertarAsignatura&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
@@ -96,6 +99,7 @@ export class fetchAsignatura
      * Envia solicitud para actualizar un registro existente de la BDD
      * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
      * @returns id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarAsignaturaEnBackend(objeto) {
         try {

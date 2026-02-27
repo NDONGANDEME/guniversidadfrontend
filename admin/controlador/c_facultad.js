@@ -74,10 +74,10 @@ export class c_facultad {
     async cargarAulas() {
         try {
             const datos = await m_aula.obtenerAulas();
-            this.aulas = datos || [];
+            this.aulas = datos || []; console.log(this.aulas)
             this.actualizarTablaAulas();
         } catch (error) {
-            Alerta.error('Error', 'Fallo al cargar aulas');
+            Alerta.notificarError(`Fallo al cargar aulas: ${error}`, 1500);
             this.aulas = [];
         }
     }
@@ -152,7 +152,7 @@ export class c_facultad {
 
     async guardarFacultad() {
         if (!this.formularioFacultadEsValido()) {
-            Alerta.notificarAdvertencia('Complete correctamente los campos');
+            Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
             return;
         }
         
@@ -198,7 +198,7 @@ export class c_facultad {
         u_facultad.configurarModoEdicion(true, 'facultad');
     }
 
-    async cambiarEstadoFacultad(id) {
+    /*async cambiarEstadoFacultad(id) {
         const facultad = this.facultades.find(f => f.idFacultad == id);
         if (!facultad) return;
         
@@ -224,7 +224,7 @@ export class c_facultad {
         } catch (error) {
             Alerta.error('Error', `No se pudo ${accion} la facultad`);
         }
-    }
+    }*/
 
     cancelarEdicionFacultad() {
         this.modoEdicionFacultad = false;
@@ -261,7 +261,7 @@ export class c_facultad {
 
     async guardarAula() {
         if (!this.formularioAulaEsValido()) {
-            Alerta.advertencia('Campos inválidos', 'Complete todos los campos correctamente');
+            Alerta.notificarAdvertencia('Complete todos los campos correctamente', 1500);
             return;
         }
         
@@ -269,7 +269,8 @@ export class c_facultad {
             const datos = {
                 nombreAula: $('#nombreAula').val().trim(),
                 capacidad: $('#capacidadAula').val(),
-                idFacultad: $('#facultadesAula').val()
+                idFacultad: $('#facultadesAula').val(),
+                estado: 'Habilitado'
             };
             
             let resultado;
@@ -305,7 +306,7 @@ export class c_facultad {
         u_facultad.configurarModoEdicion(true, 'aula');
     }
 
-    async cambiarEstadoAula(id) {
+    /*async cambiarEstadoAula(id) {
         const aula = this.aulas.find(a => a.idAula == id);
         if (!aula) return;
         
@@ -331,7 +332,7 @@ export class c_facultad {
         } catch (error) {
             Alerta.error('Error', `No se pudo ${accion} el aula`);
         }
-    }
+    }*/
 
     async eliminarAula(id) {
         const confirmacion = await Alerta.confirmar('Confirmar', '¿Eliminar esta aula permanentemente?');

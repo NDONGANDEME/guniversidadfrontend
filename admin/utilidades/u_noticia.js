@@ -64,6 +64,7 @@ export class u_noticia_admin {
 
     // ========== MANEJO DE ARCHIVOS ==========
     static archivosSeleccionados = [];
+    static archivosAEnviarBackend = [];
 
     static configurarSubidaArchivos() {
         // Al hacer clic en el área de drop, abrir selector
@@ -107,7 +108,9 @@ export class u_noticia_admin {
 
         // Validar formato
         const formatosPermitidos = ['image/png', 'image/jpeg', 'image/jpg'];
+        
         console.log(archivos)
+        
         
         for (let archivo of archivos) {
             if (!formatosPermitidos.includes(archivo.type)) {
@@ -123,7 +126,10 @@ export class u_noticia_admin {
                 tamaño: archivo.size,
                 preview: URL.createObjectURL(archivo)
             });
-            console.log(this.archivosSeleccionados)
+
+            this.archivosAEnviarBackend.push({archivo: archivo});
+            console.log(this.archivosAEnviarBackend)
+            
         }
 
         this.actualizarPrevisualizacion();
@@ -193,7 +199,7 @@ export class u_noticia_admin {
     }
 
     static obtenerArchivosParaEnviar() {
-        return this.archivosSeleccionados.map(item => item.archivo);
+        return this.archivosAEnviarBackend.map(item => item.archivo);
     }
 
     // ========== MODO EDICIÓN ==========
@@ -211,10 +217,17 @@ export class u_noticia_admin {
     static crearTarjetaNoticiaHTML(noticia) {
         // Obtener la primera foto si existe
         let fotoHtml = '<i class="fas fa-newspaper fa-3x text-muted"></i>';
+        
         if (noticia.fotos && noticia.fotos.length > 0) {
-            // Asumiendo que las fotos vienen con una propiedad 'url' o 'ruta'
-            const fotoUrl = noticia.fotos[0].url || noticia.fotos[0].ruta || '';
-            fotoHtml = `<img src="${fotoUrl}" class="card-img-top" style="height: 180px; object-fit: cover;">`;
+            const primeraFoto = noticia.fotos[0];
+            console.log(noticia)
+            console.log(primeraFoto)
+            // Intentar diferentes formas de obtener la URL
+            const fotoUrl = primeraFoto.url_completa || (primeraFoto.nombre ? `/guniversidadfrontend/public/img/${primeraFoto.nombre}` : '');
+            
+            if (fotoUrl) {
+                fotoHtml = `<img src="${fotoUrl}" class="card-img-top" style="height: 180px; object-fit: cover;" onerror="this.src='/guniversidadfrontend/public/img/escudo_AAUCA.jpg'">`;
+            }
         }
 
         // Formatear fecha
@@ -232,8 +245,11 @@ export class u_noticia_admin {
                         <p class="card-text">${noticia.descripcion.substring(0, 100)}...</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="badge bg-warning text-dark">${noticia.tipo}</span>
-                            <div>
-                                <button class="btn btn-sm btn-outline-warning editar-noticia" title="Editar" data-id="${noticia.idNoticia}">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-info ver-detalles-noticia" title="Ver detalles" data-id="${noticia.idNoticia}" data-bs-toggle="modal" data-bs-target="#modalVerDetallesNoticia">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning editar-noticia" title="Editar" data-id="${noticia.idNoticia}" data-bs-toggle="modal" data-bs-target="#modalNuevaNoticia">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-danger eliminar-noticia" title="Eliminar" data-id="${noticia.idNoticia}">
@@ -357,13 +373,101 @@ export class u_noticia_admin {
     static async convertirANoticias(datosBackend) {
         if (!datosBackend || !Array.isArray(datosBackend)) return [];
         
-        return datosBackend.map(item => ({
-            idNoticia: item.idNoticia || item.id,
-            asunto: item.asunto,
-            descripcion: item.descripcion,
-            tipo: item.tipo || 'Comunicado',
-            fechaPublicacion: item.fechaPublicacion,
-            fotos: item.fotos || [] // Ahora las fotos vienen directamente del backend
-        }));
+        // VER qué estructura tienen los datos
+        console.log('Datos completos del backend:', JSON.stringify(datosBackend, null, 2));
+        
+        // Ver la primera noticia para entender la estructura
+        if (datosBackend.length > 0) {
+            console.log('Primera noticia:', datosBackend[0]);
+            console.log('Fotos de primera noticia:', datosBackend[0].fotos);
+        }
+        
+        const baseUrl = '/guniversidadfrontend/public/img/';
+        
+        return datosBackend.map(item => {
+            let fotosProcesadas = [];         
+
+            if (item.fotos && Array.isArray(item.fotos)) {
+                fotosProcesadas = item.fotos.map(foto => {
+                    console.log('Procesando foto individual:', foto);
+                    
+                    // Si foto es un string (nombre del archivo)
+                    if (typeof foto === 'string') {
+                        return {
+                            url: foto,
+                            url_completa: baseUrl + foto,
+                            nombre: foto
+                        };
+                    }
+                    // Si foto es un objeto
+                    else if (foto && typeof foto === 'object') {
+                        // Si tiene url
+                        if (foto.url) {
+                            return {
+                                ...foto,
+                                url_completa: baseUrl + foto.url
+                            };
+                        }
+                        // Si tiene nombre
+                        else if (foto.nombre) {
+                            return {
+                                ...foto,
+                                url: foto.nombre,
+                                url_completa: baseUrl + foto.nombre
+                            };
+                        }
+                    }
+                    
+                    return foto;
+                });
+            }
+            
+            return {
+                idNoticia: item.idNoticia || item.id,
+                asunto: item.asunto,
+                descripcion: item.descripcion,
+                tipo: item.tipo || 'Comunicado',
+                fechaPublicacion: item.fechaPublicacion,
+                fotos: fotosProcesadas
+            };
+        });
+    }
+
+    // ========== GENERAR HTML PARA DETALLES DE NOTICIA ==========
+    static crearDetallesNoticiaHTML(noticia) {
+        let fotosHtml = '';
+        if (noticia.fotos && noticia.fotos.length > 0) {
+            fotosHtml = '<div class="row mt-3">';
+            noticia.fotos.forEach(foto => {
+                const fotoUrl = foto.url_completa || (foto.nombre ? `/guniversidadfrontend/public/img/${foto.nombre}` : '');
+                if (fotoUrl) {
+                    fotosHtml += `
+                        <div class="col-md-3 col-sm-4 col-6 mb-3">
+                            <img src="${fotoUrl}" class="img-fluid rounded" style="height: 150px; width: 100%; object-fit: cover;">
+                        </div>
+                    `;
+                }
+            });
+            fotosHtml += '</div>';
+        }
+
+        const fecha = noticia.fechaPublicacion ? new Date(noticia.fechaPublicacion).toLocaleDateString() : 'Fecha desconocida';
+        
+        return `
+            <div class="noticia-detalle">
+                <div class="text-center mb-4">
+                    <h3>${noticia.asunto}</h3>
+                    <p class="text-muted">${fecha}</p>
+                    <span class="badge bg-warning text-dark fs-6">${noticia.tipo}</span>
+                </div>
+                
+                <div class="descripcion mt-4 p-3 bg-light rounded">
+                    <h5>Descripción:</h5>
+                    <p>${noticia.descripcion}</p>
+                </div>
+                
+                ${fotosHtml ? `<div class="mt-4"><h5>Galería de imágenes:</h5>${fotosHtml}</div>` : ''}
+            </div>
+        `;
     }
 }

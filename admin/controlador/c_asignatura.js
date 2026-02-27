@@ -63,7 +63,7 @@ export class c_asignatura {
     async cargarAsignaturas() {
         try {
             const datos = await m_asignatura.obtenerAsignaturas();
-            this.asignaturas = datos || [];
+            this.asignaturas = datos || []; console.log(datos)
             this.actualizarTablaAsignaturas();
         } catch (error) {
             console.error('Error al cargar asignaturas:', error);
@@ -243,7 +243,7 @@ export class c_asignatura {
     }
 
     actualizarTablaAsignaturas() {
-        u_asignatura.actualizarTablaAsignaturas(this.dataTableAsignaturas, this.asignaturas, this.facultades);
+        u_asignatura.actualizarTablaAsignaturas(this.dataTableAsignaturas, this.asignaturas);
     }
 }
 

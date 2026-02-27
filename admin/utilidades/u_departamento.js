@@ -137,7 +137,7 @@ export class u_departamento {
         if (!busqueda || busqueda === '') {
             let html = '';
             departamentos.forEach(d => {
-                html += `<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombre}</div>`;
+                html += `<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombreDepartamento}</div>`;
             });
             $opciones.html(html).show();
             
@@ -148,8 +148,9 @@ export class u_departamento {
         
         // Filtrar departamentos por la búsqueda
         const filtrados = departamentos.filter(d => 
-            d.nombre.toLowerCase().includes(busqueda)
+            d.nombreDepartamento.toLowerCase().includes(busqueda)
         );
+        
         
         // Si no hay resultados
         if (filtrados.length === 0) {
@@ -205,13 +206,14 @@ export class u_departamento {
 
     // ========== TABLA DE DEPARTAMENTOS ==========
     static generarBotonesDepartamento(id) {
+        /*<button class="btn btn-sm btn-outline-info toggle-estado-departamento" title="Cambiar estado" data-id="${id}">
+                    <i class="fas fa-sync-alt"></i>
+                </button>*/
+
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-departamento" title="Editar" data-id="${id}">
                     <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-info toggle-estado-departamento" title="Cambiar estado" data-id="${id}">
-                    <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
         `;
@@ -226,7 +228,7 @@ export class u_departamento {
             const nombreFacultad = u_departamento.obtenerNombreFacultad(facultades, d.idFacultad);
             
             const fila = [
-                d.nombre || 'Sin nombre',
+                d.nombreDepartamento || 'Sin nombre',
                 nombreFacultad,
                 this.generarBotonesDepartamento(d.idDepartamento)
             ];
@@ -248,27 +250,28 @@ export class u_departamento {
         const iconoToggle = estado == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
         const claseToggle = estado == 1 ? 'btn-outline-danger' : 'btn-outline-success';
         const textoToggle = estado == 1 ? 'Deshabilitar' : 'Habilitar';
+
+        /*<button class="btn btn-sm ${claseToggle} toggle-estado-carrera" title="${textoToggle}" data-id="${id}">
+                    <i class="fas ${iconoToggle}"></i>
+                </button>*/
         
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-carrera" title="Editar" data-id="${id}">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-sm ${claseToggle} toggle-estado-carrera" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
-                </button>
             </div>
         `;
     }
 
-    static actualizarTablaCarreras(dataTable, carreras, departamentos) {
+    static actualizarTablaCarreras(dataTable, carreras) {
         if (!dataTable) return;
         
         dataTable.clear();
         
         carreras.forEach(c => {
-            const nombreDepto = u_departamento.obtenerNombreDepartamento(departamentos, c.idDepartamento);
-            const estadoTexto = c.estado == 1 ? 'Habilitado' : 'Deshabilitado';
+            const nombreDepto = c.nombreDepartamento;
+            const estadoTexto = c.estado == 'Habilitado' ? 'Habilitado' : 'Deshabilitado';
             
             const fila = [
                 c.nombreCarrera || 'Sin nombre',
@@ -286,11 +289,5 @@ export class u_departamento {
         });
         
         dataTable.draw();
-    }
-
-    static obtenerNombreDepartamento(departamentos, idDepartamento) {
-        if (!idDepartamento) return '<span class="text-muted">Ninguno</span>';
-        const d = departamentos.find(d => d.idDepartamento == idDepartamento);
-        return d ? d.nombre : '<span class="text-muted">Desconocido</span>';
     }
 }

@@ -7,6 +7,7 @@ export class fetchCurso
     /**
      * Envia solicitud para cargar los curso de la BDD
      * @returns array de cursos
+     * Ya es funcioanal
      */
     static async obtenerCursosDelBackend() {
         try {
@@ -45,6 +46,7 @@ export class fetchCurso
      * Envia solicitud para actualizar un registro existente de la BDD
      * @param {m_carrera} objeto - objeto que contiene los parametros de la clase curso
      * @returns id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarCursoEnBackend(objeto) {
         try {

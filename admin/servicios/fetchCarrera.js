@@ -7,10 +7,11 @@ export class fetchCarrera
     /**
      * Envia solicitud para cargar las carreras de la BDD
      * @returns array de carreras
+     * Ya es funcional
      */
     static async obtenerCarrerasDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&action=obtenerCarreras&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerCarreras&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -25,6 +26,7 @@ export class fetchCarrera
      * Envia solicitud para insertar una nueva carrera a la BDD
      * @param {m_carrera} objeto - objeto que contiene los parametros de la clase facultad
      * @returns id del nuevo registro insertado
+     * Ya es funcional
      */
     static async insertarCarreraEnBackend(objeto) {
         try {
@@ -45,6 +47,7 @@ export class fetchCarrera
      * Envia solicitud para actualizar un registro existente de la BDD
      * @param {m_carrera} objeto - objeto que contiene los parametros de la clase facultad
      * @returns id del registro actualizado
+     * Ya es funcional
      */
     static async actualizarCarreraEnBackend(objeto) {
         try {
@@ -69,7 +72,7 @@ export class fetchCarrera
     static async deshabilitarCarreraEnBackend(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=deshabilitarCarrera&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); 
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;

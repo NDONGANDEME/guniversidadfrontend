@@ -85,8 +85,8 @@ export class m_sesion
             try {
                 const nuevaS = new m_sesion(correoONombre.value.trim(), contraseña.value.trim());
 
-                /*
-                let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
+                
+                /*let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
                 let administrador = (nuevaS.nombreOCorreo == 'admin' || nuevaS.nombreOCorreo == 'admin@email.com') && nuevaS.contraseña == 'admin1234';
                 let profesor = (nuevaS.nombreOCorreo == 'profesor' || nuevaS.nombreOCorreo == 'profesor@email.com') && nuevaS.contraseña == 'profesor1234';
 
@@ -94,7 +94,7 @@ export class m_sesion
                     intentos = 0;
                     m_sesion.guardarSesion('usuarioActivo', nuevaS);
 
-                    switch(profesor ? 'Profesor' : 'Administrador') // Reemplazar con variable rol
+                    switch(profesor ? 'Profesor' : 'Secretario') // Reemplazar con variable rol
                     {
                         case 'Administrador': 
                             Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
@@ -121,8 +121,8 @@ export class m_sesion
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}.`, 3000);
                         return;
                     }
-                }
-                */
+                }*/
+                
 
                 //PARTE REAL
                 let usuarioVerificado = await fetchSesion.verificarCredencialesEnBackend(nuevaS);

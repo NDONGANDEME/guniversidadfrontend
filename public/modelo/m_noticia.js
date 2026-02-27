@@ -38,8 +38,8 @@ export class m_noticia
         return await fetchNoticia.obtenerNoticiasPorInternaDelBackend(); 
     }
 
-    static async obtenerCantidadPaginacion() {
-        return await fetchNoticia.obtenerCantidadPaginacionEnBDD();
+    static async obtenerTotalPaginas() {
+        return await fetchNoticia.obtenerTotalPaginasEnBDD();
     }
 
     static async obtenerNoticiaPorId(id) {

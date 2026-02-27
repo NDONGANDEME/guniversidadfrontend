@@ -105,14 +105,15 @@ export class u_facultad {
         const iconoToggle = habilitado == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
         const claseToggle = habilitado == 1 ? 'btn-outline-danger' : 'btn-outline-success';
         const textoToggle = habilitado == 1 ? 'Deshabilitar' : 'Habilitar';
+
+        /*<button class="btn btn-sm ${claseToggle} toggle-estado-facultad" title="${textoToggle}" data-id="${id}">
+                    <i class="fas ${iconoToggle}"></i>
+                </button>*/
         
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-facultad" title="Editar" data-id="${id}">
                     <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm ${claseToggle} toggle-estado-facultad" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
                 </button>
             </div>
         `;
@@ -153,17 +154,18 @@ export class u_facultad {
         const iconoToggle = estado == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
         const claseToggle = estado == 1 ? 'btn-outline-dark' : 'btn-outline-success';
         const textoToggle = estado == 1 ? 'Deshabilitar' : 'Habilitar';
+
+        /*<button class="btn btn-sm ${claseToggle} toggle-estado-aula" title="${textoToggle}" data-id="${id}">
+                    <i class="fas ${iconoToggle}"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger eliminar-aula" title="Eliminar" data-id="${id}">
+                    <i class="fas fa-trash"></i>
+                </button>*/
         
         return `
             <div class="d-flex justify-content-center gap-1">
                 <button class="btn btn-sm btn-outline-warning editar-aula" title="Editar" data-id="${id}">
                     <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm ${claseToggle} toggle-estado-aula" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger eliminar-aula" title="Eliminar" data-id="${id}">
-                    <i class="fas fa-trash"></i>
                 </button>
             </div>
         `;
@@ -183,7 +185,7 @@ export class u_facultad {
                 a.nombreAula || 'Sin nombre',
                 a.capacidad || '0',
                 nombreFacultad,
-                a.estado == 1 ? 'Habilitado' : 'Deshabilitado',
+                a.estado == 'Habilitado' ? 'Habilitado' : 'Inhabilitado',
                 this.generarBotonesAula(a.idAula, a.estado)
             ];
             
