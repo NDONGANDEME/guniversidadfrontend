@@ -40,7 +40,7 @@ export class c_usuario {
     async inicializar() {
         try {
             // Verificar sesión
-            sesiones.verificarExistenciaSesion();
+            //sesiones.verificarExistenciaSesion();
             
             // Cargar componentes comunes
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
@@ -85,6 +85,7 @@ export class c_usuario {
     async cargarUsuarios() {
         try {
             this.usuarios = await m_usuario.obtenerUsuarios();
+            console.log(this.usuarios)
             this.actualizarTablaUsuarios();
 
             if (this.usuarios == []) Alerta.notificar('No hay usuarios en la BDD', 1500);
@@ -139,6 +140,7 @@ export class c_usuario {
     }
     
     actualizarTablaUsuarios() {
+        console.log('je suis la')
         this.tablaUsuarios.clear();
         
         this.usuarios.forEach(usuario => {

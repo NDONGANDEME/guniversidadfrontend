@@ -2,7 +2,7 @@ import { Alerta } from "../utilidades/u_alertas.js";
 
 export class fetchSesion
 {
-    url = '/guniversidadfrontend/public/core/endpoint.php';
+    static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
      * Envia solicitud para verificar las credenciales del usuario en el backend
@@ -11,10 +11,10 @@ export class fetchSesion
      */
     static async verificarCredencialesEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${url}?ruta=sesion&accion=verificarCredenciales&actor=global`, {
+            let solicitud = await fetch(`${this.url}?ruta=sesion&accion=verificarCredenciales&actor=global`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return[];

@@ -61,8 +61,8 @@ export class fetchNoticia
      */
     static async obtenerNoticiasDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&action=obtenerNoticias&actor=admin`);
-            let respuesta = await solicitud.json();
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticias&actor=admin`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -82,7 +82,7 @@ export class fetchNoticia
             let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -102,7 +102,7 @@ export class fetchNoticia
             let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=admin`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -120,7 +120,7 @@ export class fetchNoticia
     static async eliminarNoticiaEnBDD(id) {
         try  {
             let solicitud = await fetch(`${this.url}?ruta=noticia&accion=eliminarNoticia&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;

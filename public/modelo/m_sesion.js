@@ -56,6 +56,7 @@ export class m_sesion
 
         let intentos = 0;
         const maxIntentos = 3;
+        let rol;
 
         // Validación en tiempo real para cada input
         inputs.forEach(input => {
@@ -84,16 +85,16 @@ export class m_sesion
             try {
                 const nuevaS = new m_sesion(correoONombre.value.trim(), contraseña.value.trim());
 
-                
+                /*
                 let secretario = (nuevaS.nombreOCorreo == 'secretario' || nuevaS.nombreOCorreo == 'secretario@email.com') && nuevaS.contraseña == 'secretario1234';
                 let administrador = (nuevaS.nombreOCorreo == 'admin' || nuevaS.nombreOCorreo == 'admin@email.com') && nuevaS.contraseña == 'admin1234';
                 let profesor = (nuevaS.nombreOCorreo == 'profesor' || nuevaS.nombreOCorreo == 'profesor@email.com') && nuevaS.contraseña == 'profesor1234';
 
-                if(secretario || profesor){
+                if(secretario || profesor || administrador){
                     intentos = 0;
                     m_sesion.guardarSesion('usuarioActivo', nuevaS);
 
-                    switch(profesor ? 'Profesor' : 'Secretario') // Reemplazar con variable rol
+                    switch(administrador ? 'Administrador' : 'Secretario') // Reemplazar con variable rol
                     {
                         case 'Administrador': 
                             Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
@@ -121,16 +122,22 @@ export class m_sesion
                         return;
                     }
                 }
+                */
 
-                /*PARTE REAL
+                //PARTE REAL
                 let usuarioVerificado = await fetchSesion.verificarCredencialesEnBackend(nuevaS);
+                console.log(usuarioVerificado);
                 if (usuarioVerificado) {
                     intentos = 0;   // Reiniciar contador de intentos al iniciar sesión exitosamente
 
-                    m_sesion.guardarSesion('usuarioActivo', usuarioVerificado);
-
-                    let rol = usuarioVerificado.rol;
-                    switch (rol) {
+                    m_sesion.guardarSesion('usuarioActivo', usuarioVerificado[0]);
+                    usuarioVerificado.forEach(usuario => {
+                        rol = usuario.rol;
+                    });
+                    console.log(rol);
+                    //let rol = usuarioVerificado.rol;
+                    if(usuarioVerificado[0].estado == 'activo'){
+                        switch (rol) {
                         case 'Administrador':
                             Alerta.cargarSimple(1500, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
                             break;
@@ -146,6 +153,10 @@ export class m_sesion
                     }
 
                     formIniciarSesion.reset();
+                    }else {
+                        Alerta.notificarError(`Tu cuenta no está activa, por lo tanto, no tienes acceso al sistema`, 3000);
+                        return
+                    }
                 }else {
                     if(intentos >= maxIntentos) {
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}. Por favor, contacte a soporte.`, 3000);
@@ -155,7 +166,7 @@ export class m_sesion
                         Alerta.notificarError(`Credenciales incorrectas. Intento ${intentos} de ${maxIntentos}.`, 3000);
                         return;
                     }
-                }*/
+                }
             } catch(error) {
                 Alerta.notificarError(`Error de verificación [m_sesion]: ${error}.`, 3000);
                 return;
