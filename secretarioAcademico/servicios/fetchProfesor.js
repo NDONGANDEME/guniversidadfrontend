@@ -8,9 +8,26 @@ export class fetchProfesor
      * Envia solicitud para listar los profesores de la BDD
      * @returns array de profesores
      */
-    static async obtenerProfesoresPorFacultadDelBackend() {
+    static async obtenerProfesoresPorFacultadDelBackend(idFacultad) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=obtenerProfesoresPorFacultad&actor=secretario`);
+            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=obtenerProfesoresPorFacultad&actor=secretario&valor=${idFacultad}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchProfesor]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Envia solicitud para listar los profesores de la BDD
+     * @returns array de profesores
+     */
+    static async obtenerProfesoresPorDepartamentoDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=obtenerProfesoresPorDepartamento&actor=secretario`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

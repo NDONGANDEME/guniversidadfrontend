@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="../css/admin.css">
-    <link rel="stylesheet" href="../css/general.css">
+    <link rel="stylesheet" href="../../../public/template/css/globalModulos.css">
 </head>
 <body id="page-top">
     <!-- Page Wrapper -->
@@ -21,7 +21,7 @@
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <div class="sidebar-brand-text"> Administrador </div>
+                <div class="sidebar-brand-text" id="administrador"> Administrador </div>
             </div>
 
             <hr class="sidebar-divider">
@@ -108,7 +108,7 @@
                                         <input type="text" class="form-control" id="nombreCurso" placeholder="Ej: primero" required>
                                         <label id="errorNombreCurso" class="errorMensaje"></label>
                                     </div>
-                                    <div class="">
+                                    <div class="mt-1">
                                         <label for="nivelCurso" class="form-label">Nivel</label>
                                         <input type="number" min="0" class="form-control" id="nivelCurso" placeholder="Ej: 1" required>
                                         <label id="errorNivelCurso" class="errorMensaje"></label>
@@ -208,7 +208,7 @@
                                     <input type="number" min="0" class="form-control" id="numeroSemestre" placeholder="Ej: 1" required>
                                     <label id="errorNumeroSemestre" class="errorMensaje"></label>
                                 </div>
-                                <div class="">
+                                <div class="mt-1">
                                     <label for="cursoSemestre" class="form-label">Curso perteneciente</label>
                                     <select class="form-select" id="cursoSemestre" required>
                                         <option value="Ninguno">Seleccione</option>

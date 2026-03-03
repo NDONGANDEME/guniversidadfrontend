@@ -20,6 +20,14 @@ export class m_asignatura
         return await fetchAsignatura.obtenerAsignaturasDelBackend();
     }
 
+    static async obtenerAsignaturasPorSemestre(numeroSemestre) {
+        return await fetchAsignatura.obtenerAsignaturasPorSemestreDelBackend(numeroSemestre);
+    }
+
+    static async obtenerAsignaturasPendientesYBloqueadas(numeroSemestre) {
+        return await fetchAsignatura.obtenerAsignaturasPendientesYBloqueadasDelBackend(numeroSemestre);
+    }
+
     static async insertarAsignatura(objeto) {
         return await fetchAsignatura.insertarAsignaturaEnBackend(objeto);
     }

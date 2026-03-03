@@ -2,7 +2,7 @@ import { fetchProfesor } from "../servicios/fetchProfesor.js";
 
 export class m_profesor
 {
-    profesor (idProfesor, nombreProfesor, apellidosProfesor, dipProfesor, especialidad, gradoEstudio, idDepartamento, idUsuario, genero, nacionalidad, 
+    constructor (idProfesor, nombreProfesor, apellidosProfesor, dipProfesor, especialidad, gradoEstudio, idDepartamento, idUsuario, genero, nacionalidad, 
         responsabilidad, correoProfesor, telefonoProfesor) {
             this.idProfesor = idProfesor;
             this.nombreProfesor = nombreProfesor;
@@ -19,8 +19,12 @@ export class m_profesor
             this.telefonoProfesor = telefonoProfesor;
     }
 
-    static async obtenerProfesoresPorFacultad() {
-        return await fetchProfesor.obtenerProfesoresPorFacultadDelBackend();
+    static async obtenerProfesoresPorFacultad(idFacultad = null) {
+        return await fetchProfesor.obtenerProfesoresPorFacultadDelBackend(idFacultad);
+    }
+
+    static async obtenerProfesoresPorDepartamento() {
+        return await fetchProfesor.obtenerProfesoresPorDepartamentoDelBackend();
     }
 
     static async insertarProfesor(objeto) {

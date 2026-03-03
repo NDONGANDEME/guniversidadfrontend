@@ -23,6 +23,57 @@ export class fetchEstudiante
     }
 
     /**
+     * Envia solicitud para listar los estudiante de la BDD
+     * @returns array de estudiante que ven una determinada asignatura
+     */
+    static async obtenerEstudiantesPorAsignaturaDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerEstudiantesPorAsignatura&actor=secretario`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchEstudiante]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Envia solicitud para listar los estudiante de la BDD
+     * @returns array de estudiante
+     */
+    static async obtenerEstudiantesPorFacultadDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerEstudiantesPorFacultad&actor=secretario`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchEstudiante]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Envia solicitud para listar los estudiante de la BDD
+     * @returns array de estudiantes (nombreEstudiante, carrera, curso, semestre)
+     */
+    static async obtenerDatosEspecificosEstudiantesDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerDatosEspecificosEstudiantes&actor=secretario`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchEstudiante]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
      * Envia solicitud para insertar un nuevo estudiante en la BDD
      * @param {m_estudiante} objeto 
      * @returns id del nuevo registro insertado

@@ -22,395 +22,7 @@
       href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
     />
     <link rel="stylesheet" href="../css/secretario.css" />
-    <link rel="stylesheet" href="../css/general.css" />
-    <style>
-      /* ===== ESTILOS PARA EL MODAL DE ELABORACIÓN ===== */
-
-      /* Contenedor de semestres con scroll horizontal */
-      #semestres-scroll {
-        overflow-x: auto;
-        overflow-y: hidden;
-        white-space: nowrap;
-        height: 100%;
-        scroll-behavior: smooth;
-        padding-bottom: 5px;
-      }
-
-      #semestres-scroll::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      #semestres-scroll::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-      }
-
-      #semestres-scroll::-webkit-scrollbar-thumb {
-        background: #ffd600;
-        border-radius: 4px;
-      }
-
-      #semestres-scroll::-webkit-scrollbar-thumb:hover {
-        background: #e6c100;
-      }
-
-      /* Contenedor flex para semestres */
-      #semestres-container {
-        display: flex;
-        flex-direction: row;
-        gap: 15px;
-        height: 100%;
-        padding-right: 10px;
-      }
-
-      /* Tarjetas de semestre */
-      .semestre-horizontal {
-        min-width: 300px;
-        max-width: 300px;
-        height: 100%;
-        display: inline-block;
-        vertical-align: top;
-        transition: transform 0.3s ease;
-      }
-
-      .semestre-horizontal:hover {
-        transform: translateY(-5px);
-      }
-
-      .semester-card {
-        height: 100%;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-      }
-
-      .semester-card:hover {
-        border-color: #ffd600;
-        box-shadow: 0 5px 15px rgba(255, 214, 0, 0.3);
-      }
-
-      .semester-card .card-body {
-        flex: 1;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* Lista de asignaturas dentro de semestre */
-      .asignaturas-list {
-        flex: 1;
-        min-height: 200px;
-        overflow-y: auto;
-        padding-right: 5px;
-      }
-
-      .asignaturas-list::-webkit-scrollbar {
-        width: 5px;
-      }
-
-      .asignaturas-list::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 3px;
-      }
-
-      .asignaturas-list::-webkit-scrollbar-thumb {
-        background: #ffd600;
-        border-radius: 3px;
-      }
-
-      /* Biblioteca de asignaturas */
-      #biblioteca-asignaturas {
-        scrollbar-width: thin;
-        scrollbar-color: #ffd600 #f1f1f1;
-        height: 550px;
-        overflow-y: auto;
-      }
-
-      #biblioteca-asignaturas::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      #biblioteca-asignaturas::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-      }
-
-      #biblioteca-asignaturas::-webkit-scrollbar-thumb {
-        background: #ffd600;
-        border-radius: 4px;
-      }
-
-      /* Items arrastrables */
-      .draggable-item {
-        cursor: move;
-        transition: all 0.3s ease;
-      }
-
-      .draggable-item:hover {
-        background-color: #fff3cd !important;
-        border-color: #ffd600 !important;
-      }
-
-      /* Notificaciones flotantes */
-      .position-fixed {
-        position: fixed;
-        z-index: 9999;
-      }
-
-      /* Utilidades de altura */
-      .h-100 {
-        height: 100% !important;
-      }
-
-      .flex-fill {
-        flex: 1 1 auto !important;
-      }
-
-      /* Ajuste de altura para contenedores */
-      .card-body[style*="height: 550px"] {
-        height: 550px !important;
-      }
-
-      /* Estilo para las alertas de asignaturas */
-      .alert-warning {
-        background-color: #fff3cd;
-        border-color: #ffd600;
-        color: #000;
-      }
-
-      /* ===== ESTILOS PARA SELECTS CON APARIENCIA DE INPUT ===== */
-      .select-input-style {
-        width: 100%;
-        padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #212529;
-        background-color: #fff;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 16px 12px;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        transition:
-          border-color 0.15s ease-in-out,
-          box-shadow 0.15s ease-in-out;
-      }
-
-      .select-input-style:focus {
-        border-color: #ffd600;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(255, 214, 0, 0.25);
-      }
-
-      .select-input-style:hover {
-        border-color: #ffd600;
-        background-color: #fff9e6;
-      }
-
-      .select-input-style option {
-        padding: 8px;
-      }
-
-      /* Estilo para cuando está seleccionado */
-      .select-input-style option:checked {
-        background-color: #ffd600;
-        color: #000;
-      }
-
-      /* Estilo para la celda que contiene el select */
-      td .select-input-style {
-        margin: -0.375rem -0.75rem;
-        width: calc(100% + 1.5rem);
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-        background-color: transparent;
-      }
-
-      td .select-input-style:hover,
-      td .select-input-style:focus {
-        background-color: #fff9e6;
-      }
-
-      /* Indicador visual de que es interactivo */
-      .select-input-style {
-        cursor: pointer;
-      }
-
-      .select-input-style:hover {
-        cursor: pointer;
-      }
-
-      .input-dropdown {
-        width: 100%;
-        position: relative;
-      }
-
-      .input-dropdown .dropdown-toggle {
-        width: 100%;
-        text-align: left;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        padding: 0.375rem 0.75rem;
-        color: #212529;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .input-dropdown .dropdown-toggle::after {
-        display: inline-block;
-        margin-left: 0.255em;
-        vertical-align: 0.255em;
-        content: "";
-        border-top: 0.3em solid;
-        border-right: 0.3em solid transparent;
-        border-bottom: 0;
-        border-left: 0.3em solid transparent;
-        color: #6c757d;
-      }
-
-      .input-dropdown .dropdown-toggle:hover,
-      .input-dropdown .dropdown-toggle:focus {
-        border-color: #ffd600;
-        background-color: #fff9e6;
-        box-shadow: 0 0 0 0.25rem rgba(255, 214, 0, 0.25);
-      }
-
-      .input-dropdown .dropdown-menu {
-        width: 100%;
-        max-height: 300px;
-        overflow-y: auto;
-        border: 1px solid #ced4da;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .input-dropdown .dropdown-item {
-        cursor: pointer;
-        padding: 0.5rem 1rem;
-      }
-
-      .input-dropdown .dropdown-item:hover {
-        background-color: #fff9e6;
-        color: #000;
-      }
-
-      .input-dropdown .dropdown-item.active {
-        background-color: #ffd600;
-        color: #000;
-      }
-
-      .input-dropdown .selected-value {
-        flex: 1;
-        color: #212529;
-      }
-
-      .input-dropdown .selected-value.placeholder {
-        color: #6c757d;
-      }
-
-      /* ===== ESTILOS PARA INPUT CON AUTOCOMPLETADO ===== */
-      .autocomplete-wrapper {
-        position: relative;
-        width: 100%;
-      }
-
-      .autocomplete-input {
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #212529;
-        background-color: #fff;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 16px 12px;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        transition:
-          border-color 0.15s ease-in-out,
-          box-shadow 0.15s ease-in-out;
-      }
-
-      .autocomplete-input:focus {
-        border-color: #ffd600;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(255, 214, 0, 0.25);
-      }
-
-      .autocomplete-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        max-height: 250px;
-        overflow-y: auto;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        margin-top: 4px;
-        z-index: 1000;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        display: none;
-      }
-
-      .autocomplete-dropdown.show {
-        display: block;
-      }
-
-      .autocomplete-item {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .autocomplete-item:hover {
-        background-color: #fff9e6;
-      }
-
-      .autocomplete-item.selected {
-        background-color: #ffd600;
-        color: #000;
-      }
-
-      .autocomplete-item mark {
-        background-color: #ffd600;
-        padding: 0;
-        font-weight: bold;
-      }
-
-      .no-results {
-        padding: 0.5rem 1rem;
-        color: #6c757d;
-        font-style: italic;
-      }
-
-      td .autocomplete-wrapper {
-        margin: -0.375rem -0.75rem;
-        width: calc(100% + 1.5rem);
-      }
-
-      td .autocomplete-input {
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-        background-color: transparent;
-      }
-
-      td .autocomplete-input:focus {
-        background-color: #fff9e6;
-      }
-    </style>
+    <link rel="stylesheet" href="../../../public/template/css/globalModulos.css" />
   </head>
   <body id="page-top">
     <!-- Page Wrapper -->
@@ -446,31 +58,21 @@
             <i class="fas fa-list-alt"></i> <span> Planes de Estudios </span>
           </a>
         </li>
-
         <li class="nav-item">
           <a class="nav-link matricula">
             <i class="fas fa-clipboard-list"></i> <span> Matrícula </span>
           </a>
         </li>
-
-        <li class="nav-item">
-          <a class="nav-link pago">
-            <i class="fas fa-clipboard-list"></i> <span> Pago </span>
-          </a>
-        </li>
-
         <li class="nav-item">
           <a class="nav-link profesor">
             <i class="fas fa-chalkboard-teacher"></i> <span> Profesores </span>
           </a>
         </li>
-
         <li class="nav-item">
           <a class="nav-link estudiante">
             <i class="fas fa-calendar-alt"></i> <span> Estudiantes </span>
           </a>
         </li>
-
         <li class="nav-item">
           <a class="nav-link horario">
             <i class="fas fa-user-graduate"></i> <span> Horario </span>
@@ -547,46 +149,7 @@
                         </tr>
                       </thead>
                       <tbody class="tbodyTabla" id="tbodyTablaPlanesEstudios">
-                        <tr>
-                          <td class="align-middle">
-                            Ingeniería Informática 2024
-                          </td>
-                          <td class="align-middle">15/03/2024</td>
-                          <td class="align-middle">2024-2028</td>
-                          <td class="align-middle">Ingeniería en Sistemas</td>
-                          <td class="align-middle">Sí</td>
-                          <td class="align-middle">
-                            <div
-                              class="d-flex justify-content-center align-items-center gap-1"
-                            >
-                              <button
-                                class="btn btn-sm btn-outline-warning me-1 editar"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalNuevoPlanEstudio"
-                                title="Editar"
-                                data-id="1"
-                              >
-                                <i class="fas fa-edit"></i>
-                              </button>
-                              <button
-                                class="btn btn-sm btn-outline-info me-1 verDtalles"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalVerDetallesPlanEstudio"
-                                title="Ver Detalles"
-                                data-id="1"
-                              >
-                                <i class="fas fa-eye"></i>
-                              </button>
-                              <button
-                                class="btn btn-sm btn-outline-danger me-1 deshabilitar"
-                                title="Deshabilitar"
-                                data-id="1"
-                              >
-                                <i class="fas fa-toggle-off"></i>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
+                        <!-- Los datos se cargarán dinámicamente desde c_planEstudio.js -->
                       </tbody>
                     </table>
                   </div>
@@ -735,7 +298,7 @@
                       <label for="vigentePlanEstudio" class="form-label"
                         >¿Es vigente?</label
                       >
-                      <select class="form-select" id="vigentePlanEstudio">
+                      <select class="form-select" id="vigentePlanEstudio" required>
                         <option value="">Seleccione...</option>
                         <option value="Sí">Sí</option>
                         <option value="No">No</option>
@@ -749,11 +312,9 @@
                       <label for="carrerasPlanEstudio" class="form-label"
                         >Carrera</label
                       >
-                      <select class="form-select" id="carrerasPlanEstudio">
+                      <select class="form-select" id="carrerasPlanEstudio" required>
                         <option value="">Seleccione...</option>
-                        <option value="1">Ingeniería en Sistemas</option>
-                        <option value="2">Ingeniería Informática</option>
-                        <option value="3">Ciencias de la Computación</option>
+                        <!-- Las opciones se cargarán dinámicamente desde c_planEstudio.js -->
                       </select>
                       <label
                         id="errorCarrerasPlanEstudio"
@@ -785,166 +346,12 @@
                             class="form-control"
                             placeholder="🔍 Buscar asignaturas..."
                             id="searchAsignatura"
-                            onkeyup="filtrarAsignaturas()"
                           />
                         </div>
 
                         <!-- Lista de asignaturas -->
                         <div class="list-group" id="listaAsignaturas">
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="1"
-                            data-nombre="Matemáticas I"
-                            data-creditos="5"
-                            data-modalidad="Presencial"
-                            data-codigo="MAT101"
-                          >
-                            <strong>MAT101</strong> - Matemáticas I <br /><small
-                              class="text-muted"
-                              >5 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="2"
-                            data-nombre="Lengua I"
-                            data-creditos="4"
-                            data-modalidad="Presencial"
-                            data-codigo="LEN101"
-                          >
-                            <strong>LEN101</strong> - Lengua y Literatura I
-                            <br /><small class="text-muted"
-                              >4 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="3"
-                            data-nombre="Física I"
-                            data-creditos="4"
-                            data-modalidad="Presencial"
-                            data-codigo="FIS101"
-                          >
-                            <strong>FIS101</strong> - Física General
-                            <br /><small class="text-muted"
-                              >4 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="4"
-                            data-nombre="Química I"
-                            data-creditos="4"
-                            data-modalidad="Presencial"
-                            data-codigo="QUI101"
-                          >
-                            <strong>QUI101</strong> - Química General
-                            <br /><small class="text-muted"
-                              >4 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="5"
-                            data-nombre="Inglés I"
-                            data-creditos="3"
-                            data-modalidad="Virtual"
-                            data-codigo="ING101"
-                          >
-                            <strong>ING101</strong> - Inglés Técnico I
-                            <br /><small class="text-muted"
-                              >3 créditos • Virtual</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="6"
-                            data-nombre="Matemáticas II"
-                            data-creditos="5"
-                            data-modalidad="Presencial"
-                            data-codigo="MAT201"
-                          >
-                            <strong>MAT201</strong> - Matemáticas II
-                            <br /><small class="text-muted"
-                              >5 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="7"
-                            data-nombre="Física II"
-                            data-creditos="4"
-                            data-modalidad="Presencial"
-                            data-codigo="FIS201"
-                          >
-                            <strong>FIS201</strong> - Física General II
-                            <br /><small class="text-muted"
-                              >4 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="8"
-                            data-nombre="Programación I"
-                            data-creditos="5"
-                            data-modalidad="Híbrida"
-                            data-codigo="PRO201"
-                          >
-                            <strong>PRO201</strong> - Programación I
-                            <br /><small class="text-muted"
-                              >5 créditos • Híbrida</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="9"
-                            data-nombre="Cálculo I"
-                            data-creditos="5"
-                            data-modalidad="Presencial"
-                            data-codigo="MAT301"
-                          >
-                            <strong>MAT301</strong> - Cálculo Diferencial
-                            <br /><small class="text-muted"
-                              >5 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="10"
-                            data-nombre="Estructuras de Datos"
-                            data-creditos="5"
-                            data-modalidad="Presencial"
-                            data-codigo="PRO301"
-                          >
-                            <strong>PRO301</strong> - Estructuras de Datos
-                            <br /><small class="text-muted"
-                              >5 créditos • Presencial</small
-                            >
-                          </div>
-                          <div
-                            class="list-group-item list-group-item-action draggable-item"
-                            draggable="true"
-                            data-id="11"
-                            data-nombre="Bases de Datos I"
-                            data-creditos="4"
-                            data-modalidad="Híbrida"
-                            data-codigo="BD301"
-                          >
-                            <strong>BD301</strong> - Bases de Datos I
-                            <br /><small class="text-muted"
-                              >4 créditos • Híbrida</small
-                            >
-                          </div>
+                          <!-- Las asignaturas se cargarán dinámicamente desde c_planEstudio.js -->
                         </div>
                       </div>
                     </div>
@@ -957,10 +364,7 @@
                         class="card-header bg-warning d-flex justify-content-between align-items-center"
                       >
                         <h6 class="mb-0">📅 Estructura por Semestres</h6>
-                        <button
-                          class="btn btn-sm btn-dark"
-                          onclick="agregarSemestre()"
-                        >
+                        <button class="btn btn-sm btn-dark" id="btnAgregarSemestre" disabled>
                           <i class="fas fa-plus"></i> Agregar Semestre
                         </button>
                       </div>
@@ -971,118 +375,7 @@
                         <!-- Contenedor con scroll horizontal -->
                         <div id="semestres-scroll">
                           <div id="semestres-container">
-                            <!-- Semestre 1 -->
-                            <div
-                              class="semestre-horizontal"
-                              id="semestre-col-1"
-                            >
-                              <div
-                                class="card semester-card h-100"
-                                data-semestre="1"
-                              >
-                                <div
-                                  class="card-header bg-warning d-flex justify-content-between align-items-center py-2"
-                                >
-                                  <h6 class="mb-0">Semestre I</h6>
-                                  <div>
-                                    <button
-                                      class="btn btn-sm btn-outline-danger"
-                                      onclick="eliminarSemestre(1)"
-                                      title="Eliminar semestre"
-                                    >
-                                      <i class="fas fa-trash"></i>
-                                    </button>
-                                  </div>
-                                </div>
-                                <div
-                                  class="card-body"
-                                  style="
-                                    white-space: normal;
-                                    overflow-y: auto;
-                                    height: calc(100% - 60px);
-                                  "
-                                >
-                                  <div
-                                    class="asignaturas-list"
-                                    id="semestre1-list"
-                                    ondragover="allowDrop(event)"
-                                    ondrop="dropAsignatura(event, 1)"
-                                  >
-                                    <!-- Las asignaturas se agregarán aquí -->
-                                  </div>
-                                  <div
-                                    class="mt-2 d-flex justify-content-between pt-2 border-top"
-                                  >
-                                    <small class="text-muted"
-                                      >Créditos:
-                                      <span id="creditos1">0</span></small
-                                    >
-                                    <small class="text-muted"
-                                      >Asignaturas:
-                                      <span id="asignaturas1">0</span></small
-                                    >
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            <!-- Semestre 2 -->
-                            <div
-                              class="semestre-horizontal"
-                              id="semestre-col-2"
-                            >
-                              <div
-                                class="card semester-card h-100"
-                                data-semestre="2"
-                              >
-                                <div
-                                  class="card-header bg-warning d-flex justify-content-between align-items-center py-2"
-                                >
-                                  <h6 class="mb-0">Semestre II</h6>
-                                  <div>
-                                    <span class="badge bg-dark me-2"
-                                      >1° Básico</span
-                                    >
-                                    <button
-                                      class="btn btn-sm btn-outline-danger"
-                                      onclick="eliminarSemestre(2)"
-                                      title="Eliminar semestre"
-                                    >
-                                      <i class="fas fa-trash"></i>
-                                    </button>
-                                  </div>
-                                </div>
-                                <div
-                                  class="card-body"
-                                  style="
-                                    white-space: normal;
-                                    overflow-y: auto;
-                                    height: calc(100% - 60px);
-                                  "
-                                >
-                                  <div
-                                    class="asignaturas-list"
-                                    id="semestre2-list"
-                                    ondragover="allowDrop(event)"
-                                    ondrop="dropAsignatura(event, 2)"
-                                  >
-                                    <!-- Las asignaturas se agregarán aquí -->
-                                  </div>
-                                  <div
-                                    class="mt-2 d-flex justify-content-between pt-2 border-top"
-                                  >
-                                    <small class="text-muted"
-                                      >Créditos:
-                                      <span id="creditos2">0</span></small
-                                    >
-                                    <small class="text-muted"
-                                      >Asignaturas:
-                                      <span id="asignaturas2">0</span></small
-                                    >
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                            <!-- Los semestres se generarán dinámicamente desde c_planEstudio.js -->
                           </div>
                         </div>
                       </div>
@@ -1107,8 +400,8 @@
                       <div class="card-body">
                         <table class="table table-sm">
                           <tr>
-                            <th>Total de Semestres:</th>
-                            <td id="totalSemestres">2</td>
+                            <th>Total de Semestres con asignaturas:</th>
+                            <td id="totalSemestres">0</td>
                           </tr>
                           <tr>
                             <th>Total de Asignaturas:</th>
@@ -1128,48 +421,27 @@
                   <div
                     class="card-header bg-warning d-flex justify-content-between align-items-center"
                   >
-                    <h6 class="mb-0">📋 Detalles por asignatura</h6>
-                  </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-hover">
-                        <thead class="table-warning">
-                          <tr>
-                            <th>Semestre</th>
-                            <th>Asignatura</th>
-                            <th>Prerequisitos</th>
-                            <th>Créditos</th>
-                          </tr>
-                        </thead>
-                        <tbody id="tablaDetallesAsignatura">
-                          <!--añadir dinamicamente-->
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card mt-3">
-                  <div class="card-header bg-warning">
                     <h6 class="mb-0">📋 Malla Curricular</h6>
                   </div>
                   <div class="card-body">
-                    <table class="table table-bordered">
-                      <thead class="table-warning">
-                        <tr>
-                          <th>Semestre</th>
-                          <th>Asignaturas</th>
-                          <th>Créditos</th>
-                        </tr>
-                      </thead>
-                      <tbody id="mallaCurricularBody">
-                        <tr>
-                          <td colspan="3" class="text-center text-muted">
-                            No hay asignaturas asignadas
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <thead class="table-warning">
+                          <tr>
+                            <th>Semestre</th>
+                            <th>Asignaturas</th>
+                            <th>Créditos</th>
+                          </tr>
+                        </thead>
+                        <tbody id="mallaCurricularBody">
+                          <tr>
+                            <td colspan="3" class="text-center text-muted">
+                              No hay asignaturas asignadas
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1201,27 +473,21 @@
       <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Modal para ver detalles de profesor -->
+    <!-- Modal para ver detalles de plan de estudio -->
     <div class="modal fade" id="modalVerDetallesPlanEstudio" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-sm">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalles del Plan de Estudios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
-                    <div class="card shadow">
-
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold"> Plan de Estudios elaborado </h6>
-                        </div>
-
-                        <div class="card-body">
-                            <div>
-                                <!--aqui se muestran todos los datos introducidos en el formulario, dinamicamente-->
-                            </div>
-                        </div>
+                    <div class="card-body">
+                        <!-- Los detalles se cargarán dinámicamente desde c_planEstudio.js -->
                     </div>
                 </div>
-
                 <div class="modal-footer">
-                    <button class="btn btn-secondary cancelar" type="button" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -1230,6 +496,7 @@
     <!-- Logout Modal-->
     <div class="importandoModalCierreSesion"></div>
 
+    <!-- Scripts -->
     <script src="../../../public/nomodules/jquery/dist/jquery.min.js"></script>
     <script src="../../../public/nomodules/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -1237,567 +504,5 @@
     <script src="../../../public/nomodules/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script type="module" src="../../controlador/c_planEstudio.js"></script>
-
-    <!-- Script para la funcionalidad de elaboración -->
-    <script>
-      // ===== VARIABLES GLOBALES =====
-      let asignaturasPorSemestre = {
-        1: [],
-        2: [],
-      };
-
-      let profesores = [
-        { id: 1, nombre: "Dr. Juan Pérez", especialidad: "Matemáticas" },
-        { id: 2, nombre: "MSc. María García", especialidad: "Lengua" },
-        { id: 3, nombre: "Ing. Carlos López", especialidad: "Programación" },
-        { id: 4, nombre: "Dra. Ana Martínez", especialidad: "Física" },
-        {
-          id: 5,
-          nombre: "MSc. Roberto Sánchez",
-          especialidad: "Bases de Datos",
-        },
-        { id: 6, nombre: "Ing. Laura Torres", especialidad: "Inglés" },
-      ];
-
-      // ===== FUNCIONES DEL MODAL =====
-      function abrirElaboracion(idPlan) {
-        const modal = new bootstrap.Modal(
-          document.getElementById("modalNuevoPlanEstudio"),
-        );
-        document.getElementById("elaboracion-tab").click();
-        document.querySelector("#modalNuevoPlanEstudioLabel").textContent =
-          "Elaborando Plan de Estudios";
-        modal.show();
-      }
-
-      // ===== FUNCIONES DE DRAG & DROP =====
-      function allowDrop(ev) {
-        ev.preventDefault();
-      }
-
-      function dragAsignatura(ev) {
-        const elemento = ev.target.closest(".draggable-item");
-        if (!elemento) return;
-
-        const data = {
-          id: elemento.dataset.id,
-          nombre: elemento.dataset.nombre,
-          creditos: elemento.dataset.creditos,
-          modalidad: elemento.dataset.modalidad,
-          codigo: elemento.dataset.codigo,
-        };
-
-        ev.dataTransfer.setData("text/plain", JSON.stringify(data));
-        ev.target.classList.add("bg-warning");
-      }
-
-      function dropAsignatura(ev, semestreId) {
-        ev.preventDefault();
-
-        try {
-          const data = JSON.parse(ev.dataTransfer.getData("text/plain"));
-
-          if (
-            asignaturasPorSemestre[semestreId].some((a) => a.id === data.id)
-          ) {
-            alert("Esta asignatura ya está en este semestre");
-            return;
-          }
-
-          const asignatura = {
-            id: data.id,
-            nombre: data.nombre,
-            creditos: parseInt(data.creditos),
-            modalidad: data.modalidad,
-            codigo: data.codigo || "N/A",
-            profesor: "Por asignar",
-          };
-
-          asignaturasPorSemestre[semestreId].push(asignatura);
-          actualizarVistaSemestre(semestreId);
-          actualizarCreditos(semestreId);
-        } catch (e) {
-          console.error("Error:", e);
-        }
-      }
-
-      // ===== FUNCIONES DE ACTUALIZACIÓN DE VISTA =====
-      function actualizarVistaSemestre(semestreId) {
-        const lista = document.getElementById(`semestre${semestreId}-list`);
-        if (!lista) return;
-
-        lista.innerHTML = "";
-
-        asignaturasPorSemestre[semestreId].forEach((asignatura, index) => {
-          const item = document.createElement("div");
-          item.className =
-            "alert alert-warning p-2 mb-2 d-flex justify-content-between align-items-center";
-          item.innerHTML = `
-                    <div>
-                        <strong>${asignatura.nombre}</strong><br>
-                        <small>${asignatura.creditos} créditos • ${asignatura.modalidad}</small>
-                    </div>
-                    <div>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarAsignatura(${semestreId}, ${index})">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-          lista.appendChild(item);
-        });
-
-        document.getElementById(`asignaturas${semestreId}`).textContent =
-          asignaturasPorSemestre[semestreId].length;
-      }
-
-      function actualizarCreditos(semestreId) {
-        const total = asignaturasPorSemestre[semestreId].reduce(
-          (sum, a) => sum + a.creditos,
-          0,
-        );
-        document.getElementById(`creditos${semestreId}`).textContent = total;
-        actualizarEstadisticas();
-      }
-
-      function actualizarEstadisticas() {
-        let totalAsignaturas = 0;
-        let totalCreditos = 0;
-
-        Object.values(asignaturasPorSemestre).forEach((asignaturas) => {
-          totalAsignaturas += asignaturas.length;
-          totalCreditos += asignaturas.reduce((sum, a) => sum + a.creditos, 0);
-        });
-
-        document.getElementById("totalAsignaturas").textContent =
-          totalAsignaturas;
-        document.getElementById("totalCreditos").textContent = totalCreditos;
-        document.getElementById("totalSemestres").textContent = Object.keys(
-          asignaturasPorSemestre,
-        ).length;
-
-        actualizarMallaCurricular();
-        actualizarTablaProfesores();
-      }
-
-      function actualizarMallaCurricular() {
-        const tbody = document.getElementById("mallaCurricularBody");
-        if (!tbody) return;
-
-        tbody.innerHTML = "";
-
-        for (let i = 1; i <= Object.keys(asignaturasPorSemestre).length; i++) {
-          if (
-            asignaturasPorSemestre[i] &&
-            asignaturasPorSemestre[i].length > 0
-          ) {
-            const nombres = asignaturasPorSemestre[i]
-              .map((a) => a.nombre)
-              .join(", ");
-            const creditos = asignaturasPorSemestre[i].reduce(
-              (sum, a) => sum + a.creditos,
-              0,
-            );
-
-            tbody.innerHTML += `
-                        <tr>
-                            <td>Semestre ${i}</td>
-                            <td>${nombres}</td>
-                            <td>${creditos}</td>
-                        </tr>
-                    `;
-          }
-        }
-      }
-
-      // Función para asignar profesor desde dropdown
-      function asignarProfesorDropdown(semestreId, index, profesorNombre) {
-        if (
-          asignaturasPorSemestre[semestreId] &&
-          asignaturasPorSemestre[semestreId][index]
-        ) {
-          asignaturasPorSemestre[semestreId][index].profesor =
-            profesorNombre || "";
-
-          // Actualizar el texto del botón
-          const dropdownId = `dropdown-${semestreId}-${index}`;
-          const selectedSpan = document.getElementById(
-            `selected-${dropdownId}`,
-          );
-          if (selectedSpan) {
-            selectedSpan.textContent =
-              profesorNombre || "Seleccionar profesor...";
-            if (profesorNombre) {
-              selectedSpan.classList.remove("placeholder");
-            } else {
-              selectedSpan.classList.add("placeholder");
-            }
-          }
-
-          // Mostrar notificación
-          const alerta = document.createElement("div");
-          alerta.className =
-            "alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3";
-          alerta.style.zIndex = "9999";
-          alerta.innerHTML = `
-            <strong>¡Asignado!</strong> Profesor asignado correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-          document.body.appendChild(alerta);
-          setTimeout(() => alerta.remove(), 3000);
-        }
-      }
-
-      // ===== FUNCIONES DE MANEJO DE SEMESTRES =====
-      function agregarSemestre() {
-        const container = document.getElementById("semestres-container");
-        const newId = Object.keys(asignaturasPorSemestre).length + 1;
-
-        const semestreDiv = document.createElement("div");
-        semestreDiv.className = "semestre-horizontal";
-        semestreDiv.id = `semestre-col-${newId}`;
-
-        semestreDiv.innerHTML = `
-                <div class="card semester-card h-100" data-semestre="${newId}">
-                    <div class="card-header bg-warning d-flex justify-content-between align-items-center py-2">
-                        <h6 class="mb-0">Semestre ${newId}</h6>
-                        <div>
-                            <span class="badge bg-dark me-2">Nuevo</span>
-                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarSemestre(${newId})" title="Eliminar semestre">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body" style="white-space: normal; overflow-y: auto; height: calc(100% - 60px);">
-                        <div class="asignaturas-list" id="semestre${newId}-list" style="min-height: 200px;" ondragover="allowDrop(event)" ondrop="dropAsignatura(event, ${newId})"></div>
-                        <div class="mt-2 d-flex justify-content-between pt-2 border-top">
-                            <small class="text-muted">Créditos: <span id="creditos${newId}">0</span></small>
-                            <small class="text-muted">Asignaturas: <span id="asignaturas${newId}">0</span></small>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-        container.appendChild(semestreDiv);
-        asignaturasPorSemestre[newId] = [];
-
-        const scrollContainer = document.getElementById("semestres-scroll");
-        setTimeout(() => {
-          scrollContainer.scrollLeft = scrollContainer.scrollWidth;
-        }, 100);
-      }
-
-      function eliminarSemestre(semestreId) {
-        if (
-          confirm(
-            "¿Estás seguro de eliminar este semestre? Se eliminarán todas las asignaturas asignadas.",
-          )
-        ) {
-          const columna = document.getElementById(`semestre-col-${semestreId}`);
-          if (columna) {
-            columna.remove();
-          }
-
-          delete asignaturasPorSemestre[semestreId];
-
-          actualizarEstadisticas();
-          actualizarTablaProfesores();
-        }
-      }
-
-      function eliminarAsignatura(semestreId, index) {
-        asignaturasPorSemestre[semestreId].splice(index, 1);
-        actualizarVistaSemestre(semestreId);
-        actualizarCreditos(semestreId);
-      }
-
-      // ===== FUNCIONES DE ASIGNACIÓN DE PROFESORES =====
-      function asignarProfesor(semestreId, index, profesorNombre) {
-        if (
-          asignaturasPorSemestre[semestreId] &&
-          asignaturasPorSemestre[semestreId][index]
-        ) {
-          asignaturasPorSemestre[semestreId][index].profesor = profesorNombre;
-
-          const alerta = document.createElement("div");
-          alerta.className =
-            "alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3";
-          alerta.style.zIndex = "9999";
-          alerta.innerHTML = `
-                    <strong>¡Asignado!</strong> Profesor asignado correctamente.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                `;
-          document.body.appendChild(alerta);
-
-          setTimeout(() => alerta.remove(), 3000);
-        }
-      }
-
-      // ===== FUNCIÓN DE FILTRADO =====
-      function filtrarAsignaturas() {
-        const searchTerm = document
-          .getElementById("searchAsignatura")
-          .value.toLowerCase();
-        const items = document.querySelectorAll(
-          "#listaAsignaturas .draggable-item",
-        );
-
-        items.forEach((item) => {
-          const text = item.textContent.toLowerCase();
-          item.style.display = text.includes(searchTerm) ? "block" : "none";
-        });
-      }
-
-      class AutocompleteProfesor {
-        constructor(inputElement, semestreId, index) {
-          this.input = inputElement;
-          this.semestreId = semestreId;
-          this.index = index;
-          this.wrapper = this.input.closest(".autocomplete-wrapper");
-          this.dropdown = this.wrapper.querySelector(".autocomplete-dropdown");
-          this.profesores = window.profesores || [];
-          this.selectedIndex = -1;
-          this.filteredProfesores = [];
-
-          this.init();
-        }
-
-        init() {
-          // Eventos del input
-          this.input.addEventListener("input", () => this.handleInput());
-          this.input.addEventListener("focus", () => this.showDropdown());
-          this.input.addEventListener("keydown", (e) => this.handleKeydown(e));
-
-          // Cerrar dropdown al hacer clic fuera
-          document.addEventListener("click", (e) => {
-            if (!this.wrapper.contains(e.target)) {
-              this.hideDropdown();
-            }
-          });
-
-          // Cargar valor inicial si existe
-          const asignatura =
-            window.asignaturasPorSemestre[this.semestreId]?.[this.index];
-          if (asignatura?.profesor && asignatura.profesor !== "Por asignar") {
-            this.input.value = asignatura.profesor;
-          }
-        }
-
-        handleInput() {
-          const value = this.input.value.toLowerCase();
-          this.filteredProfesores = this.profesores.filter((p) =>
-            p.nombre.toLowerCase().includes(value),
-          );
-          this.renderDropdown();
-          this.showDropdown();
-          this.selectedIndex = -1;
-        }
-
-        renderDropdown() {
-          if (!this.dropdown) return;
-
-          if (this.filteredProfesores.length === 0) {
-            this.dropdown.innerHTML =
-              '<div class="no-results">No se encontraron profesores</div>';
-            return;
-          }
-
-          let html = "";
-          const searchTerm = this.input.value.toLowerCase();
-
-          this.filteredProfesores.forEach((profesor, idx) => {
-            const nombre = profesor.nombre;
-            const highlighted = searchTerm
-              ? nombre.replace(
-                  new RegExp(searchTerm, "gi"),
-                  (match) => `<mark>${match}</mark>`,
-                )
-              : nombre;
-
-            html += `
-                <div class="autocomplete-item ${idx === this.selectedIndex ? "selected" : ""}" 
-                     onclick="window.asignarProfesorAutocomplete(${this.semestreId}, ${this.index}, '${profesor.nombre}')">
-                    ${highlighted} <small class="text-muted">(${profesor.especialidad})</small>
-                </div>
-            `;
-          });
-
-          this.dropdown.innerHTML = html;
-        }
-
-        handleKeydown(e) {
-          const items = this.dropdown.querySelectorAll(".autocomplete-item");
-
-          switch (e.key) {
-            case "ArrowDown":
-              e.preventDefault();
-              this.selectedIndex = Math.min(
-                this.selectedIndex + 1,
-                items.length - 1,
-              );
-              this.updateSelectedItem();
-              break;
-
-            case "ArrowUp":
-              e.preventDefault();
-              this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
-              this.updateSelectedItem();
-              break;
-
-            case "Enter":
-              e.preventDefault();
-              if (
-                this.selectedIndex >= 0 &&
-                this.filteredProfesores[this.selectedIndex]
-              ) {
-                const profesor = this.filteredProfesores[this.selectedIndex];
-                this.selectProfesor(profesor.nombre);
-              }
-              break;
-
-            case "Escape":
-              this.hideDropdown();
-              break;
-          }
-        }
-
-        updateSelectedItem() {
-          const items = this.dropdown.querySelectorAll(".autocomplete-item");
-          items.forEach((item, idx) => {
-            if (idx === this.selectedIndex) {
-              item.classList.add("selected");
-              item.scrollIntoView({ block: "nearest" });
-            } else {
-              item.classList.remove("selected");
-            }
-          });
-        }
-
-        selectProfesor(profesorNombre) {
-          this.input.value = profesorNombre;
-          window.asignarProfesor(this.semestreId, this.index, profesorNombre);
-          this.hideDropdown();
-        }
-
-        showDropdown() {
-          this.dropdown.classList.add("show");
-        }
-
-        hideDropdown() {
-          this.dropdown.classList.remove("show");
-          this.selectedIndex = -1;
-        }
-      }
-
-      // Función global para asignar profesor (para usar desde el onclick)
-      window.asignarProfesorAutocomplete = function (
-        semestreId,
-        index,
-        profesorNombre,
-      ) {
-        asignarProfesor(semestreId, index, profesorNombre);
-      };
-
-      // Modificar la función asignarProfesor para actualizar el input
-      function asignarProfesor(semestreId, index, profesorNombre) {
-        if (
-          asignaturasPorSemestre[semestreId] &&
-          asignaturasPorSemestre[semestreId][index]
-        ) {
-          asignaturasPorSemestre[semestreId][index].profesor = profesorNombre;
-
-          // Mostrar notificación
-          const alerta = document.createElement("div");
-          alerta.className =
-            "alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3";
-          alerta.style.zIndex = "9999";
-          alerta.innerHTML = `
-            <strong>¡Asignado!</strong> Profesor asignado correctamente.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-          document.body.appendChild(alerta);
-
-          setTimeout(() => {
-            alerta.remove();
-          }, 3000);
-        }
-      }
-
-      // Actualizar la función de asignación automática
-      function asignarProfesoresAutomatico() {
-        let asignaciones = 0;
-
-        for (let semestreId in asignaturasPorSemestre) {
-          asignaturasPorSemestre[semestreId].forEach((asignatura, index) => {
-            const nombreAsignatura = asignatura.nombre.toLowerCase();
-            let profesorAsignado = "";
-
-            if (
-              nombreAsignatura.includes("matem") ||
-              nombreAsignatura.includes("calculo")
-            ) {
-              profesorAsignado = "Dr. Juan Pérez";
-            } else if (
-              nombreAsignatura.includes("lengua") ||
-              nombreAsignatura.includes("literatura")
-            ) {
-              profesorAsignado = "MSc. María García";
-            } else if (
-              nombreAsignatura.includes("progra") ||
-              nombreAsignatura.includes("estructura")
-            ) {
-              profesorAsignado = "Ing. Carlos López";
-            } else if (nombreAsignatura.includes("fisica")) {
-              profesorAsignado = "Dra. Ana Martínez";
-            } else if (
-              nombreAsignatura.includes("base") ||
-              nombreAsignatura.includes("datos")
-            ) {
-              profesorAsignado = "MSc. Roberto Sánchez";
-            } else if (nombreAsignatura.includes("ingles")) {
-              profesorAsignado = "Ing. Laura Torres";
-            } else {
-              profesorAsignado =
-                profesores[Math.floor(Math.random() * profesores.length)]
-                  .nombre;
-            }
-
-            asignaturasPorSemestre[semestreId][index].profesor =
-              profesorAsignado;
-            asignaciones++;
-          });
-        }
-
-        actualizarTablaProfesores();
-
-        // Mostrar notificación
-        const alerta = document.createElement("div");
-        alerta.className =
-          "alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3";
-        alerta.style.zIndex = "9999";
-        alerta.innerHTML = `
-        <strong>¡Asignación completada!</strong> Se asignaron ${asignaciones} profesores automáticamente.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-        document.body.appendChild(alerta);
-
-        setTimeout(() => {
-          alerta.remove();
-        }, 3000);
-      }
-
-      // Hacer que profesores sea accesible globalmente
-      window.profesores = profesores;
-      window.asignaturasPorSemestre = asignaturasPorSemestre;
-
-      // ===== INICIALIZACIÓN =====
-      document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".draggable-item").forEach((item) => {
-          item.addEventListener("dragstart", dragAsignatura);
-          item.addEventListener("dragend", function () {
-            this.classList.remove("bg-warning");
-          });
-        });
-      });
-    </script>
   </body>
 </html>

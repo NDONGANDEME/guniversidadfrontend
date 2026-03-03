@@ -94,7 +94,11 @@ export class m_sesion
                     intentos = 0;
                     m_sesion.guardarSesion('usuarioActivo', nuevaS);
 
+<<<<<<< HEAD
                     switch(administrador ? 'Administrador' : 'Secretario') // Reemplazar con variable rol
+=======
+                    switch(profesor ? 'Profesor' : 'Administrador') // Reemplazar con variable rol
+>>>>>>> 06dafdbe5a62a4b9354fb22a689ebaa66e2f9429
                     {
                         case 'Administrador': 
                             Alerta.cargarSimple(3000, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
