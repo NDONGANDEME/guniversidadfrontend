@@ -12,7 +12,8 @@ export class m_asignatura
     }
 
     /*
-        el codigo de la aignatura se generará automaticamente en el metodo generarCodigoAsignatura(){}
+        el codigo de la aignatura se generará automaticamente en el metodo generarCodigoAsignatura(nombreFacultad, nombreAsignatura){} y devolverá un string del formato:
+        facultad-numero-asignatura. ejemplo: FI-0001-RED (faciltad de ingenierias, numero 0001, asignatura: redes).
     */
 
     static async obtenerAsignaturas() {
@@ -27,11 +28,7 @@ export class m_asignatura
         return await fetchAsignatura.actualizarAsignaturaEnBackend(objeto);
     }
 
-    static async deshabilitarAsignatura(id) {
-        return await fetchAsignatura.deshabilitarAsignaturaEnBackend(id);
-    }
-
-    static async habilitarAsignatura(id) {
-        return await fetchAsignatura.habilitarAsignaturaEnBackend(id);
+    static async obtenerAsignaturasPorFacultad(idFacultad) {
+        return await fetchAsignatura.obtenerAsignaturasPorFacultadDelBackend(idFacultad);
     }
 }

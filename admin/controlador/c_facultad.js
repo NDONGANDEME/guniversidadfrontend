@@ -1,302 +1,373 @@
-/**
- * Maneja la lógica de negocio y utiliza u_facultad para operaciones de DOM
- */
-
 import { sesiones } from "../../public/core/sesiones.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { m_facultad } from "../modelo/m_facultad.js";
+import { m_aula } from "../modelo/m_aula.js";
 import { u_facultad } from "../utilidades/u_facultad.js";
 
-export class c_facultad
-{
+export class c_facultad {
     constructor() {
+        // Facultades
         this.facultades = [];
         this.facultadActual = null;
-        this.modoEdicion = false;
-        this.dataTable = null;
-        this.actor = null;
+        this.modoEdicionFacultad = false;
+        this.dataTableFacultades = null;
         
-        // Estados de validación
-        this.validaciones = {
-            nombre: false,
-            direccion: false,
-            correo: false,
-            telefono: false
-        };
+        // Aulas
+        this.aulas = [];
+        this.aulaActual = null;
+        this.modoEdicionAula = false;
+        this.dataTableAulas = null;
     }
 
-    // ============================================
-    // INICIALIZACIÓN
-    // ============================================
-    
+    // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
-            // Verificar sesión
             sesiones.verificarExistenciaSesion();
-            
-            // Cargar componentes comunes
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
             u_utiles.botonesNavegacionAdministrador();
             
-            // Inicializar DataTable
-            this.inicializarDataTable();
-            
-            // Cargar datos
-            await this.cargarDatosIniciales();
-            
-            // Configurar eventos y validaciones
+            this.inicializarDataTables();
+            await this.cargarFacultades();
+            await this.cargarAulas();
             this.configurarEventos();
             this.configurarValidaciones();
         } catch (error) {
-            Alerta.error('Error', `No se pudo inicializar el módulo de facultades: ${error}`);
+            Alerta.error('Error', 'No se pudo inicializar el módulo');
         }
     }
 
-    // Inicializar DataTable
-    inicializarDataTable() {
+    inicializarDataTables() {
+        // DataTable de facultades
         if ($.fn.dataTable.isDataTable('#tablaFacultades')) {
             $('#tablaFacultades').DataTable().destroy();
         }
-        
-        this.dataTable = $('#tablaFacultades').DataTable({
-            language: {
-                url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
-            },
-            columnDefs: [
-                { orderable: false, targets: [3] } // No ordenar por acciones
-            ]
+        this.dataTableFacultades = $('#tablaFacultades').DataTable({
+            language: { url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json' },
+            columnDefs: [{ orderable: false, targets: [3] }]
+        });
+
+        // DataTable de aulas
+        if ($.fn.dataTable.isDataTable('#tablaAula')) {
+            $('#tablaAula').DataTable().destroy();
+        }
+        this.dataTableAulas = $('#tablaAula').DataTable({
+            language: { url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json' },
+            columnDefs: [{ orderable: false, targets: [4] }]
         });
     }
 
-    // ============================================
-    // CARGA DE DATOS
-    // ============================================
-    
-    async cargarDatosIniciales() {
+    // ========== CARGA DE DATOS ==========
+    async cargarFacultades() {
         try {
-            const facultadesBackend = await m_facultad.obtenerFacultades();
-            
-            if (facultadesBackend && facultadesBackend.length > 0) {
-                this.facultades = facultadesBackend.map(f => 
-                    new m_facultad(
-                        f.idFacultad, 
-                        f.nombreFacultad, 
-                        f.direccionFacultad,
-                        f.correo,
-                        f.telefono
-                    )
-                );
-                
-                this.actualizarTabla();
-            } else {
-                this.facultades = [];
-            }
+            const datos = await m_facultad.obtenerFacultades();
+            this.facultades = datos || [];
+            this.actualizarTablaFacultades();
+            this.cargarFacultadesEnSelect(); // Para el select de aulas
         } catch (error) {
-            Alerta.error('Error', `Fallo al cargar facultades: ${error}`);
+            Alerta.error('Error', 'Fallo al cargar facultades');
+            this.facultades = [];
         }
     }
 
-    // Actualizar tabla
-    actualizarTabla() {
-        u_facultad.actualizarTabla(
-            this.dataTable, 
-            this.facultades, 
-            (id, estado) => u_facultad.generarBotonesAccion(id, estado)
-        );
+    async cargarAulas() {
+        try {
+            const datos = await m_aula.obtenerAulas();
+            this.aulas = datos || [];
+            this.actualizarTablaAulas();
+        } catch (error) {
+            Alerta.error('Error', 'Fallo al cargar aulas');
+            this.aulas = [];
+        }
     }
 
-    // ============================================
-    // CONFIGURACIÓN DE EVENTOS Y VALIDACIONES
-    // ============================================
-    
+    cargarFacultadesEnSelect() {
+        const select = $('#facultadesAula');
+        select.empty();
+        select.append('<option value="">Seleccione...</option>');
+        
+        this.facultades.forEach(f => {
+            select.append(`<option value="${f.idFacultad}">${f.nombreFacultad}</option>`);
+        });
+    }
+
+    // ========== VALIDACIONES ==========
     configurarValidaciones() {
-        u_facultad.configurarValidaciones({
-            onNombreValidado: (valido) => this.validaciones.nombre = valido,
-            onDireccionValidada: (valido) => this.validaciones.direccion = valido,
-            onCorreoValidado: (valido) => this.validaciones.correo = valido,
-            onTelefonoValidado: (valido) => this.validaciones.telefono = valido
-        });
+        u_facultad.configurarValidaciones();
     }
 
+    // ========== EVENTOS ==========
     configurarEventos() {
-        // Botón guardar
-        $('.btnGuardarFacultad').on('click', () => this.guardarFacultad());
-        
-        // Eventos de botones en la tabla (usando delegación)
-        $(document).on('click', '.editar', (e) => {
-            const id = $(e.currentTarget).data('id');
-            this.editarFacultad(id);
+        // Eventos de facultades
+        $('#btnGuardarFacultad').on('click', () => this.guardarFacultad());
+        $(document).on('click', '.editar-facultad', (e) => {
+            this.editarFacultad($(e.currentTarget).data('id'));
+        });
+        $(document).on('click', '.toggle-estado-facultad', (e) => {
+            this.cambiarEstadoFacultad($(e.currentTarget).data('id'));
         });
         
-        $(document).on('click', '.btn-toggle-estado', (e) => {
-            const id = $(e.currentTarget).data('id');
-            this.cambiarEstadoFacultad(id);
+        // Eventos de aulas
+        $('#btnGuardarAula').on('click', () => this.guardarAula());
+        $(document).on('click', '.editar-aula', (e) => {
+            this.editarAula($(e.currentTarget).data('id'));
+        });
+        $(document).on('click', '.toggle-estado-aula', (e) => {
+            this.cambiarEstadoAula($(e.currentTarget).data('id'));
+        });
+        $(document).on('click', '.eliminar-aula', (e) => {
+            this.eliminarAula($(e.currentTarget).data('id'));
         });
         
-        // Botón cancelar edición (delegación)
-        $(document).on('click', '#btnCancelarEdicion', () => {
-            this.cancelarEdicion();
+        // Botones cancelar
+        $(document).on('click', '#btnCancelarEdicionFacultad', () => {
+            this.cancelarEdicionFacultad();
+        });
+        $(document).on('click', '#btnCancelarEdicionAula', () => {
+            this.cancelarEdicionAula();
         });
     }
 
-    // ============================================
-    // VALIDACIÓN DE FORMULARIO
-    // ============================================
+    // ========== FUNCIONES PARA FACULTADES ==========
     
-    validarFormulario() {
-        // En modo edición, permitir campos vacíos pero validar los que tienen contenido
-        if (this.modoEdicion) {
-            // Verificar que al menos un campo tenga contenido válido
-            const nombreValido = $('#nombreFacultad').val().trim() === '' || this.validaciones.nombre;
-            const direccionValida = $('#direccionFacultad').val().trim() === '' || this.validaciones.direccion;
-            const correoValido = $('#correoFacultad').val().trim() === '' || this.validaciones.correo;
-            const telefonoValido = $('#telefonoFacultad').val().trim() === '' || this.validaciones.telefono;
-            
-            return nombreValido && direccionValida && correoValido && telefonoValido;
+    formularioFacultadEsValido() {
+        const nombre = $('#nombreFacultad').val().trim();
+        const direccion = $('#direccionFacultad').val().trim();
+        const correo = $('#correoFacultad').val().trim();
+        const telefono = $('#telefonoFacultad').val().trim();
+        
+        if (this.modoEdicionFacultad) {
+            if (nombre && !u_facultad.validarNombre(nombre)) return false;
+            if (direccion && !u_facultad.validarDireccion(direccion)) return false;
+            if (correo && !u_facultad.validarCorreo(correo)) return false;
+            if (telefono && !u_facultad.validarTelefono(telefono)) return false;
+            return true;
         }
         
-        // En modo nuevo, todos los campos son obligatorios
-        return this.validaciones.nombre && this.validaciones.direccion || (this.validaciones.correo || this.validaciones.telefono);
+        return u_facultad.validarNombre(nombre) && 
+               u_facultad.validarDireccion(direccion) && 
+               (u_facultad.validarCorreo(correo) || u_facultad.validarTelefono(telefono));
     }
 
-    // ============================================
-    // OPERACIONES CRUD
-    // ============================================
-    
     async guardarFacultad() {
-        if (!this.validarFormulario()) {
-            Alerta.advertencia(
-                'Campos incompletos', 
-                this.modoEdicion ? 
-                'Complete correctamente los campos que desea actualizar' : 
-                'Complete todos los campos correctamente'
-            );
+        if (!this.formularioFacultadEsValido()) {
+            Alerta.advertencia('Campos inválidos', 'Complete correctamente los campos');
             return;
         }
         
         try {
-            const datos = u_facultad.obtenerDatosFormulario();
-            
-            // Crear objeto facultad
-            const facultadData = {
-                nombreFacultad: datos.nombre,
-                direccionFacultad: datos.direccion,
-                correo: datos.correo,
-                telefono: datos.telefono
+            const datos = {
+                nombreFacultad: $('#nombreFacultad').val().trim(),
+                direccionFacultad: $('#direccionFacultad').val().trim(),
+                correo: $('#correoFacultad').val().trim(),
+                telefono: $('#telefonoFacultad').val().trim()
             };
             
             let resultado;
-            
-            if (this.modoEdicion) {
-                // Actualizar facultad existente
-                facultadData.idFacultad = this.facultadActual.idFacultad;
-                resultado = await m_facultad.actualizarFacultad(facultadData);
+            if (this.modoEdicionFacultad) {
+                datos.idFacultad = this.facultadActual.idFacultad;
+                resultado = await m_facultad.actualizarFacultad(datos);
             } else {
-                // Insertar nueva facultad
-                resultado = await m_facultad.insertarFacultad(facultadData);
+                resultado = await m_facultad.insertarFacultad(datos);
             }
             
             if (resultado) {
-                // Recargar facultades
-                await this.cargarDatosIniciales();
-                
-                // Limpiar formulario y resetear modo edición
-                this.limpiarFormulario();
-                this.cancelarEdicion();
-                
-                Alerta.exito(
-                    this.modoEdicion ? 'Facultad actualizada' : 'Facultad creada',
-                    `La facultad se ${this.modoEdicion ? 'actualizó' : 'creó'} correctamente`
-                );
+                await this.cargarFacultades();
+                this.limpiarFormularioFacultad();
+                this.cancelarEdicionFacultad();
+                Alerta.exito('Éxito', this.modoEdicionFacultad ? 'Facultad actualizada' : 'Facultad creada');
             }
         } catch (error) {
-            Alerta.error('Error', `No se pudo guardar la facultad: ${error}`);
+            Alerta.error('Error', 'No se pudo guardar la facultad');
         }
     }
-    
-    async editarFacultad(id) {
-        try {
-            const facultad = this.facultades.find(f => f.idFacultad == id);
-            
-            if (facultad) {
-                this.modoEdicion = true;
-                this.facultadActual = facultad;
-                
-                // Cargar datos en el formulario
-                u_facultad.cargarFormularioEdicion(facultad);
-                u_facultad.configurarModoEdicion(true);
-            }
-        } catch (error) {
-            Alerta.error('Error', `No se pudo cargar la facultad para editar: ${error}`);
-        }
-    }
-    
-    async cambiarEstadoFacultad(id) {
-        try {
-            const facultad = this.facultades.find(f => f.idFacultad == id);
-            if (!facultad) return;
-            
-            const accion = facultad.habilitado ? 'deshabilitar' : 'habilitar';
-            
-            const confirmacion = await Alerta.confirmar(
-                'Confirmar',
-                `¿Está seguro de ${accion} esta facultad?`
-            );
-            
-            if (confirmacion) {
-                let resultado;
-                if (facultad.habilitado) {
-                    resultado = await m_facultad.deshabilitarFacultad(id);
-                } else {
-                    resultado = await m_facultad.habilitarFacultad(id);
-                }
-                
-                if (resultado) {
-                    // Actualizar estado local
-                    facultad.habilitado = facultad.habilitado ? 0 : 1;
-                    
-                    // Actualizar visualmente la fila
-                    const fila = $(`#tablaFacultades tbody tr`).filter(function() {
-                        return $(this).find('.btn-toggle-estado').data('id') == id;
-                    });
-                    
-                    if (fila.length) {
-                        u_facultad.actualizarEstadoFila(fila[0], facultad.habilitado);
-                    }
-                    
-                    Alerta.exito('Éxito', `Facultad ${accion === 'deshabilitar' ? 'deshabilitada' : 'habilitada'} correctamente`);
-                }
-            }
-        } catch (error) {
-            Alerta.error('Error', `No se pudo cambiar el estado de la facultad: ${error}`);
-        }
-    }
-    
-    cancelarEdicion() {
-        this.modoEdicion = false;
-        this.facultadActual = null;
-        this.limpiarFormulario();
-        u_facultad.configurarModoEdicion(false);
-    }
-    
-    limpiarFormulario() {
-        u_facultad.limpiarFormulario();
+
+    editarFacultad(id) {
+        const facultad = this.facultades.find(f => f.idFacultad == id);
+        if (!facultad) return;
         
-        // Resetear validaciones
-        this.validaciones = {
-            nombre: false,
-            direccion: false,
-            correo: false,
-            telefono: false
-        };
+        this.modoEdicionFacultad = true;
+        this.facultadActual = facultad;
+        
+        $('#nombreFacultad').val(facultad.nombreFacultad || '');
+        $('#direccionFacultad').val(facultad.direccionFacultad || '');
+        $('#correoFacultad').val(facultad.correo || '');
+        $('#telefonoFacultad').val(facultad.telefono || '');
+        
+        u_facultad.configurarModoEdicion(true, 'facultad');
+    }
+
+    async cambiarEstadoFacultad(id) {
+        const facultad = this.facultades.find(f => f.idFacultad == id);
+        if (!facultad) return;
+        
+        const nuevoEstado = facultad.habilitado == 1 ? 0 : 1;
+        const accion = nuevoEstado == 1 ? 'habilitar' : 'deshabilitar';
+        
+        const confirmacion = await Alerta.confirmar('Confirmar', `¿${accion} esta facultad?`);
+        if (!confirmacion) return;
+        
+        try {
+            let resultado;
+            if (nuevoEstado == 1) {
+                resultado = await m_facultad.habilitarFacultad(id);
+            } else {
+                resultado = await m_facultad.deshabilitarFacultad(id);
+            }
+            
+            if (resultado) {
+                facultad.habilitado = nuevoEstado;
+                this.actualizarTablaFacultades();
+                Alerta.exito('Éxito', `Facultad ${accion}da`);
+            }
+        } catch (error) {
+            Alerta.error('Error', `No se pudo ${accion} la facultad`);
+        }
+    }
+
+    cancelarEdicionFacultad() {
+        this.modoEdicionFacultad = false;
+        this.facultadActual = null;
+        this.limpiarFormularioFacultad();
+        u_facultad.configurarModoEdicion(false, 'facultad');
+    }
+
+    limpiarFormularioFacultad() {
+        $('#formFacultad')[0].reset();
+        $('.errorMensaje').text('').hide();
+        $('#formFacultad input').removeClass('border-success border-danger');
+    }
+
+    actualizarTablaFacultades() {
+        u_facultad.actualizarTablaFacultades(this.dataTableFacultades, this.facultades);
+    }
+
+    // ========== FUNCIONES PARA AULAS ==========
+    
+    formularioAulaEsValido() {
+        const nombre = $('#nombreAula').val().trim();
+        const capacidad = $('#capacidadAula').val();
+        const idFacultad = $('#facultadesAula').val();
+        
+        if (this.modoEdicionAula) {
+            if (nombre && nombre.length < 2) return false;
+            if (capacidad && capacidad <= 0) return false;
+            return true;
+        }
+        
+        return nombre.length >= 2 && capacidad > 0 && idFacultad;
+    }
+
+    async guardarAula() {
+        if (!this.formularioAulaEsValido()) {
+            Alerta.advertencia('Campos inválidos', 'Complete todos los campos correctamente');
+            return;
+        }
+        
+        try {
+            const datos = {
+                nombreAula: $('#nombreAula').val().trim(),
+                capacidad: $('#capacidadAula').val(),
+                idFacultad: $('#facultadesAula').val()
+            };
+            
+            let resultado;
+            if (this.modoEdicionAula) {
+                datos.idAula = this.aulaActual.idAula;
+                resultado = await m_aula.actualizarAula(datos);
+            } else {
+                resultado = await m_aula.insertarAula(datos);
+            }
+            
+            if (resultado) {
+                await this.cargarAulas();
+                this.limpiarFormularioAula();
+                this.cancelarEdicionAula();
+                Alerta.exito('Éxito', this.modoEdicionAula ? 'Aula actualizada' : 'Aula creada');
+            }
+        } catch (error) {
+            Alerta.error('Error', 'No se pudo guardar el aula');
+        }
+    }
+
+    editarAula(id) {
+        const aula = this.aulas.find(a => a.idAula == id);
+        if (!aula) return;
+        
+        this.modoEdicionAula = true;
+        this.aulaActual = aula;
+        
+        $('#nombreAula').val(aula.nombreAula || '');
+        $('#capacidadAula').val(aula.capacidad || '');
+        $('#facultadesAula').val(aula.idFacultad || '');
+        
+        u_facultad.configurarModoEdicion(true, 'aula');
+    }
+
+    async cambiarEstadoAula(id) {
+        const aula = this.aulas.find(a => a.idAula == id);
+        if (!aula) return;
+        
+        const nuevoEstado = aula.estado == 1 ? 0 : 1;
+        const accion = nuevoEstado == 1 ? 'habilitar' : 'deshabilitar';
+        
+        const confirmacion = await Alerta.confirmar('Confirmar', `¿${accion} esta aula?`);
+        if (!confirmacion) return;
+        
+        try {
+            let resultado;
+            if (nuevoEstado == 1) {
+                resultado = await m_aula.habilitarAula(id);
+            } else {
+                resultado = await m_aula.deshabilitarAula(id);
+            }
+            
+            if (resultado) {
+                aula.estado = nuevoEstado;
+                this.actualizarTablaAulas();
+                Alerta.exito('Éxito', `Aula ${accion}da`);
+            }
+        } catch (error) {
+            Alerta.error('Error', `No se pudo ${accion} el aula`);
+        }
+    }
+
+    async eliminarAula(id) {
+        const confirmacion = await Alerta.confirmar('Confirmar', '¿Eliminar esta aula permanentemente?');
+        if (!confirmacion) return;
+        
+        try {
+            const resultado = await m_aula.eliminarAula(id);
+            if (resultado) {
+                this.aulas = this.aulas.filter(a => a.idAula != id);
+                this.actualizarTablaAulas();
+                Alerta.exito('Éxito', 'Aula eliminada');
+            }
+        } catch (error) {
+            Alerta.error('Error', 'No se pudo eliminar el aula');
+        }
+    }
+
+    cancelarEdicionAula() {
+        this.modoEdicionAula = false;
+        this.aulaActual = null;
+        this.limpiarFormularioAula();
+        u_facultad.configurarModoEdicion(false, 'aula');
+    }
+
+    limpiarFormularioAula() {
+        $('#formAula')[0].reset();
+        $('.errorMensaje').text('').hide();
+        $('#formAula input, #formAula select').removeClass('border-success border-danger');
+    }
+
+    actualizarTablaAulas() {
+        u_facultad.actualizarTablaAulas(this.dataTableAulas, this.aulas, this.facultades);
     }
 }
 
-// ============================================
-// INICIALIZACIÓN
-// ============================================
-document.addEventListener('DOMContentLoaded', async function() {
+// INICIALIZAR
+$(document).ready(async function() {
     const controlador = new c_facultad();
     await controlador.inicializar();
 });

@@ -81,6 +81,7 @@ export class fetchUsuario
     }
 
     /**
+<<<<<<< HEAD
      * Envia solicitud para verificar si la contraseña pasada como parametro ya existe en la BDD
      * @param {String} contraseña 
      * @returns booleano
@@ -101,6 +102,8 @@ export class fetchUsuario
     }
 
     /**
+=======
+>>>>>>> a62aae651081a91322317b70eb80264ce142e5a0
      * Envia solicitud para listar todos los usuarios de la BDD
      * @returns array de usuarios
      */

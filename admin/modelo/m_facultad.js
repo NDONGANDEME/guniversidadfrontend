@@ -23,11 +23,7 @@ export class m_facultad
         return await fetchFacultad.actualizarFacultadEnBackend(objeto);
     }
 
-    static async deshabilitarFacultad(id) {
-        return await fetchFacultad.deshabilitarFacultadEnBackend(id);
-    }
-
-    static async habilitarFacultad(id) {
-        return await fetchFacultad.habilitarFacultadEnBackend(id);
+    static async eliminarFacultad(id) {
+        return await fetchFacultad.eliminarFacultadEnBackend(id);
     }
 }

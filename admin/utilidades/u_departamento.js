@@ -1,99 +1,296 @@
-// u_departamento.js - Utilidades para el módulo de departamentos
+/**
+ * Utilidades de Departamentos y Carreras - Versión simplificada
+ * Maneja todo lo relacionado con el DOM
+ */
+
+import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
 
 export class u_departamento {
-    // ============================================
-    // VALIDACIONES DE CAMPOS
-    // ============================================
     
-    // Validar nombre del departamento
+    // ========== VALIDACIONES ==========
     static validarNombre(valor) {
         return u_verificaciones.validarTexto(valor);
     }
     
-    // Validar facultad seleccionada
     static validarFacultad(valor) {
-        return valor !== 'Ninguno' && valor !== '';
+        return valor && valor !== 'Ninguno' && valor !== '';
     }
-    
-    // ============================================
-    // MANEJO DE FORMULARIO
-    // ============================================
-    
-    // Limpiar formulario
-    static limpiarFormulario() {
-        document.getElementById('formDepartamento').reset();
-        
-        // Limpiar clases de validación
-        document.querySelectorAll('#formDepartamento input, #formDepartamento select').forEach(campo => {
-            campo.classList.remove('border-success', 'border-danger');
+
+    // ========== VALIDACIONES EN TIEMPO REAL ==========
+    static configurarValidaciones() {
+        // Validar nombre del departamento
+        $('#nombreDepartamento').on('input', function() {
+            const valor = $(this).val().trim();
+            const valido = u_departamento.validarNombre(valor);
+            u_utiles.colorearCampo(valido, '#nombreDepartamento', '#errorNombreDepartamento', 'Mínimo 3 caracteres');
         });
-        
-        // Limpiar mensajes de error
-        document.querySelectorAll('.errorMensaje').forEach(error => {
-            error.textContent = '';
-            error.classList.add('d-none');
+
+        // Validar facultad seleccionada
+        $('#facultadesDepartamento').on('change', function() {
+            const valor = $(this).val();
+            const valido = u_departamento.validarFacultad(valor);
+            u_utiles.colorearCampo(valido, '#facultadesDepartamento', '#errorFacultadesDepartamento', 'Seleccione una facultad');
         });
-        
-        // Resetear select
-        document.getElementById('facultadesDepartamento').value = 'Ninguno';
+
+        // Validar nombre de carrera
+        $('#nombreCarrera').on('input', function() {
+            const valor = $(this).val().trim();
+            const valido = valor.length >= 3;
+            u_utiles.colorearCampo(valido, '#nombreCarrera', '#errorNombreCarrera', 'Mínimo 3 caracteres');
+        });
     }
-    
-    // Obtener datos del formulario
-    static obtenerDatosFormulario() {
-        return {
-            nombre: document.getElementById('nombreDepartamento').value.trim(),
-            idFacultad: document.getElementById('facultadesDepartamento').value
-        };
-    }
-    
-    // Cargar facultades en el select
-    static cargarSelectFacultades(selectId, facultades, valorSeleccionado = null) {
-        const select = document.getElementById(selectId);
-        if (!select) return;
-        
-        select.innerHTML = '<option value="Ninguno">Seleccione la facultad ...</option>';
-        
-        facultades.forEach(facultad => {
-            const option = document.createElement('option');
-            option.value = facultad.idFacultad;
-            option.textContent = facultad.nombreFacultad || facultad.nombre;
-            
-            if (valorSeleccionado && valorSeleccionado == facultad.idFacultad) {
-                option.selected = true;
+
+    // ========== MODO EDICIÓN ==========
+    static configurarModoEdicion(activo, tipo) {
+        if (tipo === 'departamento') {
+            if (activo) {
+                $('#btnGuardarDepartamento').text('Actualizar');
+                if ($('#btnCancelarEdicionDepartamento').length === 0) {
+                    $('#btnGuardarDepartamento').after(`
+                        <button type="button" class="btn btn-secondary ms-2" id="btnCancelarEdicionDepartamento">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    `);
+                }
+            } else {
+                $('#btnGuardarDepartamento').text('Guardar');
+                $('#btnCancelarEdicionDepartamento').remove();
             }
-            
-            select.appendChild(option);
+        } else if (tipo === 'carrera') {
+            if (activo) {
+                $('#btnGuardarCarrera').text('Actualizar');
+                if ($('#btnCancelarEdicionCarrera').length === 0) {
+                    $('#btnGuardarCarrera').after(`
+                        <button type="button" class="btn btn-secondary ms-2" id="btnCancelarEdicionCarrera">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    `);
+                }
+            } else {
+                $('#btnGuardarCarrera').text('Guardar');
+                $('#btnCancelarEdicionCarrera').remove();
+            }
+        }
+    }
+
+    // ========== SELECT DE FACULTADES ==========
+    static cargarSelectFacultades(selector, facultades) {
+        const $select = $(selector);
+        $select.empty();
+        $select.append('<option value="Ninguno">Seleccione la facultad ...</option>');
+        
+        facultades.forEach(f => {
+            $select.append(`<option value="${f.idFacultad}">${f.nombreFacultad || f.nombre}</option>`);
         });
     }
+
+    // ========== COMBO DE DEPARTAMENTOS PARA CARRERAS ==========
     
-    // ============================================
-    // UTILIDADES PARA LA TABLA
-    // ============================================
-    
-    // Crear botones de acción para la tabla
-    static crearBotonesAccion(departamento) {
+    /**
+     * Configura el combo input para seleccionar departamentos
+     */
+    static configurarComboDepartamentos(departamentos, onSeleccionar) {
+        const $input = $('#comboDepartamentoCarrera');
+        const $opciones = $('#opcionesDepartamentosCarrera');
+        
+        // Guardar departamentos en un data attribute para acceder desde cualquier método
+        $input.data('departamentos', departamentos);
+        
+        // Al hacer focus en el input, mostrar opciones
+        $input.on('focus click', function(e) {
+            e.stopPropagation();
+            const busqueda = $(this).val().toLowerCase();
+            u_departamento.mostrarOpcionesDepartamentos(busqueda, departamentos, $opciones, onSeleccionar);
+        });
+        
+        // Filtrar mientras escribe
+        $input.on('input', function() {
+            const busqueda = $(this).val().toLowerCase();
+            u_departamento.mostrarOpcionesDepartamentos(busqueda, departamentos, $opciones, onSeleccionar);
+        });
+        
+        // Prevenir que el click en las opciones cierre el dropdown
+        $opciones.on('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Ocultar al hacer click fuera
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.combo-input-wrapper').length) {
+                $opciones.hide();
+            }
+        });
+    }
+
+    /**
+     * Muestra las opciones filtradas del dropdown con mensajes de "no encontrado"
+     */
+    static mostrarOpcionesDepartamentos(busqueda, departamentos, $opciones, onSeleccionar) {
+        // Si no hay departamentos
+        if (!departamentos || departamentos.length === 0) {
+            $opciones.html('<div class="dropdown-option no-results">No hay departamentos disponibles</div>').show();
+            return;
+        }
+        
+        // Si la búsqueda está vacía, mostrar todos los departamentos
+        if (!busqueda || busqueda === '') {
+            let html = '';
+            departamentos.forEach(d => {
+                html += `<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombre}</div>`;
+            });
+            $opciones.html(html).show();
+            
+            // Asignar eventos a las opciones
+            u_departamento.asignarEventosOpciones($opciones, onSeleccionar);
+            return;
+        }
+        
+        // Filtrar departamentos por la búsqueda
+        const filtrados = departamentos.filter(d => 
+            d.nombre.toLowerCase().includes(busqueda)
+        );
+        
+        // Si no hay resultados
+        if (filtrados.length === 0) {
+            $opciones.html('<div class="dropdown-option no-results">No se encontraron resultados</div>').show();
+            return;
+        }
+        
+        // Generar HTML de las opciones encontradas
+        let html = '';
+        filtrados.forEach(d => {
+            html += `<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombre}</div>`;
+        });
+        
+        $opciones.html(html).show();
+        
+        // Asignar eventos a las opciones
+        u_departamento.asignarEventosOpciones($opciones, onSeleccionar);
+    }
+
+    /**
+     * Asigna eventos click a las opciones del dropdown
+     */
+    static asignarEventosOpciones($opciones, onSeleccionar) {
+        $opciones.find('.dropdown-option').off('click').on('click', function() {
+            // Solo procesar si no es un mensaje de "no results"
+            if (!$(this).hasClass('no-results')) {
+                const id = $(this).data('id');
+                const nombre = $(this).text();
+                
+                // Actualizar input y guardar ID seleccionado
+                $('#comboDepartamentoCarrera').val(nombre).data('id-seleccionado', id);
+                
+                // Marcar como válido
+                $('#comboDepartamentoCarrera').removeClass('border-danger').addClass('border-success');
+                
+                // Ocultar opciones
+                $opciones.hide();
+                
+                // Llamar callback si existe
+                if (onSeleccionar) onSeleccionar(id);
+            }
+        });
+    }
+
+    /**
+     * Limpia el combo de departamentos
+     */
+    static limpiarComboDepartamentos() {
+        $('#comboDepartamentoCarrera').val('').removeData('id-seleccionado');
+        $('#comboDepartamentoCarrera').removeClass('border-success border-danger');
+        $('#opcionesDepartamentosCarrera').empty().hide();
+    }
+
+    // ========== TABLA DE DEPARTAMENTOS ==========
+    static generarBotonesDepartamento(id) {
         return `
             <div class="d-flex justify-content-center gap-1">
-                <button class="btn btn-sm btn-outline-warning editar" 
-                        title="Editar" 
-                        data-id="${departamento.idDepartamento}">
+                <button class="btn btn-sm btn-outline-warning editar-departamento" title="Editar" data-id="${id}">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger deshabilitar" 
-                        title="Deshabilitar" 
-                        data-id="${departamento.idDepartamento}">
-                    <i class="fas fa-ban"></i>
+                <button class="btn btn-sm btn-outline-info toggle-estado-departamento" title="Cambiar estado" data-id="${id}">
+                    <i class="fas fa-sync-alt"></i>
                 </button>
             </div>
         `;
     }
-    
-    // Obtener nombre de la facultad por ID
+
+    static actualizarTablaDepartamentos(dataTable, departamentos, facultades) {
+        if (!dataTable) return;
+        
+        dataTable.clear();
+        
+        departamentos.forEach(d => {
+            const nombreFacultad = u_departamento.obtenerNombreFacultad(facultades, d.idFacultad);
+            
+            const fila = [
+                d.nombre || 'Sin nombre',
+                nombreFacultad,
+                this.generarBotonesDepartamento(d.idDepartamento)
+            ];
+            
+            dataTable.row.add(fila).draw();
+        });
+        
+        dataTable.draw();
+    }
+
     static obtenerNombreFacultad(facultades, idFacultad) {
         if (!idFacultad || idFacultad === 'Ninguno') return '<span class="text-muted">Ninguna</span>';
+        const f = facultades.find(f => f.idFacultad == idFacultad);
+        return f ? (f.nombreFacultad || f.nombre) : '<span class="text-muted">Desconocida</span>';
+    }
+
+    // ========== TABLA DE CARRERAS ==========
+    static generarBotonesCarrera(id, estado) {
+        const iconoToggle = estado == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
+        const claseToggle = estado == 1 ? 'btn-outline-danger' : 'btn-outline-success';
+        const textoToggle = estado == 1 ? 'Deshabilitar' : 'Habilitar';
         
-        const facultad = facultades.find(f => f.idFacultad == idFacultad);
-        return facultad ? facultad.nombreFacultad || facultad.nombre : '<span class="text-muted">Desconocida</span>';
+        return `
+            <div class="d-flex justify-content-center gap-1">
+                <button class="btn btn-sm btn-outline-warning editar-carrera" title="Editar" data-id="${id}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm ${claseToggle} toggle-estado-carrera" title="${textoToggle}" data-id="${id}">
+                    <i class="fas ${iconoToggle}"></i>
+                </button>
+            </div>
+        `;
+    }
+
+    static actualizarTablaCarreras(dataTable, carreras, departamentos) {
+        if (!dataTable) return;
+        
+        dataTable.clear();
+        
+        carreras.forEach(c => {
+            const nombreDepto = u_departamento.obtenerNombreDepartamento(departamentos, c.idDepartamento);
+            const estadoTexto = c.estado == 1 ? 'Habilitado' : 'Deshabilitado';
+            
+            const fila = [
+                c.nombreCarrera || 'Sin nombre',
+                nombreDepto,
+                estadoTexto,
+                this.generarBotonesCarrera(c.idCarrera, c.estado)
+            ];
+            
+            const nodoFila = dataTable.row.add(fila).draw().node();
+            
+            if (c.estado == 0) {
+                $(nodoFila).addClass('text-muted bg-light');
+                $(nodoFila).find('td:not(:last-child)').css('opacity', '0.6');
+            }
+        });
+        
+        dataTable.draw();
+    }
+
+    static obtenerNombreDepartamento(departamentos, idDepartamento) {
+        if (!idDepartamento) return '<span class="text-muted">Ninguno</span>';
+        const d = departamentos.find(d => d.idDepartamento == idDepartamento);
+        return d ? d.nombre : '<span class="text-muted">Desconocido</span>';
     }
 }

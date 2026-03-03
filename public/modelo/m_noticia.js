@@ -12,6 +12,9 @@ export class m_noticia
 
     /*
         tipo(comunicado(publico en general),interna(para los de la misma facultad), departamento(miembros del mismo departamento))
+
+        - Para las noticias que tengan muchas imagenes, la parte de imagenes hacerlo como un carrusel para mostrar todas las imagenes
+        - para las noticias que se creen en la parte del admin, dar opciones de modificar y de elminar las noticas.
     */
 
     // obtiene las noticias mas recientes del backend

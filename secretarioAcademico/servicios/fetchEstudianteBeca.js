@@ -9,7 +9,7 @@ export class fetchEstudianteBeca
      */
     static async obtenerEstudiantesBecaDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=estudianteBeca&accion=obtenerEstudiantesBeca&actor=secretario`);
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerEstudiantesBeca&actor=secretario`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -27,7 +27,7 @@ export class fetchEstudianteBeca
      */
     static async insertarEstudianteBecadoEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=estudianteBeca&accion=insertarEstudianteBecado&actor=secretario`, {
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=insertarEstudianteBecado&actor=secretario`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -47,7 +47,7 @@ export class fetchEstudianteBeca
      */
     static async actualizarEstudianteBecadoEnBDD(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=estudianteBeca&accion=actualizarEstudianteBecado&actor=secretario`, {
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=actualizarEstudianteBecado&actor=secretario`, {
                 method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -67,7 +67,7 @@ export class fetchEstudianteBeca
      */
     static async deshabilitarEstudianteBecadoEnBDD(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=estudianteBeca&accion=deshabilitarEstudianteBecado&valor=${id}&actor=secretario`);
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=deshabilitarEstudianteBecado&valor=${id}&actor=secretario`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -85,7 +85,7 @@ export class fetchEstudianteBeca
      */
     static async habilitarEstudianteBecadoEnBDD(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=estudianteBeca&accion=habilitarEstudianteBecado&valor=${id}&actor=secretario`);
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=habilitarEstudianteBecado&valor=${id}&actor=secretario`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

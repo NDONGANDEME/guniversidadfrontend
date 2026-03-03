@@ -20,6 +20,10 @@ export class m_familiar
         return await fetchFamiliar.obtenerFamiliaresDelBackend();
     }
 
+    static async obtenerFamiliarResponsablePorEstudiante(idEstudiante) {
+        return await fetchFamiliar.obtenerFamiliarResponsablePorEstudianteDelBackend(idEstudiante);
+    }
+
     static async insertarFamiliar(objeto) {
         return await fetchFamiliar.insertarFamiliarEnBDD(objeto);
     }

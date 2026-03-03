@@ -12,15 +12,15 @@ export class m_administrativo
         this.idFacultad = idFacultad;
     }
 
-    static async obtenerAdministrativos(actor) {
-        return await fetchAdministrativo.obtenerAdministrativosDelBackend(actor);
+    static async obtenerAdministrativos() {
+        return await fetchAdministrativo.obtenerAdministrativosDelBackend();
     }
 
-    static async insertarAdministrativo(objeto, actor) {
-        return await fetchAdministrativo.insertarAdministrativoEnBackend(objeto, actor);
+    static async insertarAdministrativo(objeto) {
+        return await fetchAdministrativo.insertarAdministrativoEnBackend(objeto);
     }
 
-    static async actualizarAdministrativo(objeto, actor) {
-        return await fetchAdministrativo.actualizarAdministrativoEnBackend(objeto, actor);
+    static async actualizarAdministrativo(objeto) {
+        return await fetchAdministrativo.actualizarAdministrativoEnBackend(objeto);
     }
 }

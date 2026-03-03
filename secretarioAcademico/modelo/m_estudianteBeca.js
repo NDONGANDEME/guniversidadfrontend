@@ -2,7 +2,7 @@ import { fetchEstudianteBeca } from "../servicios/fetchEstudianteBeca.js";
 
 export class m_estudianteBeca
 {
-    estudiante_beca (idEstudianteBecario, idEstudiante, idBeca, fechaInicio, fechaFinal, estado, observaciones) {
+    constructor (idEstudianteBecario, idEstudiante, idBeca, fechaInicio, fechaFinal, estado, observaciones) {
         this.idEstudianteBecario = idEstudianteBecario;
         this.idEstudiante = idEstudiante;
         this.idBeca = idBeca;
@@ -10,7 +10,7 @@ export class m_estudianteBeca
         this.fechaFinal = fechaFinal;
         this.estado = estado;
         this.observaciones = observaciones;
-    }
+    } 
 
     static async obtenerEstudiantes() {
         return await fetchEstudianteBeca.obtenerEstudiantesBecaDelBackend();

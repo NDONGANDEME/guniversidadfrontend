@@ -1,17 +1,17 @@
 import { Alerta } from "../../public/utilidades/u_alertas.js";
+import { m_administrativo } from "../modelo/m_administrativo.js";
 
 export class fetchAdministrativo
 {
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para cargar administrativos de la BDD
+     * @returns array de administrativos
      */
-    static async obtenerAdministrativosDelBackend(actor) {
+    static async obtenerAdministrativosDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&action=obtenerAdministrativos&actor=${actor}`);
+            let solicitud = await fetch(`${this.url}?ruta=administrativo&action=obtenerAdministrativos&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -23,14 +23,13 @@ export class fetchAdministrativo
     }
 
     /**
-     * 
-     * @param {*} objeto 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para insertar un nuevo administrativo en la BDD
+     * @param {m_administrativo} objeto 
+     * @returns id del nuevo registro insertado
      */
-    static async insertarAdministrativoEnBackend(objeto, actor) {
+    static async insertarAdministrativoEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=insertarAdministrativo&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=insertarAdministrativo&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -44,14 +43,13 @@ export class fetchAdministrativo
     }
 
     /**
-     * 
-     * @param {*} objeto 
-     * @param {*} actor 
-     * @returns 
+     * Envia solicitud para actualizar un administrativo existente de la BDD
+     * @param {m_administrativo} objeto 
+     * @returns id del registro actualizado
      */
-    static async actualizarAdministrativoEnBackend(objeto, actor) {
+    static async actualizarAdministrativoEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=actualizarAdministrativo&actor=${actor}`, {
+            let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=actualizarAdministrativo&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();

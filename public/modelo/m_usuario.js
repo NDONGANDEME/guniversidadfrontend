@@ -32,8 +32,4 @@ export class m_usuario
     static async habilitarUsuario(id) {
         return await fetchUsuario.habilitarUsuarioEnBDD(id);
     }
-
-    static async verificarContraseñaExistente(contraseña) {
-        return await fetchUsuario.verificarContraseñaExistenteEnBackend(contraseña);
-    }
 }

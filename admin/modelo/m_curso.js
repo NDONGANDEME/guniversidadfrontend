@@ -21,11 +21,7 @@ export class m_curso
         return await fetchCurso.actualizarCursoEnBackend(objeto);
     }
 
-    static async deshabilitarCurso(id) {
-        return await fetchCurso.deshabilitarCursoEnBackend(id);
-    }
-
-    static async habilitarCurso(id) {
-        return await fetchCurso.habilitarCursoEnBackend(id);
+    static async eliminarCurso(id) {
+        return await fetchCurso.eliminarCursoEnBackend(id);
     }
 }

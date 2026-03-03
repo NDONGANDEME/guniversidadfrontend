@@ -1,11 +1,7 @@
-import { sesiones } from "../../public/core/sesiones.js";
-import { Alerta } from "../../public/utilidades/u_alertas.js";
-import { m_administrativo } from "../modelo/m_administrativo.js";
-import { u_usuario } from "../utilidades/u_usuario.js";
+import { sesiones } from "../../public/core/sesiones.js"
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
-import { m_usuario } from "../../public/modelo/m_usuario.js";
-import { m_facultad } from "../modelo/m_facultad.js";
 
+<<<<<<< HEAD
 export class c_usuario {
     constructor() {
         // Datos principales
@@ -540,4 +536,14 @@ export class c_usuario {
 document.addEventListener('DOMContentLoaded', async function() {
     const controlador = new c_usuario();
     await controlador.inicializar();
+=======
+document.addEventListener('DOMContentLoaded', function()
+{
+    // verificamos que existe sesion
+    sesiones.verificarExistenciaSesion();
+    u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
+    u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
+    u_utiles.botonesNavegacionAdministrador();
+    u_utiles.manejoTabla();
+>>>>>>> a62aae651081a91322317b70eb80264ce142e5a0
 });

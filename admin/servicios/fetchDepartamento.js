@@ -23,6 +23,23 @@ export class fetchDepartamento
     }
 
     /**
+     * Envia solicitud para cargar los departamentos de la BDD
+     * @returns array de departamento
+     */
+    static async obtenerDepartamentosPorFacultadDelBackend(idFacultad) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=departamento&action=obtenerDepartamentosPorFacultad&actor=admin&valor=${idFacultad}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchDepartamento]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
      * Guarda la nueva facultad creada en la BDD
      * @param {m_departamento} objeto - objeto que contiene los parametros de la clase facultad
      * @returns el nuevo id insertado en la BDD
@@ -63,31 +80,13 @@ export class fetchDepartamento
     }
 
     /**
-     * 
-     * @param {*} id 
-     * @returns booleano que indique se se ha desabilitado el registro del id pasado por la url
+     * Envia colicitud para eliminar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
      */
-    static async deshabilitarDepartamentoEnBackend(id) {
+    static async eliminarDepartamentoEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=deshabilitarDepartamento&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchDepartamento]. ${error}`);
-            return false;
-        }
-    }
-
-    /**
-     * 
-     * @param {*} id 
-     * @returns booleano que indique se se ha desabilitado el registro del id pasado por la url
-     */
-    static async habilitarDepartamentoEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=habilitarDepartamento&valor=${id}&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=eliminarDepartamento&valor=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
