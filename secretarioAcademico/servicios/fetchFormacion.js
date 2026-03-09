@@ -46,7 +46,7 @@ export class fetchFormacion
             }
             
             let solicitud = await fetch(`${this.url}?ruta=formacion&accion=insertarFormacion&actor=secretario`, options);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

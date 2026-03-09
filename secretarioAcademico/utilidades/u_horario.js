@@ -221,6 +221,9 @@ export class u_horario {
         $('#comboAsignaturasClase').data('selected', id);
         this.ocultarDropdownAsignaturas();
         u_utiles.colorearCampo(true, '#comboAsignaturasClase', '#errorAsignaturasClase', '');
+        
+        // Disparar evento change
+        $('#comboAsignaturasClase').trigger('change');
     }
 
     // ---- COMBO DE AULAS ----
@@ -300,6 +303,9 @@ export class u_horario {
         $('#comboAulasClase').data('selected', id);
         this.ocultarDropdownAulas();
         u_utiles.colorearCampo(true, '#comboAulasClase', '#errorAulasClase', '');
+        
+        // Disparar evento change
+        $('#comboAulasClase').trigger('change');
     }
 
     // ========== MANEJO DE CLASES POR DÍA ==========
@@ -308,6 +314,9 @@ export class u_horario {
         if (!this.clasesPorDia[dia]) {
             this.clasesPorDia[dia] = [];
         }
+        
+        // Asignar un ID temporal
+        claseData.tempId = Date.now() + Math.random();
         this.clasesPorDia[dia].push(claseData);
         this.actualizarVistaDia(dia);
     }
@@ -330,7 +339,7 @@ export class u_horario {
         
         clases.forEach((clase, index) => {
             const item = $(`
-                <div class="alert alert-info p-2 mb-2">
+                <div class="alert alert-info p-2 mb-2" data-temp-id="${clase.tempId || ''}">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <strong>${clase.asignatura?.nombreAsignatura || 'Sin asignatura'}</strong><br>
@@ -402,7 +411,7 @@ export class u_horario {
             return;
         }
 
-        // Definir horas posibles (puedes ajustar según necesidades)
+        // Definir horas posibles
         const horas = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
         const dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
         
@@ -579,7 +588,7 @@ export class u_horario {
                 this.generarBotonesHorario(h.idHorario)
             ];
             
-            dataTable.row.add(fila).draw();
+            dataTable.row.add(fila).draw(false);
         });
         
         dataTable.draw();

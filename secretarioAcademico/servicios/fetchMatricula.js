@@ -13,7 +13,7 @@ export class fetchMatricula
     static async obtenerMatriculasDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=matricula&accion=obtenerMatriculas&actor=secretario`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];
