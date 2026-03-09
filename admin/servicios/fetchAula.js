@@ -25,11 +25,12 @@ export class fetchAula
     /**
      * Enviar solicitud para cargar las aulas de la BDD
      * @returns array de aulas
+     * Ya es funcional
      */
     static async obtenerAulasPorFacultadDelBackend(idFacultad) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=aula&accion=obtenerAulasPorFacultad&actor=admin&valor=${idFacultad}`);
-            let respuesta = await solicitud.text();
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];

@@ -19,7 +19,7 @@ export class m_profesor
             this.telefonoProfesor = telefonoProfesor;
     }
 
-    static async obtenerProfesoresPorFacultad(idFacultad = null) {
+    static async obtenerProfesoresPorFacultad(idFacultad) {
         return await fetchProfesor.obtenerProfesoresPorFacultadDelBackend(idFacultad);
     }
 

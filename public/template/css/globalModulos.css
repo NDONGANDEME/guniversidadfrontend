@@ -112,6 +112,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+/* parte de paises */
+.dropdown-options .dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-options .dropdown-item:hover,
+.dropdown-options .dropdown-item.selected {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+.dropdown-options .dropdown-item:last-child {
+    border-bottom: none;
+}
+
 /***************************************************************************/
 /* SIDEBAR - MEJORADA LEGIBILIDAD */
 /***************************************************************************/

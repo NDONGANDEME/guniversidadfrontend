@@ -92,7 +92,7 @@
                         </h1>
                     </div>
 
-                    <!--PARTE DEL ESTUDIANTES-->
+                    <!--PARTE DEL ESTUDIANTES -->
                     <div>
                         <!-- Tabla de estudiantes -->
                         <div class="border border-3 border-black mb-5 rounded-1">
@@ -118,6 +118,9 @@
                                                 <td class="align-middle">6</td>
                                                 <td class="align-middle">
                                                     <div class="d-flex justify-content-center align-items-center gap-1">
+                                                        <button class="btn btn-sm btn-outline-success me-1 convalidar" data-bs-toggle="modal" data-bs-target="#modalConvalidarEstudiante" 
+                                                            title="Convalidar" data-id="idMatriculaAsignatura"> <i class="fas fa-check-circle"></i>
+                                                        </button>
                                                         <button class="btn btn-sm btn-outline-info me-1 verDetalles" data-bs-toggle="modal" data-bs-target="#modalVerDetallesEstudiante" 
                                                             title="Ver detalles" data-id="idMatriculaAsignatura"> <i class="fas fa-eye"></i>
                                                         </button>
@@ -210,6 +213,49 @@
                 <div class="modal-footer">
                     <button class="btn btn-secondary cancelar" type="button" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success" id="btnGuardarAsignación">Guardar Asignación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para asignar asignaturas -->
+    <div class="modal fade" id="modalConvalidarEstudiante" tabindex="-1" aria-labelledby="modalConvalidarEstudianteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header justify-content-between align-items-center">
+                    <h5 class="modal-title" id="modalConvalidarEstudianteLabel">Convalidar asignaturas</h5>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formConvalidacion">
+                        <!--Boton para añadir mas contactos-->
+                        <div class="text-end mt-2">
+                            <button class="btn btn-sm btn-outline-warning" id="añadirAsignaturas" type="button" title="Añadir más asignaturas"> 
+                                <i class="fas fa-plus"></i> 
+                            </button>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-10 filter-group">
+                                <div class="combo-input-wrapper">
+                                    <label for="asignaturasConvalidacion" class="form-label">Asignaturas</label>
+                                    <input type="text" id="asignaturasConvalidacion" class="form-control" placeholder="Buscar o seleccionar...">
+                                    <div class="dropdown-options" id="opcionesAsignaturasConvalidacion"></div>
+                                    <label id="errorAsignaturasConvalidacion" class="errorMensaje"></label>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <label for="notaConvalidacion" class="form-label">Nota</label>
+                                <input type="number" min="0" class="form-control" id="notaConvalidacion" placeholder="0" required>
+                                <label id="errorNotaConvalidacion" class="errorMensaje"></label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary cancelar" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" id="btnConvalidarAsignaturas">Convalidar Asignaturas</button>
                 </div>
             </div>
         </div>

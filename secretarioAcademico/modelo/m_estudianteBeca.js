@@ -16,11 +16,11 @@ export class m_estudianteBeca
         return await fetchEstudianteBeca.obtenerEstudiantesBecaDelBackend();
     }
 
-    static async insertarEstudiante(objeto) {
+    static async insertarEstudianteBecado(objeto) {
         return await fetchEstudianteBeca.insertarEstudianteBecadoEnBDD(objeto);
     }
 
-    static async actualizarEstudiante(objeto) {
+    static async actualizarEstudianteBecado(objeto) {
         return await fetchEstudianteBeca.actualizarEstudianteBecadoEnBDD(objeto);
     }
 }

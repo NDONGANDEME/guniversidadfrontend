@@ -1,255 +1,418 @@
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
+import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
+import { Alerta } from "../../public/utilidades/u_alertas.js";
 
 export class u_estudiante {
     
     // ========== VARIABLES ESTÁTICAS ==========
-    static asignaturasSeleccionadas = [];
-    static maxCreditos = 30;
+    static asignaturasDisponibles = [];
+    static filteredAsignaturas = [];
+    static asignaturasSemestre = [];
+    static asignaturasPendientes = [];
+    static asignaturasBloqueadas = [];
+    static asignaturasAsignar = [];
+    static creditosMaximos = 30;
     static creditosActuales = 0;
+    static estudianteActual = null;
+    static matriculaActual = null;
+    
+    // ========== MANEJO DE ASIGNATURAS (COMBO) ==========
+    static inicializarComboAsignaturas() {
+        const input = $('#asignaturasConvalidacion');
+        const dropdown = $('#opcionesAsignaturasConvalidacion');
 
-    // ========== VALIDACIONES ==========
-    static validarCreditos(creditos) {
-        return this.creditosActuales + creditos <= this.maxCreditos;
+        input.off('focus').on('focus', function() {
+            u_estudiante.mostrarDropdownAsignaturas();
+        });
+
+        input.off('keyup').on('keyup', function(e) {
+            if (e.key === 'Escape') {
+                u_estudiante.ocultarDropdownAsignaturas();
+            } else {
+                u_estudiante.filtrarAsignaturas($(this).val());
+            }
+        });
+
+        // Cerrar al hacer clic fuera
+        $(document).off('click').on('click', function(e) {
+            if (!$(e.target).closest('.combo-input-wrapper').length) {
+                u_estudiante.ocultarDropdownAsignaturas();
+            }
+        });
     }
 
-    // ========== CARGAR DATOS ESPECÍFICOS DEL ESTUDIANTE ==========
-    static cargarDatosEspecificosEstudiante(datos) {
-        if (!datos) return;
+    static cargarAsignaturasEnCombo(asignaturas) {
+        u_estudiante.asignaturasDisponibles = asignaturas || [];
+        u_estudiante.filteredAsignaturas = asignaturas || [];
+        u_estudiante.renderizarDropdownAsignaturas();
+    }
 
-        // Cargar datos en el modal de detalles
-        $('#nombreCompletoDetalle').text(datos.nombreCompleto || '');
-        $('#planEstudioDetalle').text(datos.planEstudio || '');
-        $('#carreraDetalle').text(datos.carrera || '');
-        $('#cursoDetalle').text(datos.curso || '');
-        $('#semestreDetalle').text(datos.semestre || '');
+    static filtrarAsignaturas(searchTerm) {
+        const term = searchTerm.toLowerCase();
+        u_estudiante.filteredAsignaturas = u_estudiante.asignaturasDisponibles.filter(a => 
+            a.nombreAsignatura?.toLowerCase().includes(term) || 
+            a.codigoAsignatura?.toLowerCase().includes(term)
+        );
+        u_estudiante.renderizarDropdownAsignaturas();
+        u_estudiante.mostrarDropdownAsignaturas();
+    }
+
+    static renderizarDropdownAsignaturas() {
+        const dropdown = $('#opcionesAsignaturasConvalidacion');
+        dropdown.empty();
+
+        if (u_estudiante.filteredAsignaturas.length === 0) {
+            dropdown.append('<div class="dropdown-option no-results">No se encontraron asignaturas</div>');
+        } else {
+            u_estudiante.filteredAsignaturas.forEach(a => {
+                const option = $(`<div class="dropdown-option" data-id="${a.idAsignatura}">${a.codigoAsignatura || ''} - ${a.nombreAsignatura || ''} (${a.creditos || 0} créd.)</div>`);
+                option.on('click', function() {
+                    u_estudiante.seleccionarAsignaturaConvalidacion(a);
+                });
+                dropdown.append(option);
+            });
+        }
+    }
+
+    static mostrarDropdownAsignaturas() {
+        $('#opcionesAsignaturasConvalidacion').addClass('active');
+    }
+
+    static ocultarDropdownAsignaturas() {
+        $('#opcionesAsignaturasConvalidacion').removeClass('active');
+    }
+
+    static seleccionarAsignaturaConvalidacion(asignatura) {
+        $('#asignaturasConvalidacion').val(`${asignatura.codigoAsignatura || ''} - ${asignatura.nombreAsignatura || ''}`);
+        $('#asignaturasConvalidacion').data('selected', asignatura.idAsignatura);
+        $('#asignaturasConvalidacion').data('asignatura', asignatura);
+        u_estudiante.ocultarDropdownAsignaturas();
         
-        // Estos se cargarán cuando se abra el modal de asignación
-        $('#convocatoriaDetalle').text(datos.convocatoria || '0');
-        $('#vecesMatriculadoDetalle').text(datos.vecesMatriculado || '0');
-        $('#notaFinalDetalle').text(datos.notaFinal || '0');
+        // Validar campo
+        u_utiles.colorearCampo(true, '#asignaturasConvalidacion', '#errorAsignaturasConvalidacion', '');
     }
 
-    // ========== CARGAR ASIGNATURAS DEL SEMESTRE ==========
-    static cargarAsignaturasSemestre(asignaturas, semestreActual) {
+    // ========== MANEJO DE ASIGNATURAS EN CONTENEDORES ==========
+    
+    static cargarAsignaturasSemestre(asignaturas) {
+        u_estudiante.asignaturasSemestre = asignaturas || [];
+        u_estudiante.renderizarAsignaturasSemestre();
+    }
+
+    static renderizarAsignaturasSemestre() {
         const contenedor = $('#contenedorAsignaturasSemestre');
         contenedor.empty();
 
-        if (!asignaturas || asignaturas.length === 0) {
-            contenedor.html('<div class="alert alert-info m-2">No hay asignaturas para este semestre</div>');
+        if (u_estudiante.asignaturasSemestre.length === 0) {
+            contenedor.html('<div class="text-center p-3 text-muted">No hay asignaturas en este semestre</div>');
             return;
         }
 
         let html = '<div class="list-group">';
-        asignaturas.forEach(asig => {
+        
+        u_estudiante.asignaturasSemestre.forEach(asig => {
+            // Verificar si ya está en asignadas
+            const yaAsignada = u_estudiante.asignaturasAsignar.some(a => a.idPlanSemestreAsignatura == asig.idPlanSemestreAsignatura);
+            const claseDeshabilitada = yaAsignada ? 'disabled opacity-50' : '';
+            const puedeArrastrar = !yaAsignada && (u_estudiante.creditosActuales + (asig.creditos || 0) <= u_estudiante.creditosMaximos);
+            
             html += `
-                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                     data-id="${asig.idPlanSemestreAsignatura}"
-                     data-nombre="${asig.nombreAsignatura}"
-                     data-creditos="${asig.creditos}">
-                    <div>
-                        <strong>${asig.codigo || ''}</strong> - ${asig.nombreAsignatura}
-                        <br><small class="text-muted">${asig.creditos} créditos</small>
+                <div class="list-group-item list-group-item-action ${claseDeshabilitada} asignatura-item" 
+                     data-id="${asig.idPlanSemestreAsignatura}" 
+                     data-creditos="${asig.creditos || 0}"
+                     data-nombre="${asig.nombreAsignatura || ''}"
+                     data-codigo="${asig.codigoAsignatura || ''}"
+                     draggable="${puedeArrastrar}"
+                     ondragstart="u_estudiante.dragStart(event)">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${asig.codigoAsignatura || ''}</strong> - ${asig.nombreAsignatura || ''}
+                            <br><small class="text-muted">${asig.creditos || 0} créditos</small>
+                        </div>
+                        ${yaAsignada ? '<span class="badge bg-success">Asignada</span>' : ''}
                     </div>
-                    <button class="btn btn-sm btn-success btn-agregar-asignatura">
-                        <i class="fas fa-plus"></i> Agregar
-                    </button>
                 </div>
             `;
         });
+
         html += '</div>';
-        
         contenedor.html(html);
     }
 
-    // ========== CARGAR ASIGNATURAS PENDIENTES Y BLOQUEADAS ==========
-    static cargarAsignaturasPendientesYBloqueadas(asignaturas) {
+    static cargarAsignaturasPendientesYBloqueadas(pendientes, bloqueadas) {
+        u_estudiante.asignaturasPendientes = pendientes || [];
+        u_estudiante.asignaturasBloqueadas = bloqueadas || [];
+        u_estudiante.renderizarAsignaturasPendientesYBloqueadas();
+    }
+
+    static renderizarAsignaturasPendientesYBloqueadas() {
         const contenedor = $('#contenedorAsignaturasPendienteYBloqueadas');
         contenedor.empty();
 
-        if (!asignaturas || asignaturas.length === 0) {
-            contenedor.html('<div class="alert alert-info m-2">No hay asignaturas pendientes o bloqueadas</div>');
+        const todas = [...u_estudiante.asignaturasPendientes, ...u_estudiante.asignaturasBloqueadas];
+        
+        if (todas.length === 0) {
+            contenedor.html('<div class="text-center p-3 text-muted">No hay asignaturas pendientes o bloqueadas</div>');
             return;
         }
 
-        // Separar por tipo
-        const pendientes = asignaturas.filter(a => a.estado === 'pendiente' || !a.estado);
-        const bloqueadas = asignaturas.filter(a => a.estado === 'bloqueada');
-
-        let html = '<div class="accordion" id="accordionPendientesBloqueadas">';
+        let html = '<div class="list-group">';
         
-        // Pendientes
-        if (pendientes.length > 0) {
-            html += `
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePendientes">
-                            Asignaturas Pendientes (${pendientes.length})
-                        </button>
-                    </h2>
-                    <div id="collapsePendientes" class="accordion-collapse collapse" data-bs-parent="#accordionPendientesBloqueadas">
-                        <div class="accordion-body">
-                            <div class="list-group">
-            `;
+        todas.forEach(asig => {
+            const esBloqueada = u_estudiante.asignaturasBloqueadas.some(b => b.idPlanSemestreAsignatura == asig.idPlanSemestreAsignatura);
+            const claseBloqueada = esBloqueada ? 'list-group-item-danger' : '';
+            const yaAsignada = u_estudiante.asignaturasAsignar.some(a => a.idPlanSemestreAsignatura == asig.idPlanSemestreAsignatura);
+            const claseDeshabilitada = yaAsignada ? 'disabled opacity-50' : '';
+            const puedeArrastrar = !yaAsignada && !esBloqueada && (u_estudiante.creditosActuales + (asig.creditos || 0) <= u_estudiante.creditosMaximos);
             
-            pendientes.forEach(asig => {
-                html += `
-                    <div class="list-group-item d-flex justify-content-between align-items-center"
-                         data-id="${asig.idPlanSemestreAsignatura}">
+            html += `
+                <div class="list-group-item list-group-item-action ${claseBloqueada} ${claseDeshabilitada} asignatura-item" 
+                     data-id="${asig.idPlanSemestreAsignatura}" 
+                     data-creditos="${asig.creditos || 0}"
+                     data-nombre="${asig.nombreAsignatura || ''}"
+                     data-codigo="${asig.codigoAsignatura || ''}"
+                     data-es-bloqueada="${esBloqueada}"
+                     draggable="${puedeArrastrar}"
+                     ondragstart="u_estudiante.dragStart(event)">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <strong>${asig.codigo || ''}</strong> - ${asig.nombreAsignatura}
-                            <br><small class="text-muted">${asig.creditos} créditos</small>
+                            <strong>${asig.codigoAsignatura || ''}</strong> - ${asig.nombreAsignatura || ''}
+                            <br><small class="text-muted">${asig.creditos || 0} créditos</small>
+                            ${esBloqueada ? '<br><small class="text-danger">Bloqueada</small>' : ''}
                         </div>
-                        <span class="badge bg-warning">Pendiente</span>
-                    </div>
-                `;
-            });
-            
-            html += `
-                            </div>
-                        </div>
+                        ${yaAsignada ? '<span class="badge bg-success">Asignada</span>' : ''}
                     </div>
                 </div>
             `;
-        }
-
-        // Bloqueadas
-        if (bloqueadas.length > 0) {
-            html += `
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBloqueadas">
-                            Asignaturas Bloqueadas (${bloqueadas.length})
-                        </button>
-                    </h2>
-                    <div id="collapseBloqueadas" class="accordion-collapse collapse" data-bs-parent="#accordionPendientesBloqueadas">
-                        <div class="accordion-body">
-                            <div class="list-group">
-            `;
-            
-            bloqueadas.forEach(asig => {
-                html += `
-                    <div class="list-group-item d-flex justify-content-between align-items-center"
-                         data-id="${asig.idPlanSemestreAsignatura}">
-                        <div>
-                            <strong>${asig.codigo || ''}</strong> - ${asig.nombreAsignatura}
-                            <br><small class="text-muted">${asig.creditos} créditos</small>
-                        </div>
-                        <span class="badge bg-danger">Bloqueada</span>
-                    </div>
-                `;
-            });
-            
-            html += `
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+        });
 
         html += '</div>';
         contenedor.html(html);
     }
 
-    // ========== ACTUALIZAR ASIGNATURAS A ASIGNAR ==========
-    static actualizarAsignaturasAsignar() {
+    static renderizarAsignaturasAsignar() {
         const contenedor = $('#contenedorAsignaturasAsignar');
-        contenedor.empty();
-
-        if (this.asignaturasSeleccionadas.length === 0) {
-            contenedor.html('<div class="alert alert-info">No hay asignaturas seleccionadas</div>');
+        
+        if (u_estudiante.asignaturasAsignar.length === 0) {
+            contenedor.html('<div class="text-center p-3 text-muted">Arrastre asignaturas aquí</div>');
             $('#totalCreditos').text('0');
             return;
         }
 
-        let html = '<div class="list-group">';
-        this.creditosActuales = 0;
-
-        this.asignaturasSeleccionadas.forEach((asig, index) => {
-            this.creditosActuales += asig.creditos;
+        let html = '<div class="list-group" id="listaAsignaturasAsignar">';
+        let totalCreditos = 0;
+        
+        u_estudiante.asignaturasAsignar.forEach((asig, index) => {
+            totalCreditos += asig.creditos || 0;
+            
             html += `
-                <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="list-group-item d-flex justify-content-between align-items-center" data-id="${asig.idPlanSemestreAsignatura}">
                     <div>
-                        <strong>${asig.codigo || ''}</strong> - ${asig.nombreAsignatura}
-                        <br><small class="text-muted">${asig.creditos} créditos</small>
+                        <strong>${asig.codigoAsignatura || ''}</strong> - ${asig.nombreAsignatura || ''}
+                        <br><small class="text-muted">${asig.creditos || 0} créditos</small>
                     </div>
-                    <button class="btn btn-sm btn-danger btn-quitar-asignatura" data-index="${index}">
-                        <i class="fas fa-times"></i> Quitar
+                    <button class="btn btn-sm btn-outline-danger btn-eliminar-asignatura" data-index="${index}">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             `;
         });
+
         html += '</div>';
-
         contenedor.html(html);
-        $('#totalCreditos').text(this.creditosActuales);
-    }
-
-    // ========== AGREGAR ASIGNATURA A SELECCIONADAS ==========
-    static agregarAsignatura(elemento) {
-        const item = $(elemento).closest('.list-group-item');
-        const id = item.data('id');
-        const nombre = item.data('nombre');
-        const creditos = item.data('creditos');
-
-        // Validar créditos
-        if (!this.validarCreditos(creditos)) {
-            alert(`No puede superar el máximo de ${this.maxCreditos} créditos`);
-            return false;
-        }
-
-        // Verificar si ya está seleccionada
-        if (this.asignaturasSeleccionadas.some(a => a.id === id)) {
-            alert('Esta asignatura ya está seleccionada');
-            return false;
-        }
-
-        this.asignaturasSeleccionadas.push({
-            id: id,
-            nombre: nombre,
-            creditos: creditos
+        
+        u_estudiante.creditosActuales = totalCreditos;
+        $('#totalCreditos').text(totalCreditos);
+        
+        // Actualizar estado de arrastre en otros contenedores
+        u_estudiante.actualizarEstadoArrastre();
+        
+        // Agregar eventos a botones eliminar
+        $('.btn-eliminar-asignatura').off('click').on('click', function() {
+            const index = $(this).data('index');
+            u_estudiante.eliminarAsignaturaAsignar(index);
         });
-
-        this.actualizarAsignaturasAsignar();
-        return true;
     }
 
-    // ========== QUITAR ASIGNATURA DE SELECCIONADAS ==========
-    static quitarAsignatura(index) {
-        this.asignaturasSeleccionadas.splice(index, 1);
-        this.actualizarAsignaturasAsignar();
+    static actualizarEstadoArrastre() {
+        // Actualizar contenedor de semestre
+        $('.asignatura-item').each(function() {
+            const $this = $(this);
+            const id = $this.data('id');
+            const creditos = $this.data('creditos');
+            const esBloqueada = $this.data('es-bloqueada') === 'true';
+            
+            const yaAsignada = u_estudiante.asignaturasAsignar.some(a => a.idPlanSemestreAsignatura == id);
+            const puedeArrastrar = !yaAsignada && !esBloqueada && (u_estudiante.creditosActuales + creditos <= u_estudiante.creditosMaximos);
+            
+            if (yaAsignada) {
+                $this.addClass('disabled opacity-50');
+                $this.attr('draggable', 'false');
+            } else {
+                $this.removeClass('disabled opacity-50');
+                $this.attr('draggable', puedeArrastrar ? 'true' : 'false');
+            }
+        });
     }
 
-    // ========== LIMPIAR SELECCIÓN ==========
-    static limpiarSeleccion() {
-        this.asignaturasSeleccionadas = [];
-        this.creditosActuales = 0;
-        this.actualizarAsignaturasAsignar();
+    static dragStart(event) {
+        const element = event.target.closest('.asignatura-item');
+        if (!element) return;
+        
+        const id = $(element).data('id');
+        const creditos = $(element).data('creditos');
+        const nombre = $(element).data('nombre');
+        const codigo = $(element).data('codigo');
+        const esBloqueada = $(element).data('es-bloqueada');
+        
+        // No permitir arrastrar si está bloqueada
+        if (esBloqueada) {
+            event.preventDefault();
+            return;
+        }
+        
+        // Verificar límite de créditos
+        if (u_estudiante.creditosActuales + creditos > u_estudiante.creditosMaximos) {
+            event.preventDefault();
+            Alerta.advertencia('Límite de créditos', `No puede superar los ${u_estudiante.creditosMaximos} créditos`);
+            return;
+        }
+        
+        event.dataTransfer.setData('text/plain', JSON.stringify({
+            idPlanSemestreAsignatura: id,
+            creditos: creditos,
+            nombreAsignatura: nombre,
+            codigoAsignatura: codigo
+        }));
+        
+        event.dataTransfer.effectAllowed = 'move';
     }
 
-    // ========== CARGAR DATOS EN MODAL DE ASIGNACIÓN ==========
-    static cargarDatosEnModalAsignacion(datos) {
-        if (!datos) return;
+    static allowDrop(event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+    }
 
-        $('#convocatoriaAsignacion').val(datos.convocatoria || '0');
-        $('#vecesMatriculadoAsignacion').val(datos.vecesMatriculado || '0');
-        $('#notaFinalAsignacion').val(datos.notaFinal || '0');
+    static dropAsignar(event) {
+        event.preventDefault();
+        
+        const dataStr = event.dataTransfer.getData('text/plain');
+        if (!dataStr) return;
+        
+        try {
+            const asignatura = JSON.parse(dataStr);
+            
+            // Verificar si ya está asignada
+            if (u_estudiante.asignaturasAsignar.some(a => a.idPlanSemestreAsignatura == asignatura.idPlanSemestreAsignatura)) {
+                Alerta.advertencia('Duplicado', 'Esta asignatura ya está en la lista de asignar');
+                return;
+            }
+            
+            // Verificar límite de créditos
+            if (u_estudiante.creditosActuales + asignatura.creditos > u_estudiante.creditosMaximos) {
+                Alerta.advertencia('Límite de créditos', `No puede superar los ${u_estudiante.creditosMaximos} créditos`);
+                return;
+            }
+            
+            u_estudiante.asignaturasAsignar.push(asignatura);
+            u_estudiante.renderizarAsignaturasAsignar();
+            
+        } catch (e) {
+            console.error('Error al procesar asignatura:', e);
+        }
+    }
+
+    static eliminarAsignaturaAsignar(index) {
+        u_estudiante.asignaturasAsignar.splice(index, 1);
+        u_estudiante.renderizarAsignaturasAsignar();
+    }
+
+    static limpiarAsignaturasAsignar() {
+        u_estudiante.asignaturasAsignar = [];
+        u_estudiante.creditosActuales = 0;
+        u_estudiante.renderizarAsignaturasAsignar();
+    }
+
+    // ========== ACTUALIZAR DATOS DE ASIGNATURA SELECCIONADA ==========
+    static actualizarDatosAsignatura(asignatura) {
+        if (!asignatura) {
+            $('#convocatoriaAsignacion').val('').prop('disabled', true);
+            $('#vecesMatriculadoAsignacion').val('').prop('disabled', true);
+            $('#notaFinalAsignacion').val('').prop('disabled', true);
+            return;
+        }
+        
+        $('#convocatoriaAsignacion').val(asignatura.convocatoria || 0).prop('disabled', false);
+        $('#vecesMatriculadoAsignacion').val(asignatura.numeroVecesMatriculado || 0).prop('disabled', false);
+        $('#notaFinalAsignacion').val(asignatura.notaFinal || 0).prop('disabled', false);
+    }
+
+    // ========== MANEJO DE CONVALIDACIONES ==========
+    static agregarFilaConvalidacion() {
+        const asignaturaId = $('#asignaturasConvalidacion').data('selected');
+        const nota = $('#notaConvalidacion').val().trim();
+        
+        if (!asignaturaId) {
+            Alerta.advertencia('Campo requerido', 'Seleccione una asignatura');
+            return;
+        }
+        
+        if (!nota || nota < 0 || nota > 10) {
+            Alerta.advertencia('Nota inválida', 'La nota debe estar entre 0 y 10');
+            return;
+        }
+        
+        // Obtener datos de la asignatura seleccionada
+        const asignatura = u_estudiante.asignaturasDisponibles.find(a => a.idAsignatura == asignaturaId);
+        
+        if (!asignatura) return;
+        
+        // Crear fila en el formulario
+        const filaHtml = `
+            <div class="row mt-2 fila-convalidacion" data-asignatura-id="${asignaturaId}">
+                <div class="col-10">
+                    <input type="text" class="form-control" value="${asignatura.codigoAsignatura || ''} - ${asignatura.nombreAsignatura || ''}" readonly>
+                </div>
+                <div class="col-2">
+                    <div class="d-flex">
+                        <input type="number" class="form-control nota-convalidacion" value="${nota}" min="0" max="10" step="0.1" readonly>
+                        <button class="btn btn-sm btn-outline-danger ms-1 btn-eliminar-convalidacion" type="button">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        $('#formConvalidacion').append(filaHtml);
+        
+        // Limpiar selección
+        $('#asignaturasConvalidacion').val('').removeData('selected').removeData('asignatura');
+        $('#notaConvalidacion').val('');
+        
+        // Actualizar eventos
+        $('.btn-eliminar-convalidacion').off('click').on('click', function() {
+            $(this).closest('.fila-convalidacion').remove();
+        });
+    }
+
+    static limpiarConvalidaciones() {
+        $('.fila-convalidacion').remove();
+        $('#asignaturasConvalidacion').val('').removeData('selected').removeData('asignatura');
+        $('#notaConvalidacion').val('');
     }
 
     // ========== GENERAR BOTONES PARA TABLA ==========
-    static generarBotonesEstudiante(idMatricula, idEstudiante) {
+    static generarBotonesEstudiante(idMatricula) {
         return `
             <div class="d-flex justify-content-center gap-1">
-                <button class="btn btn-sm btn-outline-info ver-detalles-estudiante" 
-                        title="Ver detalles" 
-                        data-id="${idMatricula}"
-                        data-estudiante="${idEstudiante}">
+                <button class="btn btn-sm btn-outline-success convalidar" title="Convalidar" data-id="${idMatricula}">
+                    <i class="fas fa-check-circle"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-info ver-detalles" title="Ver detalles" data-id="${idMatricula}">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-warning asignar-asignaturas" 
-                        title="Asignar asignaturas" 
-                        data-id="${idMatricula}"
-                        data-estudiante="${idEstudiante}">
+                <button class="btn btn-sm btn-outline-warning asignar" title="Asignar asignaturas" data-id="${idMatricula}">
                     <i class="fas fa-edit"></i>
                 </button>
             </div>
@@ -269,12 +432,12 @@ export class u_estudiante {
 
         estudiantes.forEach(e => {
             const fila = [
-                e.nombreCompleto || 'Sin nombre',
+                e.nombreCompleto || `${e.nombre || ''} ${e.apellidos || ''}`,
                 e.carrera || 'Sin carrera',
                 e.curso || 'Sin curso',
                 e.semestre || '0',
-                e.numeroAsignaturas || '0',
-                this.generarBotonesEstudiante(e.idMatricula, e.idEstudiante)
+                e.numAsignaturas || '0',
+                u_estudiante.generarBotonesEstudiante(e.idMatricula)
             ];
             
             dataTable.row.add(fila).draw(false);
@@ -284,71 +447,70 @@ export class u_estudiante {
     }
 
     // ========== GENERAR HTML PARA DETALLES ==========
-    static generarDetallesEstudianteHTML(datos) {
-        if (!datos) return '<div class="alert alert-warning">No hay datos disponibles</div>';
-
-        let asignaturasHTML = '';
-        if (datos.asignaturas && datos.asignaturas.length > 0) {
-            asignaturasHTML = '<h6 class="mt-3">Asignaturas matriculadas:</h6><ul class="list-group">';
-            datos.asignaturas.forEach(asig => {
-                asignaturasHTML += `
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        ${asig.nombreAsignatura}
-                        <span class="badge bg-${asig.estado === 'aprobada' ? 'success' : 'warning'}">
-                            ${asig.estado || 'cursando'}
-                        </span>
-                    </li>
-                `;
-            });
-            asignaturasHTML += '</ul>';
-        }
-
+    static generarDetallesEstudianteHTML(estudiante, matricula, planEstudio, carrera, curso, semestre) {
         return `
             <div class="border border-2 border-black rounded-2 p-3">
-                <h5 class="border-bottom pb-2">Información Personal</h5>
-                <p><strong>Nombre:</strong> ${datos.nombreCompleto}</p>
-                <p><strong>Código:</strong> ${datos.codigoEstudiante || 'N/A'}</p>
-                
-                <h5 class="border-bottom pb-2 mt-3">Información Académica</h5>
-                <p><strong>Plan de Estudios:</strong> ${datos.planEstudio}</p>
-                <p><strong>Carrera:</strong> ${datos.carrera}</p>
-                <p><strong>Curso:</strong> ${datos.curso} - Semestre ${datos.semestre}</p>
-                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre del estudiante:</label>
+                    <span class="ms-2" id="nombreCompletoDetalle">${estudiante.nombre || ''} ${estudiante.apellidos || ''}</span>
+                </div>
+
                 <div class="row">
-                    <div class="col-4">
-                        <p><strong>Convocatorias:</strong> ${datos.convocatoria || '0'}</p>
+                    <div class="col-6 mb-2">
+                        <label class="form-label fw-bold">Plan de estudios:</label>
+                        <span class="ms-2" id="planEstudioDetalle">${planEstudio?.nombre || 'No disponible'}</span>
                     </div>
-                    <div class="col-4">
-                        <p><strong>Veces matriculado:</strong> ${datos.vecesMatriculado || '0'}</p>
-                    </div>
-                    <div class="col-4">
-                        <p><strong>Nota final:</strong> ${datos.notaFinal || '0'}</p>
+                    <div class="col-6 mb-2">
+                        <label class="form-label fw-bold">Carrera:</label>
+                        <span class="ms-2" id="carreraDetalle">${carrera?.nombreCarrera || 'No disponible'}</span>
                     </div>
                 </div>
-                
-                ${asignaturasHTML}
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label fw-bold">Curso:</label>
+                        <span class="ms-2" id="cursoDetalle">${curso?.nombreCurso || 'No disponible'}</span>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <label class="form-label fw-bold">Semestre:</label>
+                        <span class="ms-2" id="semestreDetalle">${semestre?.numeroSemestre || 'No disponible'}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 mb-2">
+                        <label class="form-label fw-bold">Convocatorias:</label>
+                        <span class="ms-2" id="convocatoriaDetalle">${matricula?.convocatoria || '0'}</span>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <label class="form-label fw-bold">Veces matriculado:</label>
+                        <span class="ms-2" id="vecesMatriculadoDetalle">${matricula?.numeroVecesMatriculado || '0'}</span>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <label class="form-label fw-bold">Nota final:</label>
+                        <span class="ms-2" id="notaFinalDetalle">${matricula?.notaFinal || '0'}</span>
+                    </div>
+                </div>
             </div>
         `;
     }
 
-    // ========== LIMPIAR MODALES ==========
+    // ========== LIMPIAR MODAL ==========
     static limpiarModalAsignacion() {
-        $('#convocatoriaAsignacion').val('');
-        $('#vecesMatriculadoAsignacion').val('');
-        $('#notaFinalAsignacion').val('');
+        u_estudiante.asignaturasSemestre = [];
+        u_estudiante.asignaturasPendientes = [];
+        u_estudiante.asignaturasBloqueadas = [];
+        u_estudiante.limpiarAsignaturasAsignar();
+        
         $('#contenedorAsignaturasSemestre').empty();
         $('#contenedorAsignaturasPendienteYBloqueadas').empty();
-        this.limpiarSeleccion();
+        
+        $('#convocatoriaAsignacion').val('').prop('disabled', true);
+        $('#vecesMatriculadoAsignacion').val('').prop('disabled', true);
+        $('#notaFinalAsignacion').val('').prop('disabled', true);
     }
 
-    static limpiarModalDetalles() {
-        $('#nombreCompletoDetalle').text('');
-        $('#planEstudioDetalle').text('');
-        $('#carreraDetalle').text('');
-        $('#cursoDetalle').text('');
-        $('#semestreDetalle').text('');
-        $('#convocatoriaDetalle').text('');
-        $('#vecesMatriculadoDetalle').text('');
-        $('#notaFinalDetalle').text('');
+    static limpiarModalConvalidacion() {
+        u_estudiante.limpiarConvalidaciones();
+        $('#asignaturasConvalidacion').val('').removeData('selected').removeData('asignatura');
+        $('#notaConvalidacion').val('');
     }
 }

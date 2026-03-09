@@ -1,16 +1,15 @@
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
+import { Alerta } from "../../public/utilidades/u_alertas.js";
 
 export class u_profesor {
     
-    // ========== VARIABLES ESTÁTICAS ==========
     static archivosSeleccionados = [];
     static departamentosDisponibles = [];
     static filteredDepartamentos = [];
     static currentSection = 0;
     static secciones = ['#seccion1', '#seccion2', '#seccion3'];
 
-    // ========== VALIDACIONES ==========
     static validarNombre(valor) {
         return u_verificaciones.validarNombre(valor);
     }
@@ -20,7 +19,6 @@ export class u_profesor {
     }
     
     static validarDIP(valor) {
-        // Formato: 000 000 000
         const regex = /^\d{3}\s?\d{3}\s?\d{3}$/;
         return regex.test(valor.trim());
     }
@@ -58,7 +56,7 @@ export class u_profesor {
     }
     
     static validarDepartamento(valor) {
-        return valor && valor !== '';
+        return valor && valor !== '' && valor !== 'Ninguno' && valor !== null;
     }
     
     static validarResponsabilidad(valor) {
@@ -81,19 +79,17 @@ export class u_profesor {
         return valor && valor !== 'Ninguno' && valor === 'Profesor';
     }
 
-    // ========== VALIDACIONES EN TIEMPO REAL ==========
     static configurarValidaciones() {
-        // Sección 1 - Datos personales
         $('#nombreProfesor').off('input').on('input', function() {
             const valor = $(this).val().trim();
             const valido = u_profesor.validarNombre(valor);
-            u_utiles.colorearCampo(valido, '#nombreProfesor', '#errorNombreProfesor', 'Mínimo 3 caracteres');
+            u_utiles.colorearCampo(valido, '#nombreProfesor', '#errorNombreProfesor', 'Mínimo 3 caracteres, solo letras');
         });
 
         $('#apellidosProfesor').off('input').on('input', function() {
             const valor = $(this).val().trim();
             const valido = u_profesor.validarApellidos(valor);
-            u_utiles.colorearCampo(valido, '#apellidosProfesor', '#errorApellidosProfesor', 'Mínimo 3 caracteres');
+            u_utiles.colorearCampo(valido, '#apellidosProfesor', '#errorApellidosProfesor', 'Mínimo 3 caracteres, solo letras');
         });
 
         $('#dipProfesor').off('input').on('input', function() {
@@ -105,7 +101,7 @@ export class u_profesor {
         $('#nacionalidadProfesor').off('input').on('input', function() {
             const valor = $(this).val().trim();
             const valido = u_profesor.validarNacionalidad(valor);
-            u_utiles.colorearCampo(valido, '#nacionalidadProfesor', '#errorNacionalidadProfesor', 'Mínimo 3 caracteres');
+            u_utiles.colorearCampo(valido, '#nacionalidadProfesor', '#errorNacionalidadProfesor', 'Mínimo 3 caracteres, solo letras');
         });
 
         $('#generosProfesor').off('change').on('change', function() {
@@ -117,7 +113,7 @@ export class u_profesor {
         $('#correoProfesor').off('input').on('input', function() {
             const valor = $(this).val().trim();
             const valido = u_profesor.validarCorreo(valor);
-            u_utiles.colorearCampo(valido, '#correoProfesor', '#errorCorreoProfesor', 'Correo inválido');
+            u_utiles.colorearCampo(valido, '#correoProfesor', '#errorCorreoProfesor', 'Correo inválido (ej: usuario@dominio.com)');
         });
 
         $('#telefonoProfesor').off('input').on('input', function() {
@@ -126,7 +122,6 @@ export class u_profesor {
             u_utiles.colorearCampo(valido, '#telefonoProfesor', '#errorTelefonoProfesor', 'Formato: +240 222 123 456');
         });
 
-        // Sección 2 - Datos de formación
         $('#institucionFormacionProfesor').off('input').on('input', function() {
             const valor = $(this).val().trim();
             const valido = u_profesor.validarInstitucion(valor);
@@ -154,6 +149,11 @@ export class u_profesor {
         $('#comboDepartamentosProfesor').off('input').on('input', function() {
             const valor = $(this).val().trim();
             u_profesor.filtrarDepartamentos(valor);
+            
+            if (valor === '') {
+                $(this).removeData('selected');
+                u_utiles.colorearCampo(false, '#comboDepartamentosProfesor', '#errorDepartamentosProfesor', 'Seleccione un departamento');
+            }
         });
 
         $('#responsabilidadProfesor').off('change').on('change', function() {
@@ -174,21 +174,33 @@ export class u_profesor {
             u_utiles.colorearCampo(valido, '#gradoFormacionProfesor', '#errorGradoFormacionProfesor', 'Mínimo 5 caracteres');
         });
 
-        // Sección 3 - Datos de usuario
         $('#nombreOCorreoUsuario').off('input').on('input', function() {
             const valor = $(this).val().trim();
-            const valido = u_profesor.validarNombreOCorreo(valor);
-            u_utiles.colorearCampo(valido, '#nombreOCorreoUsuario', '#errorNombreOCorreoUsuario', 'Nombre de usuario o correo inválido');
+            const esCorreo = valor.includes('@');
+            let valido;
+            let mensaje;
+            
+            if (esCorreo) {
+                valido = u_profesor.validarCorreo(valor);
+                mensaje = 'Correo inválido (ej: usuario@dominio.com)';
+            } else {
+                valido = u_profesor.validarNombreOCorreo(valor);
+                mensaje = 'Mínimo 3 caracteres, solo letras y números';
+            }
+            
+            u_utiles.colorearCampo(valido, '#nombreOCorreoUsuario', '#errorNombreOCorreoUsuario', mensaje);
         });
 
         $('#rolUsuario').off('change').on('change', function() {
             const valor = $(this).val();
-            const valido = u_profesor.validarRol(valor);
+            if (valor !== 'Profesor') {
+                $(this).val('Profesor');
+            }
+            const valido = u_profesor.validarRol('Profesor');
             u_utiles.colorearCampo(valido, '#rolUsuario', '#errorRolUsuario', 'Debe seleccionar Profesor');
         });
     }
 
-    // ========== VALIDAR SECCIÓN COMPLETA ==========
     static validarSeccion1() {
         return u_profesor.validarNombre($('#nombreProfesor').val().trim()) &&
                u_profesor.validarApellidos($('#apellidosProfesor').val().trim()) &&
@@ -204,7 +216,7 @@ export class u_profesor {
                u_profesor.validarTipoFormacion($('#tiposFormacionesProfesor').val()) &&
                u_profesor.validarNivelFormacion($('#nivelesFormacionesProfesor').val()) &&
                u_profesor.validarTitulo($('#titulosProfesor').val().trim()) &&
-               u_profesor.validarDepartamento($('#comboDepartamentosProfesor').data('selected')) &&
+               this.validarDepartamentoSeleccionado() && 
                u_profesor.validarResponsabilidad($('#responsabilidadProfesor').val()) &&
                u_profesor.validarEspecialidad($('#especialidadFormacionProfesor').val().trim()) &&
                u_profesor.validarGradoEstudio($('#gradoFormacionProfesor').val().trim());
@@ -215,17 +227,13 @@ export class u_profesor {
                u_profesor.validarRol($('#rolUsuario').val());
     }
 
-    // ========== MANEJO DE SECCIONES ==========
     static mostrarSeccion(index) {
-        // Ocultar todas las secciones
         u_profesor.secciones.forEach(sec => {
             $(sec).removeClass('active').hide();
         });
 
-        // Mostrar la sección actual
         $(u_profesor.secciones[index]).addClass('active').show();
 
-        // Actualizar botones
         if (index === 0) {
             $('#anterior').hide();
             $('#siguiente').show().text('Siguiente');
@@ -243,22 +251,25 @@ export class u_profesor {
 
     static irSiguiente() {
         if (u_profesor.currentSection < u_profesor.secciones.length - 1) {
-            // Validar sección actual antes de avanzar
             let valida = false;
+            let mensaje = '';
+            
             switch(u_profesor.currentSection) {
                 case 0:
                     valida = u_profesor.validarSeccion1();
-                    if (!valida) Alerta.advertencia('Campos incompletos', 'Complete todos los campos de la sección correctamente');
+                    mensaje = 'Complete todos los campos de la sección correctamente';
                     break;
                 case 1:
                     valida = u_profesor.validarSeccion2();
-                    if (!valida) Alerta.advertencia('Campos incompletos', 'Complete todos los campos de la sección correctamente');
+                    mensaje = 'Complete todos los campos de la sección correctamente';
                     break;
             }
             
             if (valida) {
                 u_profesor.currentSection++;
                 u_profesor.mostrarSeccion(u_profesor.currentSection);
+            } else {
+                Alerta.advertencia('Campos incompletos', mensaje);
             }
         }
     }
@@ -275,59 +286,71 @@ export class u_profesor {
         u_profesor.mostrarSeccion(0);
     }
 
-    // ========== MANEJO DE DEPARTAMENTOS (COMBO) ==========
-    static inicializarComboDepartamentos() {
+    static inicializarComboDepartamentos(departamentos) {
+        console.log('Inicializando combo con departamentos:', departamentos);
+        
+        this.departamentosDisponibles = departamentos || [];
+        this.filteredDepartamentos = this.departamentosDisponibles;
+        
+        this.renderizarDropdownDepartamentos();
+
         const input = $('#comboDepartamentosProfesor');
-        const dropdown = $('#opcionesDepartamentosProfesor');
-
-        input.off('focus').on('focus', function() {
-            u_profesor.mostrarDropdownDepartamentos();
+        
+        input.off('focus').on('focus', () => {
+            this.mostrarDropdownDepartamentos();
         });
 
-        input.off('keyup').on('keyup', function(e) {
+        input.off('input').on('input', (e) => {
+            const valor = $(e.target).val().trim();
+            this.filtrarDepartamentos(valor);
+            
+            if (valor === '') {
+                $(e.target).removeData('selected');
+                u_utiles.colorearCampo(false, '#comboDepartamentosProfesor', '#errorDepartamentosProfesor', 'Seleccione un departamento');
+            }
+        });
+
+        input.off('keyup').on('keyup', (e) => {
             if (e.key === 'Escape') {
-                u_profesor.ocultarDropdownDepartamentos();
-            } else {
-                u_profesor.filtrarDepartamentos($(this).val());
+                this.ocultarDropdownDepartamentos();
             }
         });
 
-        // Cerrar al hacer clic fuera
-        $(document).off('click').on('click', function(e) {
+        $(document).off('click').on('click', (e) => {
             if (!$(e.target).closest('.combo-input-wrapper').length) {
-                u_profesor.ocultarDropdownDepartamentos();
+                this.ocultarDropdownDepartamentos();
             }
         });
-    }
-
-    static cargarDepartamentos(departamentos) {
-        u_profesor.departamentosDisponibles = departamentos;
-        u_profesor.filteredDepartamentos = departamentos;
-        u_profesor.renderizarDropdownDepartamentos();
     }
 
     static filtrarDepartamentos(searchTerm) {
-        const term = searchTerm.toLowerCase();
-        u_profesor.filteredDepartamentos = u_profesor.departamentosDisponibles.filter(d => 
-            d.nombre.toLowerCase().includes(term)
-        );
-        u_profesor.renderizarDropdownDepartamentos();
-        u_profesor.mostrarDropdownDepartamentos();
+        if (!searchTerm) {
+            this.filteredDepartamentos = this.departamentosDisponibles;
+        } else {
+            const term = searchTerm.toLowerCase();
+            this.filteredDepartamentos = this.departamentosDisponibles.filter(d => 
+                d.nombre && d.nombre.toLowerCase().includes(term)
+            );
+        }
+        this.renderizarDropdownDepartamentos();
+        this.mostrarDropdownDepartamentos();
     }
 
     static renderizarDropdownDepartamentos() {
         const dropdown = $('#opcionesDepartamentosProfesor');
         dropdown.empty();
 
-        if (u_profesor.filteredDepartamentos.length === 0) {
+        if (!this.filteredDepartamentos || this.filteredDepartamentos.length === 0) {
             dropdown.append('<div class="dropdown-option no-results">No se encontraron departamentos</div>');
         } else {
-            u_profesor.filteredDepartamentos.forEach(d => {
-                const option = $(`<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombre}</div>`);
-                option.on('click', function() {
-                    u_profesor.seleccionarDepartamento(d.idDepartamento, d.nombre);
-                });
-                dropdown.append(option);
+            this.filteredDepartamentos.forEach(d => {
+                if (d.idDepartamento && d.nombre) {
+                    const option = $(`<div class="dropdown-option" data-id="${d.idDepartamento}">${d.nombre}</div>`);
+                    option.on('click', () => {
+                        this.seleccionarDepartamento(d.idDepartamento, d.nombre);
+                    });
+                    dropdown.append(option);
+                }
             });
         }
     }
@@ -343,24 +366,45 @@ export class u_profesor {
     static seleccionarDepartamento(id, nombre) {
         $('#comboDepartamentosProfesor').val(nombre);
         $('#comboDepartamentosProfesor').data('selected', id);
-        u_profesor.ocultarDropdownDepartamentos();
+        this.ocultarDropdownDepartamentos();
         
-        // Validar campo
         u_utiles.colorearCampo(true, '#comboDepartamentosProfesor', '#errorDepartamentosProfesor', '');
+        $('#comboDepartamentosProfesor').trigger('change');
     }
 
     static getDepartamentoSeleccionado() {
-        return $('#comboDepartamentosProfesor').data('selected');
+        return $('#comboDepartamentosProfesor').data('selected') || null;
     }
 
-    // ========== MANEJO DE ARCHIVOS ==========
+    static setDepartamentoSeleccionado(id, nombre) {
+        if (id && nombre) {
+            $('#comboDepartamentosProfesor').val(nombre);
+            $('#comboDepartamentosProfesor').data('selected', id);
+            u_utiles.colorearCampo(true, '#comboDepartamentosProfesor', '#errorDepartamentosProfesor', '');
+        }
+    }
+
+    static limpiarDepartamentoSeleccionado() {
+        $('#comboDepartamentosProfesor').val('').removeData('selected');
+        u_utiles.colorearCampo(false, '#comboDepartamentosProfesor', '#errorDepartamentosProfesor', 'Seleccione un departamento');
+    }
+
+    static validarDepartamentoSeleccionado() {
+        const id = this.getDepartamentoSeleccionado();
+        const valido = id !== null && id !== undefined && id !== '';
+        
+        if (!valido) {
+            u_utiles.colorearCampo(false, '#comboDepartamentosProfesor', '#errorDepartamentosProfesor', 'Seleccione un departamento');
+        }
+        
+        return valido;
+    }
+
     static configurarSubidaArchivos() {
-        // Al hacer clic en el área de drop
         $('#fileDropArea').off('click').on('click', function() {
             $('#campoArchivoFoto').click();
         });
 
-        // Eventos de arrastrar y soltar
         $('#fileDropArea').off('dragover').on('dragover', function(e) {
             e.preventDefault();
             $(this).addClass('drag-over border-success');
@@ -379,13 +423,11 @@ export class u_profesor {
             u_profesor.procesarArchivos(archivos);
         });
 
-        // Cuando se seleccionan archivos con el input
         $('#campoArchivoFoto').off('change').on('change', function(e) {
             const archivos = e.target.files;
             u_profesor.procesarArchivos(archivos);
         });
 
-        // Botón limpiar archivos
         $('#btnLimpiarArchivos').off('click').on('click', function() {
             u_profesor.limpiarArchivos();
         });
@@ -394,22 +436,24 @@ export class u_profesor {
     static procesarArchivos(archivos) {
         if (!archivos || archivos.length === 0) return;
 
-        // Verificar límite de archivos (máx 10)
         if (u_profesor.archivosSeleccionados.length + archivos.length > 10) {
-            alert('Solo puede seleccionar hasta 10 archivos');
+            Alerta.advertencia('Límite de archivos', 'Solo puede seleccionar hasta 10 archivos');
             return;
         }
 
-        // Formatos permitidos
         const formatosPermitidos = ['application/pdf', 'image/png', 'image/jpeg', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
         
         for (let archivo of archivos) {
             if (!formatosPermitidos.includes(archivo.type) && !archivo.type.startsWith('image/')) {
-                alert(`Formato no permitido: ${archivo.name}`);
+                Alerta.advertencia('Formato no permitido', `Formato no permitido: ${archivo.name}`);
                 continue;
             }
 
-            // Crear preview según tipo
+            if (archivo.size > 5 * 1024 * 1024) {
+                Alerta.advertencia('Archivo muy grande', `El archivo ${archivo.name} supera los 5MB`);
+                continue;
+            }
+
             let preview = '';
             if (archivo.type.startsWith('image/')) {
                 preview = URL.createObjectURL(archivo);
@@ -468,7 +512,6 @@ export class u_profesor {
         html += '</div>';
         previewContainer.html(html);
 
-        // Agregar eventos a los botones de eliminar
         $('.btn-eliminar-archivo').off('click').on('click', function() {
             const index = $(this).data('index');
             u_profesor.eliminarArchivo(index);
@@ -476,7 +519,6 @@ export class u_profesor {
     }
 
     static eliminarArchivo(index) {
-        // Liberar la URL del objeto si es imagen
         if (u_profesor.archivosSeleccionados[index].preview) {
             URL.revokeObjectURL(u_profesor.archivosSeleccionados[index].preview);
         }
@@ -501,7 +543,6 @@ export class u_profesor {
         return u_profesor.archivosSeleccionados.map(item => item.archivo);
     }
 
-    // ========== MANEJO DE IMAGEN DE PERFIL ==========
     static configurarSubidaImagen() {
         $('#añadirImagen').off('click').on('click', function() {
             $('#campoArchivoFotoPerfil').click();
@@ -510,21 +551,57 @@ export class u_profesor {
         $('#campoArchivoFotoPerfil').off('change').on('change', function(e) {
             const archivo = e.target.files[0];
             if (archivo) {
+                if (!archivo.type.match('image.*')) {
+                    Alerta.advertencia('Formato no válido', 'Solo se permiten imágenes PNG, JPG o JPEG');
+                    $(this).val('');
+                    return;
+                }
+                
+                if (archivo.size > 2 * 1024 * 1024) {
+                    Alerta.advertencia('Imagen muy grande', 'La imagen no debe superar los 2MB');
+                    $(this).val('');
+                    return;
+                }
+                
+                $('#formProfesor').data('imagen-perfil', archivo);
+                
                 const lector = new FileReader();
                 lector.onload = function(e) {
-                    $('#contenedorFotoPerfil').html(`<img src="${e.target.result}" class="img-fluid rounded-3" style="max-height: 100px;">`);
+                    $('#contenedorFotoPerfil').html(`
+                        <div class="position-relative">
+                            <img src="${e.target.result}" class="img-fluid rounded-3 border border-2 border-warning" 
+                                style="width: 120px; height: 120px; object-fit: cover;">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle p-0" 
+                                    style="width: 24px; height: 24px;" id="btnEliminarImagenTemp">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `);
+                    
+                    $('#btnEliminarImagenTemp').off('click').on('click', function() {
+                        u_profesor.limpiarImagen();
+                    });
                 };
                 lector.readAsDataURL(archivo);
             }
         });
     }
 
-    static limpiarImagen() {
-        $('#contenedorFotoPerfil').html('<i class="fas fa-user"></i>');
-        $('#campoArchivoFotoPerfil').val('');
+    static obtenerImagenParaSubir() { 
+        return $('#formProfesor').data('imagen-perfil'); 
     }
 
-    // ========== MODO EDICIÓN ==========
+    static limpiarImagen() {
+        $('#contenedorFotoPerfil').html(`
+            <div class="d-flex justify-content-center align-items-center bg-light rounded-3 border" 
+                style="width: 120px; height: 120px;">
+                <i class="fas fa-user text-secondary" style="font-size: 3rem;"></i>
+            </div>
+        `);
+        $('#campoArchivoFotoPerfil').val('');
+        $('#formProfesor').removeData('imagen-perfil');
+    }
+
     static configurarModoEdicion(activo) {
         if (activo) {
             $('#modalNuevoProfesorLabel').text('Editar profesor');
@@ -535,47 +612,72 @@ export class u_profesor {
         }
     }
 
-    // ========== LIMPIAR MODAL ==========
     static limpiarModal() {
-        $('#formMatricula')[0].reset();
+        $('#formProfesor')[0].reset();
         
-        // Limpiar selects
         $('#generosProfesor').val('Ninguno');
         $('#tiposFormacionesProfesor').val('Ninguno');
         $('#nivelesFormacionesProfesor').val('Ninguno');
         $('#responsabilidadProfesor').val('Ninguno');
-        $('#rolUsuario').val('Ninguno');
+        $('#rolUsuario').val('Profesor');
         
-        // Limpiar combo departamentos
-        $('#comboDepartamentosProfesor').val('').removeData('selected');
+        this.limpiarDepartamentoSeleccionado();
         
-        // Limpiar mensajes de error
-        $('.errorMensaje').text('').hide();
+        $('.errorMensaje').text('').addClass('d-none');
         
-        // Limpiar clases de validación
-        $('#formMatricula input, #formMatricula select, #formMatricula textarea')
+        $('#formProfesor input, #formProfesor select, #formProfesor textarea')
             .removeClass('border-success border-danger');
         
-        // Limpiar archivos
         u_profesor.limpiarArchivos();
         u_profesor.limpiarImagen();
         
-        // Reiniciar secciones
         u_profesor.reiniciarSecciones();
-    }
-
-    // ========== CARGAR FACULTADES EN SELECT ==========
-    static cargarFacultadesEnSelect(facultades, selectId) {
-        const select = $(selectId);
-        select.empty();
-        select.append('<option value="">Seleccione facultad...</option>');
         
-        facultades.forEach(f => {
-            select.append(`<option value="${f.idFacultad}">${f.nombreFacultad}</option>`);
-        });
+        $('#formProfesor').removeData('contrasena-generada');
     }
 
-    // ========== GENERAR BOTONES PARA TABLA ==========
+    static prepararNuevoUsuario() {
+        const nuevaContrasena = u_profesor.generarContrasena(10);
+        $('#formProfesor').data('contrasena-generada', nuevaContrasena);
+    }
+
+    static generarContrasena(longitud = 10) {
+        const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const minusculas = 'abcdefghijklmnopqrstuvwxyz';
+        const numeros = '0123456789';
+        const especiales = '!@#$%^&*';
+        let contrasena = '';
+        
+        contrasena += mayusculas.charAt(Math.floor(Math.random() * mayusculas.length));
+        contrasena += minusculas.charAt(Math.floor(Math.random() * minusculas.length));
+        contrasena += numeros.charAt(Math.floor(Math.random() * numeros.length));
+        contrasena += especiales.charAt(Math.floor(Math.random() * especiales.length));
+        
+        const todos = mayusculas + minusculas + numeros + especiales;
+        for (let i = 4; i < longitud; i++) {
+            contrasena += todos.charAt(Math.floor(Math.random() * todos.length));
+        }
+        
+        return contrasena.split('').sort(() => 0.5 - Math.random()).join('');
+    }
+
+    static obtenerContrasenaGenerada() { 
+        return $('#formProfesor').data('contrasena-generada'); 
+    }
+
+    static validarFormularioCompleto(modoEdicion = false) {
+        const seccion1Valida = u_profesor.validarSeccion1();
+        const seccion2Valida = u_profesor.validarSeccion2();
+        const seccion3Valida = u_profesor.validarSeccion3();
+        
+        if (modoEdicion) {
+            return seccion1Valida && seccion2Valida && seccion3Valida;
+        }
+        
+        const contrasenaGenerada = u_profesor.obtenerContrasenaGenerada();
+        return seccion1Valida && seccion2Valida && seccion3Valida && contrasenaGenerada;
+    }
+
     static generarBotonesProfesor(id) {
         return `
             <div class="d-flex justify-content-center gap-1">
@@ -589,7 +691,6 @@ export class u_profesor {
         `;
     }
 
-    // ========== ACTUALIZAR TABLA DE PROFESORES ==========
     static actualizarTablaProfesores(dataTable, profesores, departamentos) {
         if (!dataTable) return;
         
@@ -601,7 +702,6 @@ export class u_profesor {
         }
 
         profesores.forEach(p => {
-            // Buscar nombre del departamento
             const depto = departamentos.find(d => d.idDepartamento == p.idDepartamento);
             const nombreDepto = depto ? depto.nombre : 'Sin departamento';
             
@@ -612,31 +712,31 @@ export class u_profesor {
                 u_profesor.generarBotonesProfesor(p.idProfesor)
             ];
             
-            const nodoFila = dataTable.row.add(fila).draw(false).node();
+            dataTable.row.add(fila).draw(false);
         });
         
         dataTable.draw();
     }
 
-    // ========== GENERAR HTML PARA DETALLES ==========
     static generarDetallesProfesorHTML(profesor, usuario, formacion, departamento) {
-        // Formatear fecha si existe
         let fechaIngreso = 'No disponible';
-        if (usuario?.ultimoAcceso) {
+        if (usuario?.fechaCreacion) {
             try {
-                fechaIngreso = new Date(usuario.ultimoAcceso).toLocaleDateString();
+                fechaIngreso = new Date(usuario.fechaCreacion).toLocaleDateString();
             } catch (e) {
-                fechaIngreso = usuario.ultimoAcceso;
+                fechaIngreso = usuario.fechaCreacion;
             }
         }
+
+        const fotoPerfil = usuario?.foto ? 
+            `/guniversidadfrontend/public/img/${usuario.foto}` : 
+            '../../../public/img/undraw_profile.svg';
 
         return `
             <div class="d-flex align-items-center gap-3 mb-4">
                 <div class="imgCarnet">
-                    ${usuario?.foto ? 
-                        `<img src="${usuario.foto}" alt="Foto profesor" class="img-fluid rounded-circle">` : 
-                        `<img src="../../../public/img/undraw_profile.svg" alt="Foto carnet">`
-                    }
+                    <img src="${fotoPerfil}" alt="Foto profesor" class="img-fluid rounded-circle" 
+                         onerror="this.onerror=null; this.src='../../../public/img/undraw_profile.svg';">
                 </div>
                 <div>
                     <span class="fs-4 fw-bold">${profesor.nombreProfesor || ''} ${profesor.apellidosProfesor || ''}</span><br>
@@ -648,48 +748,21 @@ export class u_profesor {
                 <div class="col-md-6">
                     <h6 class="bg-warning p-2 rounded">Datos Personales</h6>
                     <table class="table table-sm">
-                        <tr>
-                            <th>DIP:</th>
-                            <td>${profesor.dipProfesor || 'No disponible'}</td>
-                        </tr>
-                        <tr>
-                            <th>Nacionalidad:</th>
-                            <td>${profesor.nacionalidad || 'No disponible'}</td>
-                        </tr>
-                        <tr>
-                            <th>Género:</th>
-                            <td>${profesor.genero || 'No disponible'}</td>
-                        </tr>
-                        <tr>
-                            <th>Teléfono:</th>
-                            <td>${profesor.telefonoProfesor || 'No disponible'}</td>
-                        </tr>
+                        <tr><th>DIP:</th><td>${profesor.dipProfesor || 'No disponible'}</td></tr>
+                        <tr><th>Nacionalidad:</th><td>${profesor.nacionalidad || 'No disponible'}</td></tr>
+                        <tr><th>Género:</th><td>${profesor.genero || 'No disponible'}</td></tr>
+                        <tr><th>Teléfono:</th><td>${profesor.telefonoProfesor || 'No disponible'}</td></tr>
                     </table>
                 </div>
                 
                 <div class="col-md-6">
                     <h6 class="bg-warning p-2 rounded">Datos de Formación</h6>
                     <table class="table table-sm">
-                        <tr>
-                            <th>Institución:</th>
-                            <td>${formacion?.institucion || 'No disponible'}</td>
-                        </tr>
-                        <tr>
-                            <th>Tipo/Nivel:</th>
-                            <td>${formacion?.tipoFormacion || ''} - ${formacion?.nivel || ''}</td>
-                        </tr>
-                        <tr>
-                            <th>Título:</th>
-                            <td>${formacion?.titulo || 'No disponible'}</td>
-                        </tr>
-                        <tr>
-                            <th>Especialidad:</th>
-                            <td>${profesor.especialidad || 'No disponible'}</td>
-                        </tr>
-                        <tr>
-                            <th>Grado:</th>
-                            <td>${profesor.gradoEstudio || 'No disponible'}</td>
-                        </tr>
+                        <tr><th>Institución:</th><td>${formacion?.institucion || 'No disponible'}</td></tr>
+                        <tr><th>Tipo/Nivel:</th><td>${formacion?.tipoFormacion || ''} - ${formacion?.nivel || ''}</td></tr>
+                        <tr><th>Título:</th><td>${formacion?.titulo || 'No disponible'}</td></tr>
+                        <tr><th>Especialidad:</th><td>${profesor.especialidad || 'No disponible'}</td></tr>
+                        <tr><th>Grado:</th><td>${profesor.gradoEstudio || 'No disponible'}</td></tr>
                     </table>
                 </div>
             </div>
@@ -698,21 +771,74 @@ export class u_profesor {
                 <div class="col-12">
                     <h6 class="bg-warning p-2 rounded">Datos Laborales</h6>
                     <table class="table table-sm">
-                        <tr>
-                            <th>Departamento:</th>
-                            <td>${departamento?.nombre || 'No asignado'}</td>
-                        </tr>
-                        <tr>
-                            <th>Responsabilidad:</th>
-                            <td>${profesor.responsabilidad || 'Ninguna'}</td>
-                        </tr>
-                        <tr>
-                            <th>Fecha de ingreso:</th>
-                            <td>${fechaIngreso}</td>
-                        </tr>
+                        <tr><th>Departamento:</th><td>${departamento?.nombre || 'No asignado'}</td></tr>
+                        <tr><th>Responsabilidad:</th><td>${profesor.responsabilidad || 'Ninguna'}</td></tr>
+                        <tr><th>Fecha de ingreso:</th><td>${fechaIngreso}</td></tr>
                     </table>
                 </div>
             </div>
         `;
+    }
+
+    static cargarDatosEnModal(profesor, usuario, formacion, departamento, facultades) {
+        this.limpiarModal();
+
+        const baseUrl = '/guniversidadfrontend/public/img/';
+        
+        $('#nombreProfesor').val(profesor.nombreProfesor || '');
+        $('#apellidosProfesor').val(profesor.apellidosProfesor || '');
+        $('#dipProfesor').val(profesor.dipProfesor || '');
+        $('#nacionalidadProfesor').val(profesor.nacionalidad || '');
+        $('#generosProfesor').val(profesor.genero || 'Ninguno');
+        $('#correoProfesor').val(profesor.correoProfesor || '');
+        $('#telefonoProfesor').val(profesor.telefonoProfesor || '');
+        
+        $('#nombreProfesor, #apellidosProfesor, #dipProfesor, #nacionalidadProfesor, #correoProfesor, #telefonoProfesor').trigger('input');
+        $('#generosProfesor').trigger('change');
+        
+        if (formacion) {
+            $('#institucionFormacionProfesor').val(formacion.institucion || '');
+            $('#tiposFormacionesProfesor').val(formacion.tipoFormacion || 'Ninguno');
+            $('#nivelesFormacionesProfesor').val(formacion.nivel || 'Ninguno');
+            $('#titulosProfesor').val(formacion.titulo || '');
+        }
+        
+        $('#especialidadFormacionProfesor').val(profesor.especialidad || '');
+        $('#gradoFormacionProfesor').val(profesor.gradoEstudio || '');
+        
+        if (departamento) {
+            this.setDepartamentoSeleccionado(departamento.idDepartamento, departamento.nombre);
+        }
+        
+        $('#responsabilidadProfesor').val(profesor.responsabilidad || 'Ninguno');
+        
+        $('#institucionFormacionProfesor, #titulosProfesor, #especialidadFormacionProfesor, #gradoFormacionProfesor').trigger('input');
+        $('#tiposFormacionesProfesor, #nivelesFormacionesProfesor, #responsabilidadProfesor').trigger('change');
+        
+        if (usuario) {
+            if (usuario.correo && usuario.correo.includes('@')) {
+                $('#nombreOCorreoUsuario').val(usuario.correo);
+            } else {
+                $('#nombreOCorreoUsuario').val(usuario.nombreUsuario || '');
+            }
+            
+            $('#rolUsuario').val('Profesor');
+            
+            if (usuario.foto) {
+                const fotoNombre = baseUrl + usuario.foto;
+                $('#contenedorFotoPerfil').html(`
+                    <div class="position-relative">
+                        <img src="${fotoNombre}" class="img-fluid rounded-3 border border-2 border-warning" 
+                            style="width: 120px; height: 120px; object-fit: cover;"
+                            onerror="this.onerror=null; this.src='../../../public/img/undraw_profile.svg';">
+                    </div>
+                `);
+            }
+        }
+        
+        $('#nombreOCorreoUsuario').trigger('input');
+        $('#rolUsuario').trigger('change');
+        
+        $('#formProfesor').removeData('contrasena-generada');
     }
 }

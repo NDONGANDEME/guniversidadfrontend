@@ -52,6 +52,14 @@ export class u_verificaciones
     }
 
 
+    // metodo para validar el DIP: hecho para el formato 000 000 000
+    static validarDIP(numeroDip)
+    {
+        const regex = /^\d{3}\s?\d{3}\s?\d{3}$/;
+        return regex.test(numeroDip.trim());
+    }
+
+
     // metodo para validar la contraseña
     static validarContraseña(contraseña) 
     {

@@ -45,8 +45,9 @@ export class u_utiles
             u_utiles.botonesNavegacion();
             u_utiles.manejoDatosSesion();
             
-            if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador();
+            if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador(); 
             if(document.querySelector('#secretarioAcademico')) u_utiles.botonesNavegacionSecretario();
+            if(document.querySelector('#comprobante')) u_utiles.botonesNavegacionComprobante();
             if(document.querySelector('#profesorPanel')) u_utiles.botonesNavegacionProfesor();
         } catch(error) {
             Alerta.error('Error', `Fallo al hacer fetch para cargar los archivos de importacion, estoy en u_utiles: ${error}`);
@@ -171,6 +172,19 @@ export class u_utiles
         u_utiles.redirigirA(document.querySelector('.estudiante'), `${url}/estudiante.html`);
 
         u_utiles.redirigirA(document.querySelector('.profesor'), `${url}/profesor.html`);
+
+        if (document.querySelector('#imprimirComprobantePago')) u_utiles.redirigirA(document.querySelector('#imprimirComprobantePago'), `${url}/comprobanteMatricula.html`);
+
+        if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
+
+        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
+    }
+
+    // navegacion para los botones de la parte del secretario academico (Comprobante)
+    static botonesNavegacionComprobante() {
+        let url = '/guniversidadfrontend/secretarioAcademico/template/html';
+
+        u_utiles.redirigirA(document.querySelector('.volver'), `${url}/matricula.html`);
 
         if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 

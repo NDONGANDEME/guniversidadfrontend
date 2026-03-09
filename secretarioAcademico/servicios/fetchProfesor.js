@@ -10,8 +10,8 @@ export class fetchProfesor
      */
     static async obtenerProfesoresPorFacultadDelBackend(idFacultad) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=obtenerProfesoresPorFacultad&actor=secretario&valor=${idFacultad}`);
-            let respuesta = await solicitud.json();
+            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=obtenerProfesoresPorFacultad&actor=secretario&idFacultad=${idFacultad}`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];
@@ -28,7 +28,7 @@ export class fetchProfesor
     static async obtenerProfesoresPorDepartamentoDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=profesor&accion=obtenerProfesoresPorDepartamento&actor=secretario`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];
@@ -40,40 +40,72 @@ export class fetchProfesor
 
     /**
      * Envia solicitud para insertar un nuevo profesor en la BDD
-     * @param {m_profesor} objeto 
+     * @param {m_profesor|FormData} objeto 
      * @returns id del nuevo registro insertado
      */
     static async insertarProfesorEnBDD(objeto) {
+        objeto.forEach((valor, clave) => {
+            console.log(clave + ': ' + valor);
+        });
+        
+
         try {
-            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=insertarProfesor&actor=secretario`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
-            let respuesta = await solicitud.json();
+            // Detectar si es FormData
+            const esFormData = objeto instanceof FormData;
+            
+            const options = {
+                method: 'POST',
+                body: esFormData ? objeto : JSON.stringify(objeto)
+            };
+            
+            // Solo agregar headers si NO es FormData
+            if (!esFormData) {
+                options.headers = { 'Content-Type': 'application/json' };
+            }
+            
+            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=insertarProfesor&actor=secretario`, options);
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
-        } catch(error){
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchProfesor]. ${error}`, 3000);
+        } catch(error) {
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario. insercion]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
      * Enviar solicitud para actualizar un profesor guardado en la BDD
-     * @param {m_profesor} objeto 
+     * @param {m_profesor|FormData} objeto 
      * @returns id del registro actualizado
      */
     static async actualizarProfesorEnBDD(objeto) {
+        objeto.forEach((valor, clave) => {
+            console.log(clave + ': ' + valor);
+        });
+        
+
         try {
-            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=actualizarProfesor&actor=secretario`, {
-                method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
-            let respuesta = await solicitud.json();
+            // Detectar si es FormData
+            const esFormData = objeto instanceof FormData;
+            
+            const options = {
+                method: 'POST',
+                body: esFormData ? objeto : JSON.stringify(objeto)
+            };
+            
+            // Solo agregar headers si NO es FormData
+            if (!esFormData) {
+                options.headers = { 'Content-Type': 'application/json' };
+            }
+            
+            let solicitud = await fetch(`${this.url}?ruta=profesor&accion=actualizarProfesor&actor=secretario`, options);
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
-        } catch(error){
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchProfesor]. ${error}`, 3000);
+        } catch(error) {
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario. actuaizar]. ${error}`, 3000);
             return null;
         }
     }

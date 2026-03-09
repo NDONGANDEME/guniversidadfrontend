@@ -14,6 +14,8 @@ export class m_matricula
         this.estado = estado;
     }
 
+    /*La modalidadMatricula podra ser: parcial o completa*/
+
     static async obtenerMatriculas() {
         return await fetchMatricula.obtenerMatriculasDelBackend();
     }

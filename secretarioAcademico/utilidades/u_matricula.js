@@ -1,770 +1,982 @@
-/**
- * Utilidades de Matrículas - Versión simplificada
- * Maneja todo lo relacionado con el DOM
- */
-
 import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
-import { u_utiles } from "../../public/utilidades/u_utiles.js";
+import { Alerta } from "../../public/utilidades/u_alertas.js";
 
 export class u_matricula {
     
-    // ========== VALIDACIONES ==========
-    static validarNombre(valor) {
-        return u_verificaciones.validarNombre(valor);
+    static paises = [
+        'Guinea Ecuatorial', 'España', 'Francia', 'Portugal', 'Angola', 
+        'Camerún', 'Gabón', 'Nigeria', 'Brasil', 'México',
+        'Argentina', 'Colombia', 'Chile', 'Perú', 'Venezuela',
+        'Estados Unidos', 'Canadá', 'Reino Unido', 'Alemania', 'Italia',
+        'China', 'Japón', 'Corea del Sur', 'India', 'Marruecos',
+        'Senegal', 'Costa de Marfil', 'Ghana', 'Sudáfrica', 'Egipto'
+    ];
+
+    static planesEstudio = [];
+
+    static cargarPaises() {
+        const $input = $('#comboPaisesEstudianteMatricula');
+        const $opciones = $('#opcionesEstudianteMatricula');
+        
+        if (!$input.length) return;
+        
+        $input.off().on('focus', function() {
+            u_matricula.mostrarOpcionesPaises($(this), $opciones);
+        }).on('input', function() {
+            const texto = $(this).val().toLowerCase();
+            const filtradas = u_matricula.paises.filter(p => p.toLowerCase().includes(texto));
+            u_matricula.mostrarOpcionesPaises($(this), $opciones, filtradas);
+        });
+        
+        $(document).on('click', function(e) {
+            if (!$input.is(e.target) && !$opciones.is(e.target)) {
+                $opciones.hide();
+            }
+        });
     }
-    
-    static validarApellidos(valor) {
-        return u_verificaciones.validarNombre(valor);
+
+    static mostrarOpcionesPaises($input, $contenedor, opciones = null) {
+        const lista = opciones || u_matricula.paises;
+        
+        if (lista.length === 0) {
+            $contenedor.html('<div class="dropdown-item text-muted">No hay resultados</div>');
+        } else {
+            let html = '';
+            lista.forEach(pais => {
+                html += `<div class="dropdown-item" data-value="${pais}">${pais}</div>`;
+            });
+            $contenedor.html(html);
+        }
+        
+        const pos = $input.position();
+        const altura = $input.outerHeight();
+        
+        $contenedor.css({
+            'position': 'absolute',
+            'top': pos.top + altura + 'px',
+            'left': pos.left + 'px',
+            'width': $input.outerWidth() + 'px',
+            'max-height': '200px',
+            'overflow-y': 'auto',
+            'z-index': '9999',
+            'display': 'block',
+            'background': 'white',
+            'border': '1px solid #ccc',
+            'border-radius': '4px',
+            'box-shadow': '0 4px 8px rgba(0,0,0,0.1)'
+        });
+        
+        $contenedor.find('.dropdown-item').off().on('click', function() {
+            $input.val($(this).data('value'));
+            $contenedor.hide();
+            $input.trigger('change');
+        });
+    }
+
+    static configurarComboCentros(callbackAñadir) {
+        const $input = $('#comboCentroEstudianteMatricula');
+        const $opciones = $('#opcionesCentroEstudianteMatricula');
+        
+        if (!$input.length) return;
+        
+        $input.off().on('focus', function() {
+            u_matricula.mostrarOpcionesCentros($(this), $opciones, callbackAñadir);
+        });
+        
+        $(document).on('click', function(e) {
+            if (!$input.is(e.target) && !$opciones.is(e.target)) {
+                $opciones.hide();
+            }
+        });
+    }
+
+    static mostrarOpcionesCentros($input, $contenedor, callbackAñadir) {
+        const centros = ['Ninguno', 'Instituto Nacional', 'Centro de Bachillerato', 'Colegio Salesiano'];
+        
+        let html = '<div class="dropdown-item fw-bold text-success" data-value="añadir">➕ Añadir nuevo centro</div>';
+        centros.forEach(c => {
+            html += `<div class="dropdown-item" data-value="${c}">${c}</div>`;
+        });
+        
+        $contenedor.html(html);
+        
+        const pos = $input.position();
+        const altura = $input.outerHeight();
+        
+        $contenedor.css({
+            'position': 'absolute',
+            'top': pos.top + altura + 'px',
+            'left': pos.left + 'px',
+            'width': $input.outerWidth() + 'px',
+            'max-height': '200px',
+            'overflow-y': 'auto',
+            'z-index': '9999',
+            'display': 'block',
+            'background': 'white',
+            'border': '1px solid #ccc',
+            'border-radius': '4px',
+            'box-shadow': '0 4px 8px rgba(0,0,0,0.1)'
+        });
+        
+        $contenedor.find('.dropdown-item').off().on('click', function() {
+            const valor = $(this).data('value');
+            if (valor === 'añadir') {
+                callbackAñadir();
+            } else {
+                $input.val(valor);
+                $contenedor.hide();
+                $input.trigger('change');
+            }
+        });
+    }
+
+    static configurarComboUniversidades(callbackAñadir) {
+        const $input = $('#comboUniversidadEstudianteMatricula');
+        const $opciones = $('#opcionesUniversidadEstudianteMatricula');
+        
+        if (!$input.length) return;
+        
+        $input.off().on('focus', function() {
+            u_matricula.mostrarOpcionesUniversidades($(this), $opciones, callbackAñadir);
+        });
+        
+        $(document).on('click', function(e) {
+            if (!$input.is(e.target) && !$opciones.is(e.target)) {
+                $opciones.hide();
+            }
+        });
+    }
+
+    static mostrarOpcionesUniversidades($input, $contenedor, callbackAñadir) {
+        const universidades = ['Ninguno', 'UNED', 'UAM', 'UC3M', 'Universidad Complutense'];
+        
+        let html = '<div class="dropdown-item fw-bold text-success" data-value="añadir">➕ Añadir nueva universidad</div>';
+        universidades.forEach(u => {
+            html += `<div class="dropdown-item" data-value="${u}">${u}</div>`;
+        });
+        
+        $contenedor.html(html);
+        
+        const pos = $input.position();
+        const altura = $input.outerHeight();
+        
+        $contenedor.css({
+            'position': 'absolute',
+            'top': pos.top + altura + 'px',
+            'left': pos.left + 'px',
+            'width': $input.outerWidth() + 'px',
+            'max-height': '200px',
+            'overflow-y': 'auto',
+            'z-index': '9999',
+            'display': 'block'
+        });
+        
+        $contenedor.find('.dropdown-item').off().on('click', function() {
+            const valor = $(this).data('value');
+            if (valor === 'añadir') {
+                callbackAñadir();
+            } else {
+                $input.val(valor);
+                $contenedor.hide();
+                $input.trigger('change');
+            }
+        });
+    }
+
+    static generarContrasena(longitud = 10) {
+        const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const minusculas = 'abcdefghijklmnopqrstuvwxyz';
+        const numeros = '0123456789';
+        const especiales = '!@#$%^&*';
+        let contrasena = '';
+        
+        contrasena += mayusculas[Math.floor(Math.random() * mayusculas.length)];
+        contrasena += minusculas[Math.floor(Math.random() * minusculas.length)];
+        contrasena += numeros[Math.floor(Math.random() * numeros.length)];
+        contrasena += especiales[Math.floor(Math.random() * especiales.length)];
+        
+        const todos = mayusculas + minusculas + numeros + especiales;
+        for (let i = 4; i < longitud; i++) {
+            contrasena += todos[Math.floor(Math.random() * todos.length)];
+        }
+        
+        contrasena = contrasena.split('').sort(() => 0.5 - Math.random()).join('');
+        
+        $('#formMatricula').data('contrasena-generada', contrasena);
+        Alerta.informacion('Contraseña generada', `La contraseña es: ${contrasena}`);
+        
+        return contrasena;
+    }
+
+    static obtenerContrasenaGenerada() {
+        return $('#formMatricula').data('contrasena-generada');
+    }
+
+    static validarNombre(valor) {
+        return valor && valor.length >= 3 && /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(valor);
     }
     
     static validarDip(valor) {
-        return /^\d{3}\s?\d{3}\s?\d{3}$/.test(valor);
+        return valor && /^\d{3}\s?\d{3}\s?\d{3}$/.test(valor);
     }
     
-    static validarEmail(valor) {
-        return u_verificaciones.validarCorreo(valor);
+    static validarFecha(valor) {
+        if (!valor) return false;
+        const fecha = new Date(valor);
+        const hoy = new Date();
+        return fecha < hoy;
+    }
+    
+    static validarSelect(valor) {
+        return valor && valor !== 'Ninguno' && valor !== '';
+    }
+    
+    static validarCorreo(valor) {
+        return valor && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
     }
     
     static validarTelefono(valor) {
-        return u_verificaciones.validarTelefono(valor);
+        return valor && /^\+?\d{1,3}\s?\d{1,4}\s?\d{1,4}\s?\d{1,4}$/.test(valor);
     }
     
     static validarCursoAcademico(valor) {
-        return /^\d{4}\/\d{4}$/.test(valor);
+        return valor && /^\d{4}\/\d{4}$/.test(valor);
+    }
+    
+    static validarNumero(valor) {
+        return valor && !isNaN(valor) && parseFloat(valor) > 0;
     }
 
-    // ========== VALIDACIONES EN TIEMPO REAL ==========
+    static colorearCampo(valido, selectorCampo, selectorError, mensaje) {
+        const $campo = $(selectorCampo);
+        const $error = $(selectorError);
+        
+        if (valido) {
+            $campo.removeClass('border-danger').addClass('border-success');
+            $error.text('').addClass('d-none');
+        } else {
+            $campo.removeClass('border-success').addClass('border-danger');
+            $error.text(mensaje).removeClass('d-none');
+        }
+    }
+
     static configurarValidaciones() {
-        // Validaciones de estudiante
         $('#nombreEstudianteMatricula').on('input', function() {
-            const valido = u_matricula.validarNombre($(this).val().trim());
-            u_utiles.colorearCampo(valido, '#nombreEstudianteMatricula', '#errorNombreEstudianteMatricula', 'Mínimo 3 caracteres');
+            const valido = u_matricula.validarNombre($(this).val());
+            u_matricula.colorearCampo(valido, '#nombreEstudianteMatricula', '#errorNombreEstudianteMatricula', 'Mínimo 3 letras');
         });
-        
+
         $('#apellidosEstudianteMatricula').on('input', function() {
-            const valido = u_matricula.validarApellidos($(this).val().trim());
-            u_utiles.colorearCampo(valido, '#apellidosEstudianteMatricula', '#errorApellidosEstudianteMatricula', 'Mínimo 3 caracteres');
+            const valido = u_matricula.validarNombre($(this).val());
+            u_matricula.colorearCampo(valido, '#apellidosEstudianteMatricula', '#errorApellidosEstudianteMatricula', 'Mínimo 3 letras');
         });
-        
+
         $('#dipEstudianteMatricula').on('input', function() {
-            const valido = u_matricula.validarDip($(this).val().trim());
-            u_utiles.colorearCampo(valido, '#dipEstudianteMatricula', '#errorDipEstudianteMatricula', 'Formato: 000 000 000');
+            const valido = u_matricula.validarDip($(this).val());
+            u_matricula.colorearCampo(valido, '#dipEstudianteMatricula', '#errorDipEstudianteMatricula', 'Formato: 000 000 000');
         });
-        
+
+        $('#fechaNacimientoEstudianteMatricula').on('change', function() {
+            const valido = u_matricula.validarFecha($(this).val());
+            u_matricula.colorearCampo(valido, '#fechaNacimientoEstudianteMatricula', '#errorFechaNacimientoEstudianteMatricula', 'Fecha inválida o futura');
+        });
+
+        $('#nacionalidadEstudianteMatricula').on('input', function() {
+            const valido = $(this).val().length >= 3;
+            u_matricula.colorearCampo(valido, '#nacionalidadEstudianteMatricula', '#errorNacionalidadEstudianteMatricula', 'Mínimo 3 caracteres');
+        });
+
+        $('#generosEstudianteMatricula').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#generosEstudianteMatricula', '#errorGenerosEstudianteMatricula', 'Seleccione una opción');
+        });
+
+        $('#direccionEstudianteMatricula').on('input', function() {
+            const valido = $(this).val().length >= 5;
+            u_matricula.colorearCampo(valido, '#direccionEstudianteMatricula', '#errorDireccionEstudianteMatricula', 'Mínimo 5 caracteres');
+        });
+
+        $('#localidadEstudianteMatricula').on('input', function() {
+            const valido = $(this).val().length >= 3;
+            u_matricula.colorearCampo(valido, '#localidadEstudianteMatricula', '#errorLocalidadEstudianteMatricula', 'Mínimo 3 caracteres');
+        });
+
+        $('#provinciaEstudianteMatricula').on('input', function() {
+            const valido = $(this).val().length >= 3;
+            u_matricula.colorearCampo(valido, '#provinciaEstudianteMatricula', '#errorProvinciaEstudianteMatricula', 'Mínimo 3 caracteres');
+        });
+
+        $('#comboPaisesEstudianteMatricula').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#comboPaisesEstudianteMatricula', '#errorPaisesEstudianteMatricula', 'Seleccione un país');
+        });
+
         $('#correoEstudianteMatricula').on('input', function() {
-            const valido = u_matricula.validarEmail($(this).val().trim());
-            u_utiles.colorearCampo(valido, '#correoEstudianteMatricula', '#errorCorreoEstudianteMatricula', 'Correo inválido');
+            const valido = u_matricula.validarCorreo($(this).val());
+            u_matricula.colorearCampo(valido, '#correoEstudianteMatricula', '#errorCorreoEstudianteMatricula', 'Correo inválido');
         });
-        
+
         $('#telefonoEstudianteMatricula').on('input', function() {
-            const valido = u_matricula.validarTelefono($(this).val().trim());
-            u_utiles.colorearCampo(valido, '#telefonoEstudianteMatricula', '#errorTelefonoEstudianteMatricula', 'Formato: +240 222 123 456');
+            const valido = u_matricula.validarTelefono($(this).val());
+            u_matricula.colorearCampo(valido, '#telefonoEstudianteMatricula', '#errorTelefonoEstudianteMatricula', 'Formato: +240 222 123 456');
         });
-        
-        // Validaciones de familiar
+
         $('#nombreEstudianteFamiliar').on('input', function() {
-            const valido = u_matricula.validarNombre($(this).val().trim());
-            u_utiles.colorearCampo(valido, '#nombreEstudianteFamiliar', '#errorNombreEstudianteFamiliar', 'Mínimo 3 caracteres');
+            const valido = u_matricula.validarNombre($(this).val());
+            u_matricula.colorearCampo(valido, '#nombreEstudianteFamiliar', '#errorNombreEstudianteFamiliar', 'Mínimo 3 letras');
         });
-        
-        // Validaciones de matrícula
+
+        $('#apellidosEstudianteFamiliar').on('input', function() {
+            const valido = u_matricula.validarNombre($(this).val());
+            u_matricula.colorearCampo(valido, '#apellidosEstudianteFamiliar', '#errorApellidosEstudianteFamiliar', 'Mínimo 3 letras');
+        });
+
+        $('#dipEstudianteFamiliar').on('input', function() {
+            const valido = u_matricula.validarDip($(this).val());
+            u_matricula.colorearCampo(valido, '#dipEstudianteFamiliar', '#errorDipEstudianteFamiliar', 'Formato: 000 000 000');
+        });
+
+        $('#direccionEstudianteFamiliar').on('input', function() {
+            const valido = $(this).val().length >= 5;
+            u_matricula.colorearCampo(valido, '#direccionEstudianteFamiliar', '#errorDireccionEstudianteFamiliar', 'Mínimo 5 caracteres');
+        });
+
+        $('#correoEstudianteFamiliar').on('input', function() {
+            const valido = u_matricula.validarCorreo($(this).val());
+            u_matricula.colorearCampo(valido, '#correoEstudianteFamiliar', '#errorCorreoEstudianteFamiliar', 'Correo inválido');
+        });
+
+        $('#telefonoEstudianteFamiliar').on('input', function() {
+            const valido = u_matricula.validarTelefono($(this).val());
+            u_matricula.colorearCampo(valido, '#telefonoEstudianteFamiliar', '#errorTelefonoEstudianteFamiliar', 'Teléfono inválido');
+        });
+
+        $('#parentezcoEstudianteFamiliar').on('input', function() {
+            const valido = $(this).val().length >= 3;
+            u_matricula.colorearCampo(valido, '#parentezcoEstudianteFamiliar', '#errorParentezcoEstudianteFamiliar', 'Mínimo 3 caracteres');
+        });
+
+        $('#contactoIncidenteEstudianteFamiliar').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#contactoIncidenteEstudianteFamiliar', '#errorContactoIncidenteFamiliar', 'Seleccione una opción');
+        });
+
+        $('#responsablePagoEstudianteFamiliar').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#responsablePagoEstudianteFamiliar', '#errorResponsablePagoFamiliar', 'Seleccione una opción');
+        });
+
         $('#cursoAcademicoMatricula').on('input', function() {
-            const valido = u_matricula.validarCursoAcademico($(this).val().trim());
-            u_utiles.colorearCampo(valido, '#cursoAcademicoMatricula', '#errorCursoAcademicoMatricula', 'Formato: 2025/2026');
+            const valido = u_matricula.validarCursoAcademico($(this).val());
+            u_matricula.colorearCampo(valido, '#cursoAcademicoMatricula', '#errorCursoAcademicoMatricula', 'Formato: 2025/2026');
         });
-    }
 
-    // ========== FUNCIONES DEL MODAL ==========
-    static abrirModalNuevo() {
-        $('#modalNuevaMatricula').modal('show');
-    }
-
-    static cambiarSeccion(seccion, direccion = null) {
-        $('.seccion').removeClass('active anim-in anim-out izquierda derecha');
-        
-        if (direccion === 'siguiente') {
-            $(`#seccion${seccion-1}`).addClass('anim-out');
-            setTimeout(() => {
-                $(`#seccion${seccion}`).addClass('active anim-in');
-            }, 300);
-        } else if (direccion === 'anterior') {
-            $(`#seccion${seccion+1}`).addClass('anim-out izquierda');
-            setTimeout(() => {
-                $(`#seccion${seccion}`).addClass('active anim-in');
-            }, 300);
-        } else {
-            $(`#seccion${seccion}`).addClass('active');
-        }
-    }
-
-    static actualizarBotonesNavegacion(seccionActual, totalSecciones, modoEdicion) {
-        if (seccionActual === 1) {
-            $('#anterior').hide();
-            $('#siguiente').show();
-            $('#btnGuardarMatricula').hide();
-        } else if (seccionActual === totalSecciones) {
-            $('#anterior').show();
-            $('#siguiente').hide();
-            $('#btnGuardarMatricula').show().text(modoEdicion ? 'Actualizar Matrícula' : 'Guardar Matrícula');
-        } else {
-            $('#anterior').show();
-            $('#siguiente').show();
-            $('#btnGuardarMatricula').hide();
-        }
-    }
-
-    static mostrarBusquedaEstudiante(mostrar) {
-        if (mostrar) {
-            $('#ContBusquedaMatricula').removeClass('d-none');
-        } else {
-            $('#ContBusquedaMatricula').addClass('d-none');
-        }
-    }
-
-    static mostrarSeccionBecas(mostrar) {
-        if (mostrar) {
-            $('.datos-becario').show();
-        } else {
-            $('.datos-becario').hide();
-        }
-    }
-
-    // ========== COMBOS ==========
-    static cargarComboCarreras(carreras) {
-        const $input = $('#comboCarrerasMatricula');
-        $input.data('carreras', carreras);
-    }
-
-    static configurarComboCarreras(carreras, onSeleccionar) {
-        const $input = $('#comboCarrerasMatricula');
-        const $opciones = $('#opcionesCarrerasMatricula');
-        
-        $input.on('focus click', function(e) {
-            e.stopPropagation();
-            u_matricula.mostrarOpcionesCarreras($(this).val(), carreras, $opciones, onSeleccionar);
+        $('#fechaMatricula').on('change', function() {
+            const valido = $(this).val() !== '';
+            u_matricula.colorearCampo(valido, '#fechaMatricula', '#errorFechaMatricula', 'Seleccione una fecha');
         });
-        
-        $input.on('input', function() {
-            u_matricula.mostrarOpcionesCarreras($(this).val(), carreras, $opciones, onSeleccionar);
-        });
-        
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.combo-input-wrapper').length) {
-                $opciones.hide();
-            }
-        });
-    }
 
-    static mostrarOpcionesCarreras(busqueda, carreras, $opciones, onSeleccionar) {
-        if (!carreras || carreras.length === 0) {
-            $opciones.html('<div class="dropdown-option no-results">No hay carreras disponibles</div>').show();
-            return;
-        }
-        
-        const busquedaLower = busqueda.toLowerCase();
-        const filtradas = carreras.filter(c => 
-            c.nombreCarrera.toLowerCase().includes(busquedaLower)
-        );
-        
-        if (filtradas.length === 0) {
-            $opciones.html('<div class="dropdown-option no-results">No se encontraron resultados</div>').show();
-            return;
-        }
-        
-        let html = '';
-        filtradas.forEach(c => {
-            html += `<div class="dropdown-option" data-id="${c.idCarrera}">${c.nombreCarrera}</div>`;
+        $('#modalidadMatricula').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#modalidadMatricula', '#errorModalidadMatricula', 'Seleccione una modalidad');
         });
-        
-        $opciones.html(html).show();
-        
-        $opciones.find('.dropdown-option').off('click').on('click', function() {
-            const id = $(this).data('id');
-            const nombre = $(this).text();
-            $('#comboCarrerasMatricula').val(nombre).data('id-seleccionado', id);
-            $opciones.hide();
-            if (onSeleccionar) onSeleccionar(id);
+
+        $('#comboPlanEstudioMatricula').on('change', function() {
+            const idPlan = u_matricula.getIdPlanSeleccionado();
+            const valido = idPlan && idPlan !== 'Ninguno';
+            u_matricula.colorearCampo(valido, '#comboPlanEstudioMatricula', '#errorPlanEstudioMatricula', 'Seleccione un plan');
         });
-    }
 
-    static actualizarComboEstudiantes(estudiantes) {
-        const $input = $('#comboEstudiantesMatricula');
-        $input.data('estudiantes', estudiantes);
-        $input.val('');
-    }
-
-    static cargarComboEstudiantes(estudiantes) {
-        const $input = $('#comboEstudiantesMatricula');
-        $input.data('estudiantes', estudiantes);
-    }
-
-    static configurarComboEstudiantes(estudiantes, onSeleccionar) {
-        const $input = $('#comboEstudiantesMatricula');
-        const $opciones = $('#opcionesEstudiantesMatricula');
-        
-        $input.on('focus click', function(e) {
-            e.stopPropagation();
-            const estudiantesData = $(this).data('estudiantes') || [];
-            u_matricula.mostrarOpcionesEstudiantes($(this).val(), estudiantesData, $opciones, onSeleccionar);
+        $('#semestresMatricula').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#semestresMatricula', '#errorSemestresMatricula', 'Seleccione un semestre');
         });
-        
-        $input.on('input', function() {
-            const estudiantesData = $(this).data('estudiantes') || [];
-            u_matricula.mostrarOpcionesEstudiantes($(this).val(), estudiantesData, $opciones, onSeleccionar);
-        });
-    }
 
-    static mostrarOpcionesEstudiantes(busqueda, estudiantes, $opciones, onSeleccionar) {
-        if (!estudiantes || estudiantes.length === 0) {
-            $opciones.html('<div class="dropdown-option no-results">No hay estudiantes disponibles</div>').show();
-            return;
-        }
-        
-        const busquedaLower = busqueda.toLowerCase();
-        const filtrados = estudiantes.filter(e => 
-            e.nombre.toLowerCase().includes(busquedaLower) || 
-            e.apellidos.toLowerCase().includes(busquedaLower) ||
-            e.codigoEstudiante.toLowerCase().includes(busquedaLower)
-        );
-        
-        if (filtrados.length === 0) {
-            $opciones.html('<div class="dropdown-option no-results">No se encontraron resultados</div>').show();
-            return;
-        }
-        
-        let html = '';
-        filtrados.forEach(e => {
-            html += `<div class="dropdown-option" data-id="${e.idEstudiante}">${e.nombre} ${e.apellidos} (${e.codigoEstudiante})</div>`;
+        $('#estadosMatricula').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#estadosMatricula', '#errorestadosMatricula', 'Seleccione un estado');
         });
-        
-        $opciones.html(html).show();
-        
-        $opciones.find('.dropdown-option').off('click').on('click', function() {
-            const id = $(this).data('id');
-            const nombre = $(this).text();
-            $('#comboEstudiantesMatricula').val(nombre).data('id-seleccionado', id);
-            $opciones.hide();
-            if (onSeleccionar) onSeleccionar(id);
+
+        $('#comboNombreInstitucionBeca').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#comboNombreInstitucionBeca', '#errorNombreInstitucionBeca', 'Seleccione una institución');
         });
-    }
 
-    static cargarComboPlanesEstudio(planes) {
-        const $input = $('#comboPlanEstudioMatricula');
-        $input.data('planes', planes);
-    }
-
-    static configurarComboPlanesEstudio(planes, onSeleccionar) {
-        const $input = $('#comboPlanEstudioMatricula');
-        const $opciones = $('#opcionesPlanEstudioMatricula');
-        
-        $input.on('focus click', function(e) {
-            e.stopPropagation();
-            u_matricula.mostrarOpcionesPlanesEstudio($(this).val(), planes, $opciones, onSeleccionar);
+        $('#tiposBeca').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#tiposBeca', '#errorTiposBeca', 'Seleccione un tipo');
         });
-        
-        $input.on('input', function() {
-            u_matricula.mostrarOpcionesPlanesEstudio($(this).val(), planes, $opciones, onSeleccionar);
+
+        $('#fechaInicioBeca').on('change', function() {
+            const valido = $(this).val() !== '';
+            u_matricula.colorearCampo(valido, '#fechaInicioBeca', '#errorFechaInicioBeca', 'Seleccione una fecha');
         });
-    }
 
-    static mostrarOpcionesPlanesEstudio(busqueda, planes, $opciones, onSeleccionar) {
-        if (!planes || planes.length === 0) {
-            $opciones.html('<div class="dropdown-option no-results">No hay planes de estudio</div>').show();
-            return;
-        }
-        
-        const busquedaLower = busqueda.toLowerCase();
-        const filtrados = planes.filter(p => 
-            p.nombre.toLowerCase().includes(busquedaLower)
-        );
-        
-        if (filtrados.length === 0) {
-            $opciones.html('<div class="dropdown-option no-results">No se encontraron resultados</div>').show();
-            return;
-        }
-        
-        let html = '';
-        filtrados.forEach(p => {
-            html += `<div class="dropdown-option" data-id="${p.idPlanEstudio}">${p.nombre}</div>`;
+        $('#fechaFinBeca').on('change', function() {
+            const valido = $(this).val() !== '';
+            u_matricula.colorearCampo(valido, '#fechaFinBeca', '#errorFechaFinBeca', 'Seleccione una fecha');
         });
-        
-        $opciones.html(html).show();
-        
-        $opciones.find('.dropdown-option').off('click').on('click', function() {
-            const id = $(this).data('id');
-            const nombre = $(this).text();
-            $('#comboPlanEstudioMatricula').val(nombre).data('id-seleccionado', id);
-            $opciones.hide();
-            if (onSeleccionar) onSeleccionar(id);
+
+        $('#estadosBeca').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#estadosBeca', '#errorEstadosBeca', 'Seleccione un estado');
         });
-    }
 
-    static cargarSelectSemestres(selector, semestres) {
-        const $select = $(selector);
-        $select.empty();
-        $select.append('<option value="Ninguno">Seleccione...</option>');
-        
-        semestres.forEach(s => {
-            $select.append(`<option value="${s.idSemestre}">${s.numeroSemestre} - ${s.tipoSemestre}</option>`);
+        $('#responsablePagoEstudiante').on('input', function() {
+            const valido = $(this).val().length >= 3;
+            u_matricula.colorearCampo(valido, '#responsablePagoEstudiante', '#errorResponsablePagoEstudiante', 'Mínimo 3 caracteres');
         });
-    }
 
-    // ========== COMBOS DE PAÍSES, CENTROS, UNIVERSIDADES ==========
-    static configurarComboPaises() {
-        const paises = [
-            'Guinea Ecuatorial', 'España', 'Francia', 'Portugal', 
-            'Brasil', 'Angola', 'Mozambique', 'Cabo Verde'
-        ];
-        
-        u_matricula.configurarComboGenerico(
-            '#comboPaisesEstudianteMatricula', 
-            '#opcionesEstudianteMatricula', 
-            paises
-        );
-    }
-
-    static configurarComboCentros() {
-        const centros = [
-            'Colegio Nacional', 'Instituto de Bachillerato', 
-            'Centro de Formación Profesional', 'Otro'
-        ];
-        
-        u_matricula.configurarComboGenerico(
-            '#comboCentroEstudianteMatricula', 
-            '#opcionesCentroEstudianteMatricula', 
-            centros
-        );
-    }
-
-    static configurarComboUniversidades() {
-        const universidades = [
-            'Universidad Nacional de Guinea Ecuatorial',
-            'Universidad de Alcalá', 'Universidad Complutense',
-            'Universidad de Lisboa', 'Otra'
-        ];
-        
-        u_matricula.configurarComboGenerico(
-            '#comboUniversidadEstudianteMatricula', 
-            '#opcionesUniversidadEstudianteMatricula', 
-            universidades
-        );
-    }
-
-    static configurarComboGenerico(inputSelector, opcionesSelector, opciones) {
-        const $input = $(inputSelector);
-        const $opciones = $(opcionesSelector);
-        
-        $input.on('focus click', function(e) {
-            e.stopPropagation();
-            u_matricula.mostrarOpcionesGenericas($(this).val(), opciones, $opciones, (valor) => {
-                $input.val(valor).data('id-seleccionado', valor);
-                $opciones.hide();
-            });
+        $('#cuotaEstudiante').on('input', function() {
+            const valido = u_matricula.validarNumero($(this).val());
+            u_matricula.colorearCampo(valido, '#cuotaEstudiante', '#errorCuotaEstudiante', 'Número positivo');
         });
-        
-        $input.on('input', function() {
-            u_matricula.mostrarOpcionesGenericas($(this).val(), opciones, $opciones, (valor) => {
-                $input.val(valor).data('id-seleccionado', valor);
-                $opciones.hide();
-            });
-        });
-        
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.combo-input-wrapper').length) {
-                $opciones.hide();
-            }
-        });
-    }
 
-    static mostrarOpcionesGenericas(busqueda, opciones, $opciones, onSeleccionar) {
-        const busquedaLower = busqueda.toLowerCase();
-        const filtradas = opciones.filter(o => 
-            o.toLowerCase().includes(busquedaLower)
-        );
-        
-        if (filtradas.length === 0) {
-            $opciones.html('<div class="dropdown-option no-results">No se encontraron resultados</div>').show();
-            return;
-        }
-        
-        let html = '';
-        filtradas.forEach(o => {
-            html += `<div class="dropdown-option">${o}</div>`;
+        $('#fechaPagoEstudiante').on('change', function() {
+            const valido = $(this).val() !== '';
+            u_matricula.colorearCampo(valido, '#fechaPagoEstudiante', '#errorFechaPagoEstudiante', 'Seleccione una fecha');
         });
-        
-        $opciones.html(html).show();
-        
-        $opciones.find('.dropdown-option').off('click').on('click', function() {
-            onSeleccionar($(this).text());
+
+        $('#montoEstudiante').on('input', function() {
+            const valido = u_matricula.validarNumero($(this).val());
+            u_matricula.colorearCampo(valido, '#montoEstudiante', '#errorMontoEstudiante', 'Monto positivo');
         });
-    }
 
-    // ========== FUNCIONES PARA AÑADIR ELEMENTOS ==========
-    static añadirContactoFamiliar(onAñadir) {
-        // Clonar el primer familiar
-        const $original = $('.datos-familiar:first');
-        const $clon = $original.clone();
-        
-        // Limpiar valores del clon
-        $clon.find('input, select').val('');
-        $clon.find('.errorMensaje').text('').hide();
-        $clon.find('input, select').removeClass('border-success border-danger');
-        
-        // Añadir botón de eliminar
-        $clon.find('.row:first').prepend(`
-            <div class="col-12 text-end mb-2">
-                <button type="button" class="btn btn-sm btn-outline-danger eliminar-familiar">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `);
-        
-        // Añadir al DOM
-        $original.parent().append($clon);
-        
-        // Evento para eliminar
-        $clon.find('.eliminar-familiar').on('click', function() {
-            $clon.remove();
-        });
-        
-        // Obtener datos del familiar
-        const datos = u_matricula.obtenerDatosFamiliar($clon);
-        if (onAñadir) onAñadir(datos);
-    }
-
-    static añadirBeca(becas, onAñadir) {
-        // Clonar el primer becario
-        const $original = $('.datos-becario:first');
-        const $clon = $original.clone();
-        
-        // Limpiar valores del clon
-        $clon.find('input, select').val('Ninguno');
-        $clon.find('.errorMensaje').text('').hide();
-        $clon.find('input, select').removeClass('border-success border-danger');
-        
-        // Añadir botón de eliminar
-        $clon.find('.row:first').prepend(`
-            <div class="col-12 text-end mb-2">
-                <button type="button" class="btn btn-sm btn-outline-danger eliminar-beca">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `);
-        
-        // Añadir al DOM
-        $original.parent().append($clon);
-        
-        // Evento para eliminar
-        $clon.find('.eliminar-beca').on('click', function() {
-            $clon.remove();
-        });
-        
-        // Obtener datos de la beca
-        const datos = u_matricula.obtenerDatosBeca($clon);
-        if (onAñadir) onAñadir(datos);
-    }
-
-    // ========== CARGA DE DATOS EN FORMULARIO ==========
-    static cargarDatosEstudiante(estudiante) {
-        $('#nombreEstudianteMatricula').val(estudiante.nombre || '');
-        $('#apellidosEstudianteMatricula').val(estudiante.apellidos || '');
-        $('#dipEstudianteMatricula').val(estudiante.dipEstudiante || '');
-        $('#fechaNacimientoEstudianteMatricula').val(estudiante.fechaNacimiento || '');
-        $('#nacionalidadEstudianteMatricula').val(estudiante.nacionalidad || '');
-        $('#generosEstudianteMatricula').val(estudiante.sexo || 'Ninguno');
-        $('#direccionEstudianteMatricula').val(estudiante.direccion || '');
-        $('#localidadEstudianteMatricula').val(estudiante.localidad || '');
-        $('#provinciaEstudianteMatricula').val(estudiante.provincia || '');
-        $('#comboPaisesEstudianteMatricula').val(estudiante.pais || '');
-        $('#correoEstudianteMatricula').val(estudiante.correoEstudiante || '');
-        $('#telefonoEstudianteMatricula').val(estudiante.telefono || '');
-        $('#comboCentroEstudianteMatricula').val(estudiante.centroProcedencia || '');
-        $('#comboUniversidadEstudianteMatricula').val(estudiante.universidadProcedencia || '');
-        $('#esBecario').prop('checked', estudiante.esBecado === 'Sí');
-    }
-
-    static cargarDatosMatricula(matricula) {
-        $('#cursoAcademicoMatricula').val(matricula.cursoAcademico || u_matricula.generarCursoAcademico());
-        $('#fechaMatricula').val(matricula.fechaMatricula || '');
-        $('#modalidadMatricula').val(matricula.modalidadMatricula || 'Ninguno');
-        $('#creditosTotalesMatricula').val(matricula.totalCreditos || 0);
-        $('#estadosMatricula').val(matricula.estado || 'Ninguno');
-    }
-
-    static cargarFamiliares(familiares) {
-        // Limpiar familiares existentes excepto el primero
-        $('.datos-familiar:not(:first)').remove();
-        
-        if (familiares.length > 0) {
-            // Cargar el primer familiar
-            const f = familiares[0];
-            $('.datos-familiar:first').find('#nombreEstudianteFamiliar').val(f.nombre || '');
-            $('.datos-familiar:first').find('#apellidosEstudianteFamiliar').val(f.apellidos || '');
-            $('.datos-familiar:first').find('#dipEstudianteFamiliar').val(f.dipFamiliar || '');
-            $('.datos-familiar:first').find('#direccionEstudianteFamiliar').val(f.direccion || '');
-            $('.datos-familiar:first').find('#correoEstudianteFamiliar').val(f.correoFamiliar || '');
-            $('.datos-familiar:first').find('#telefonoEstudianteFamiliar').val(f.telefono || '');
-            $('.datos-familiar:first').find('#parentezcoEstudianteFamiliar').val(f.parentesco || '');
-            $('.datos-familiar:first').find('#contactoIncidenteEstudianteFamiliar').val(f.esContactoIncidentes || 'Ninguno');
-            $('.datos-familiar:first').find('#responsablePagoEstudianteFamiliar').val(f.esResponsablePago || 'Ninguno');
+        $('#nombreOCorreoUsuario').on('input', function() {
+            const valor = $(this).val();
+            const esCorreo = valor.includes('@');
+            let valido;
             
-            // Cargar familiares adicionales
-            for (let i = 1; i < familiares.length; i++) {
-                u_matricula.añadirContactoFamiliar(() => {});
-                const $nuevo = $(`.datos-familiar:eq(${i})`);
-                const f = familiares[i];
-                $nuevo.find('#nombreEstudianteFamiliar').val(f.nombre || '');
-                $nuevo.find('#apellidosEstudianteFamiliar').val(f.apellidos || '');
-                $nuevo.find('#dipEstudianteFamiliar').val(f.dipFamiliar || '');
-                $nuevo.find('#direccionEstudianteFamiliar').val(f.direccion || '');
-                $nuevo.find('#correoEstudianteFamiliar').val(f.correoFamiliar || '');
-                $nuevo.find('#telefonoEstudianteFamiliar').val(f.telefono || '');
-                $nuevo.find('#parentezcoEstudianteFamiliar').val(f.parentesco || '');
-                $nuevo.find('#contactoIncidenteEstudianteFamiliar').val(f.esContactoIncidentes || 'Ninguno');
-                $nuevo.find('#responsablePagoEstudianteFamiliar').val(f.esResponsablePago || 'Ninguno');
+            if (esCorreo) {
+                valido = u_matricula.validarCorreo(valor);
+            } else {
+                valido = valor.length >= 3;
             }
-        }
-    }
-
-    static cargarBecas(becas) {
-        // Limpiar becas existentes excepto la primera
-        $('.datos-becario:not(:first)').remove();
-        
-        if (becas.length > 0) {
-            // Cargar la primera beca
-            const b = becas[0];
-            $('.datos-becario:first').find('#nombreInstitucionBeca').val(b.institucionBeca || '');
-            $('.datos-becario:first').find('#tiposBeca').val(b.tipoBeca || 'Ninguno');
-            $('.datos-becario:first').find('#fechaInicioBeca').val(b.fechaInicio || '');
-            $('.datos-becario:first').find('#fechaFinBeca').val(b.fechaFinal || '');
-            $('.datos-becario:first').find('#estadosBeca').val(b.estado || 'Ninguno');
-            $('.datos-becario:first').find('#observacionesBeca').val(b.observaciones || '');
             
-            // Cargar becas adicionales
-            for (let i = 1; i < becas.length; i++) {
-                u_matricula.añadirBeca([], () => {});
-                const $nuevo = $(`.datos-becario:eq(${i})`);
-                const b = becas[i];
-                $nuevo.find('#nombreInstitucionBeca').val(b.institucionBeca || '');
-                $nuevo.find('#tiposBeca').val(b.tipoBeca || 'Ninguno');
-                $nuevo.find('#fechaInicioBeca').val(b.fechaInicio || '');
-                $nuevo.find('#fechaFinBeca').val(b.fechaFinal || '');
-                $nuevo.find('#estadosBeca').val(b.estado || 'Ninguno');
-                $nuevo.find('#observacionesBeca').val(b.observaciones || '');
+            u_matricula.colorearCampo(valido, '#nombreOCorreoUsuario', '#errorNombreOCorreoUsuario', 'Mínimo 3 caracteres o correo válido');
+        });
+
+        $('#rolUsuario').on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, '#rolUsuario', '#errorRolUsuario', 'Seleccione un rol');
+        });
+    }
+
+    static validarSeccion1() {
+        let ok = true;
+        
+        if (!this.validarNombre($('#nombreEstudianteMatricula').val())) ok = false;
+        if (!this.validarNombre($('#apellidosEstudianteMatricula').val())) ok = false;
+        if (!this.validarDip($('#dipEstudianteMatricula').val())) ok = false;
+        if (!this.validarFecha($('#fechaNacimientoEstudianteMatricula').val())) ok = false;
+        if ($('#nacionalidadEstudianteMatricula').val().length < 3) ok = false;
+        if (!this.validarSelect($('#generosEstudianteMatricula').val())) ok = false;
+        if ($('#direccionEstudianteMatricula').val().length < 5) ok = false;
+        if ($('#localidadEstudianteMatricula').val().length < 3) ok = false;
+        if ($('#provinciaEstudianteMatricula').val().length < 3) ok = false;
+        if (!this.validarSelect($('#comboPaisesEstudianteMatricula').val())) ok = false;
+        if (!this.validarCorreo($('#correoEstudianteMatricula').val())) ok = false;
+        if (!this.validarTelefono($('#telefonoEstudianteMatricula').val())) ok = false;
+        
+        if (!this.validarNombre($('#nombreEstudianteFamiliar').val())) ok = false;
+        if (!this.validarNombre($('#apellidosEstudianteFamiliar').val())) ok = false;
+        if (!this.validarDip($('#dipEstudianteFamiliar').val())) ok = false;
+        if ($('#direccionEstudianteFamiliar').val().length < 5) ok = false;
+        if (!this.validarCorreo($('#correoEstudianteFamiliar').val())) ok = false;
+        if (!this.validarTelefono($('#telefonoEstudianteFamiliar').val())) ok = false;
+        if ($('#parentezcoEstudianteFamiliar').val().length < 3) ok = false;
+        if (!this.validarSelect($('#contactoIncidenteEstudianteFamiliar').val())) ok = false;
+        if (!this.validarSelect($('#responsablePagoEstudianteFamiliar').val())) ok = false;
+        
+        return ok;
+    }
+
+    static validarSeccion2(esBecario) {
+        let ok = true;
+
+        if (!this.validarCursoAcademico($('#cursoAcademicoMatricula').val())) ok = false;
+        if (!$('#fechaMatricula').val()) ok = false;
+        if (!this.validarSelect($('#modalidadMatricula').val())) ok = false;
+
+        const idPlan = this.getIdPlanSeleccionado();
+        if (!idPlan || idPlan === 'Ninguno') {
+            this.colorearCampo(false, '#comboPlanEstudioMatricula', '#errorPlanEstudioMatricula', 'Seleccione un plan de estudio');
+            ok = false;
+        }
+
+        if (!this.validarSelect($('#semestresMatricula').val())) ok = false;
+        if (!this.validarSelect($('#estadosMatricula').val())) ok = false;
+        
+        if (esBecario) {
+            if (!this.validarSelect($('#comboNombreInstitucionBeca').val())) ok = false;
+            if (!this.validarSelect($('#tiposBeca').val())) ok = false;
+            if (!$('#fechaInicioBeca').val()) ok = false;
+            if (!$('#fechaFinBeca').val()) ok = false;
+            if (!this.validarSelect($('#estadosBeca').val())) ok = false;
+        }
+        
+        return ok;
+    }
+
+    static validarSeccion3() {
+        let ok = true;
+        
+        if ($('#responsablePagoEstudiante').val().length < 3) ok = false;
+        if (!this.validarNumero($('#cuotaEstudiante').val())) ok = false;
+        if (!$('#fechaPagoEstudiante').val()) ok = false;
+        if (!this.validarNumero($('#montoEstudiante').val())) ok = false;
+        
+        const nombreOCorreo = $('#nombreOCorreoUsuario').val();
+        const rol = $('#rolUsuario').val();
+        
+        if (nombreOCorreo || rol !== 'Ninguno') {
+            const esCorreo = nombreOCorreo.includes('@');
+            if (esCorreo) {
+                if (!this.validarCorreo(nombreOCorreo)) ok = false;
+            } else {
+                if (nombreOCorreo.length < 3) ok = false;
             }
-        }
-    }
-
-    // ========== OBTENCIÓN DE DATOS ==========
-    static obtenerDatosEstudiante() {
-        return {
-            nombre: $('#nombreEstudianteMatricula').val().trim(),
-            apellidos: $('#apellidosEstudianteMatricula').val().trim(),
-            dipEstudiante: $('#dipEstudianteMatricula').val().trim(),
-            fechaNacimiento: $('#fechaNacimientoEstudianteMatricula').val(),
-            sexo: $('#generosEstudianteMatricula').val(),
-            nacionalidad: $('#nacionalidadEstudianteMatricula').val().trim(),
-            direccion: $('#direccionEstudianteMatricula').val().trim(),
-            localidad: $('#localidadEstudianteMatricula').val().trim(),
-            provincia: $('#provinciaEstudianteMatricula').val().trim(),
-            pais: $('#comboPaisesEstudianteMatricula').val().trim(),
-            correoEstudiante: $('#correoEstudianteMatricula').val().trim(),
-            telefono: $('#telefonoEstudianteMatricula').val().trim(),
-            centroProcedencia: $('#comboCentroEstudianteMatricula').val().trim(),
-            universidadProcedencia: $('#comboUniversidadEstudianteMatricula').val().trim(),
-            esBecado: $('#esBecario').is(':checked') ? 'Sí' : 'No'
-        };
-    }
-
-    static obtenerDatosFamiliar($container = null) {
-        if ($container) {
-            return {
-                nombre: $container.find('#nombreEstudianteFamiliar').val().trim(),
-                apellidos: $container.find('#apellidosEstudianteFamiliar').val().trim(),
-                dipFamiliar: $container.find('#dipEstudianteFamiliar').val().trim(),
-                direccion: $container.find('#direccionEstudianteFamiliar').val().trim(),
-                correoFamiliar: $container.find('#correoEstudianteFamiliar').val().trim(),
-                telefono: $container.find('#telefonoEstudianteFamiliar').val().trim(),
-                parentesco: $container.find('#parentezcoEstudianteFamiliar').val().trim(),
-                esContactoIncidentes: $container.find('#contactoIncidenteEstudianteFamiliar').val(),
-                esResponsablePago: $container.find('#responsablePagoEstudianteFamiliar').val()
-            };
+            if (!this.validarSelect(rol)) ok = false;
         }
         
-        const familiares = [];
-        $('.datos-familiar').each(function() {
-            familiares.push({
-                nombre: $(this).find('#nombreEstudianteFamiliar').val().trim(),
-                apellidos: $(this).find('#apellidosEstudianteFamiliar').val().trim(),
-                dipFamiliar: $(this).find('#dipEstudianteFamiliar').val().trim(),
-                direccion: $(this).find('#direccionEstudianteFamiliar').val().trim(),
-                correoFamiliar: $(this).find('#correoEstudianteFamiliar').val().trim(),
-                telefono: $(this).find('#telefonoEstudianteFamiliar').val().trim(),
-                parentesco: $(this).find('#parentezcoEstudianteFamiliar').val().trim(),
-                esContactoIncidentes: $(this).find('#contactoIncidenteEstudianteFamiliar').val(),
-                esResponsablePago: $(this).find('#responsablePagoEstudianteFamiliar').val()
-            });
-        });
-        return familiares;
+        return ok;
     }
 
-    static obtenerDatosMatricula() {
-        return {
-            cursoAcademico: $('#cursoAcademicoMatricula').val().trim(),
-            fechaMatricula: $('#fechaMatricula').val(),
-            modalidadMatricula: $('#modalidadMatricula').val(),
-            idPlanEstudio: $('#comboPlanEstudioMatricula').data('id-seleccionado'),
-            idSemestre: $('#semestresMatricula').val(),
-            totalCreditos: parseInt($('#creditosTotalesMatricula').val()) || 0,
-            estado: $('#estadosMatricula').val()
-        };
-    }
-
-    static obtenerDatosBeca($container = null) {
-        if ($container) {
-            return {
-                institucionBeca: $container.find('#nombreInstitucionBeca').val().trim(),
-                tipoBeca: $container.find('#tiposBeca').val(),
-                fechaInicio: $container.find('#fechaInicioBeca').val(),
-                fechaFinal: $container.find('#fechaFinBeca').val(),
-                estado: $container.find('#estadosBeca').val(),
-                observaciones: $container.find('#observacionesBeca').val().trim()
-            };
-        }
+    static validarFormularioExistente() {
+        let ok = true;
         
-        const becas = [];
-        $('.datos-becario').each(function() {
-            becas.push({
-                institucionBeca: $(this).find('#nombreInstitucionBeca').val().trim(),
-                tipoBeca: $(this).find('#tiposBeca').val(),
-                fechaInicio: $(this).find('#fechaInicioBeca').val(),
-                fechaFinal: $(this).find('#fechaFinBeca').val(),
-                estado: $(this).find('#estadosBeca').val(),
-                observaciones: $(this).find('#observacionesBeca').val().trim()
-            });
-        });
-        return becas;
-    }
-
-    static obtenerDatosPago() {
-        return {
-            cuota: parseInt($('#cuotaEstudiante').val()) || 0,
-            monto: parseInt($('#montoEstudiante').val()) || 0,
-            fechaPago: $('#fechaPagoEstudiante').val()
-        };
-    }
-
-    static obtenerDatosUsuario() {
-        return {
-            nombreUsuario: $('#nombreOCorreoUsuario').val().trim(),
-            correo: $('#nombreOCorreoUsuario').val().trim(),
-            contrasena: '123456', // Contraseña por defecto
-            rol: 'Estudiante',
-            estado: 1
-        };
-    }
-
-    // ========== FUNCIONES UTILITARIAS ==========
-    static generarCodigoEstudiante(nombre, carrera) {
-        // Ejemplo: FI-0001-INF
-        const prefijoFacultad = 'FI'; // Esto debería venir de la facultad seleccionada
-        const numero = String(Math.floor(Math.random() * 9000) + 1000).padStart(4, '0');
-        const prefijoCarrera = carrera.substring(0, 3).toUpperCase();
+        const modal = $('#modalNuevaMatriculaRealizar');
         
-        return `${prefijoFacultad}-${numero}-${prefijoCarrera}`;
-    }
-
-    static generarCursoAcademico() {
-        const fecha = new Date();
-        const añoActual = fecha.getFullYear();
-        const añoSiguiente = añoActual + 1;
-        return `${añoActual}/${añoSiguiente}`;
-    }
-
-    static async subirFoto(archivo) {
-        // Simulación de subida de foto
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(URL.createObjectURL(archivo));
-            }, 500);
-        });
-    }
-
-    static limpiarFormulario() {
-        $('#formMatricula')[0].reset();
-        $('.errorMensaje').text('').hide();
-        $('input, select, textarea').removeClass('border-success border-danger');
+        if (!this.validarCursoAcademico(modal.find('#cursoAcademicoMatricula').val())) ok = false;
+        if (!modal.find('#fechaMatricula').val()) ok = false;
+        if (!this.validarSelect(modal.find('#modalidadMatricula').val())) ok = false;
+        if (!this.validarSelect(modal.find('#comboPlanEstudioMatricula').val())) ok = false;
+        if (!this.validarSelect(modal.find('#semestresMatricula').val())) ok = false;
+        if (!this.validarSelect(modal.find('#estadosMatricula').val())) ok = false;
         
-        // Limpiar combos
-        $('#comboCarrerasMatricula').val('').removeData('id-seleccionado');
-        $('#comboEstudiantesMatricula').val('').removeData('id-seleccionado');
-        $('#comboPaisesEstudianteMatricula').val('');
-        $('#comboCentroEstudianteMatricula').val('');
-        $('#comboUniversidadEstudianteMatricula').val('');
-        $('#comboPlanEstudioMatricula').val('').removeData('id-seleccionado');
+        if (modal.find('#responsablePagoEstudiante').val().length < 3) ok = false;
+        if (!this.validarNumero(modal.find('#cuotaEstudiante').val())) ok = false;
+        if (!modal.find('#fechaPagoEstudiante').val()) ok = false;
+        if (!this.validarNumero(modal.find('#montoEstudiante').val())) ok = false;
         
-        // Resetear selects
-        $('#generosEstudianteMatricula').val('Ninguno');
-        $('#modalidadMatricula').val('Ninguno');
-        $('#semestresMatricula').val('Ninguno');
-        $('#estadosMatricula').val('Ninguno');
+        return ok;
+    }
+
+    static limpiarModal(modalId) {
+        $(`${modalId} form`)[0]?.reset();
+        $(`${modalId} .errorMensaje`).text('').addClass('d-none');
+        $(`${modalId} input, ${modalId} select`).removeClass('border-success border-danger');
+        
+        $(`${modalId} .seccion`).hide();
+        $(`${modalId} #seccion1`).show();
+        
+        $(`${modalId} #anterior`).hide();
+        $(`${modalId} #siguiente`).show();
+        $(`${modalId} #btnGuardarMatricula`).hide();
+        
+        $('#contDatosBecario').addClass('d-none');
+        $('#esBecario').prop('checked', false);
+        
+        this.limpiarImagen();
+        
+        $('.contacto-adicional, .beca-adicional').remove();
+        $('#contactosAdicionales, #becasAdicionales').remove();
+    }
+
+    static limpiarCamposBeca() {
+        $('#comboNombreInstitucionBeca').val('');
         $('#tiposBeca').val('Ninguno');
+        $('#fechaInicioBeca').val('');
+        $('#fechaFinBeca').val('');
         $('#estadosBeca').val('Ninguno');
-        
-        // Ocultar secciones
-        u_matricula.mostrarSeccionBecas(false);
-        
-        // Establecer curso académico por defecto
-        $('#cursoAcademicoMatricula').val(u_matricula.generarCursoAcademico());
-        
-        // Limpiar familiares y becas excepto el primero
-        $('.datos-familiar:not(:first)').remove();
-        $('.datos-becario:not(:first)').remove();
+        $('#observacionesBeca').val('');
     }
 
-    // ========== TABLA DE MATRÍCULAS ==========
-    static generarBotonesMatricula(id) {
+    static mostrarSeccion(numero) {
+        $(`#seccion${numero}`).show();
+        
+        if (numero === 1) $('#anterior').hide();
+        else $('#anterior').show();
+        
+        if (numero === 3) {
+            $('#siguiente').hide();
+            $('#btnGuardarMatricula').show();
+        } else {
+            $('#siguiente').show();
+            $('#btnGuardarMatricula').hide();
+        }
+    }
+
+    static ocultarSeccion(numero) {
+        $(`#seccion${numero}`).hide();
+    }
+
+    static configurarSubidaImagen() {
+        $('#añadirImagen').off('click').on('click', function() {
+            $('#campoArchivoFotoPerfil').click();
+        });
+
+        $('#campoArchivoFotoPerfil').off('change').on('change', function(e) {
+            const archivo = e.target.files[0];
+            if (!archivo) return;
+            
+            if (!archivo.type.startsWith('image/')) {
+                Alerta.notificarAdvertencia('Solo se permiten imágenes', 1500);
+                return;
+            }
+            
+            if (archivo.size > 2 * 1024 * 1024) {
+                Alerta.notificarAdvertencia('La imagen no debe superar los 2MB', 1500);
+                return;
+            }
+            
+            $('#formMatricula').data('imagen-perfil', archivo);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#contenedorFotoPerfil').html(`
+                    <div style="position: relative; display: inline-block;">
+                        <img src="${e.target.result}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid #ffc107;">
+                        <button type="button" id="btnQuitarImagen" style="position: absolute; top: -5px; right: -5px; width: 24px; height: 24px; border-radius: 50%; background: #dc3545; color: white; border: none; cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `);
+                
+                $('#btnQuitarImagen').on('click', function() {
+                    u_matricula.limpiarImagen();
+                });
+            };
+            reader.readAsDataURL(archivo);
+        });
+    }
+
+    static limpiarImagen() {
+        $('#contenedorFotoPerfil').html(`
+            <div style="width: 120px; height: 120px; background: #f8f9fa; border: 2px dashed #ccc; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-user" style="font-size: 48px; color: #999;"></i>
+            </div>
+        `);
+        $('#campoArchivoFotoPerfil').val('');
+        $('#formMatricula').removeData('imagen-perfil');
+    }
+
+    static obtenerImagenParaSubir() {
+        return $('#formMatricula').data('imagen-perfil');
+    }
+
+    static generarCamposContacto(indice) {
         return `
-            <div class="d-flex justify-content-center gap-1">
-                <button class="btn btn-sm btn-outline-info verDetalles" title="Ver detalles" data-id="${id}">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-warning editar" title="Editar" data-id="${id}">
-                    <i class="fas fa-edit"></i>
-                </button>
+            <div class="contacto-adicional mt-3 p-3 border rounded">
+                <div class="text-end mb-2">
+                    <button type="button" class="btn btn-sm btn-danger eliminar-contacto">
+                        <i class="fas fa-times"></i> Eliminar contacto
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label>Nombre</label>
+                        <input type="text" class="form-control" id="nombreEstudianteFamiliar${indice}" placeholder="Nombre">
+                        <label id="errorNombreEstudianteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-4">
+                        <label>Apellidos</label>
+                        <input type="text" class="form-control" id="apellidosEstudianteFamiliar${indice}" placeholder="Apellidos">
+                        <label id="errorApellidosEstudianteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-4">
+                        <label>DIP</label>
+                        <input type="text" class="form-control" id="dipEstudianteFamiliar${indice}" placeholder="000 000 000">
+                        <label id="errorDipEstudianteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-4">
+                        <label>Dirección</label>
+                        <input type="text" class="form-control" id="direccionEstudianteFamiliar${indice}" placeholder="Dirección">
+                        <label id="errorDireccionEstudianteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-4">
+                        <label>Correo</label>
+                        <input type="email" class="form-control" id="correoEstudianteFamiliar${indice}" placeholder="correo@email.com">
+                        <label id="errorCorreoEstudianteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-4">
+                        <label>Teléfono</label>
+                        <input type="tel" class="form-control" id="telefonoEstudianteFamiliar${indice}" placeholder="+240 222 123 456">
+                        <label id="errorTelefonoEstudianteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-4">
+                        <label>Parentesco</label>
+                        <input type="text" class="form-control" id="parentezcoEstudianteFamiliar${indice}" placeholder="Padre/Madre/etc">
+                        <label id="errorParentezcoEstudianteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-4">
+                        <label>Contacto incidentes?</label>
+                        <select class="form-select" id="contactoIncidenteEstudianteFamiliar${indice}">
+                            <option value="Ninguno">Seleccione...</option>
+                            <option value="Sí">Sí</option>
+                            <option value="No">No</option>
+                        </select>
+                        <label id="errorContactoIncidenteFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-4">
+                        <label>Responsable pago?</label>
+                        <select class="form-select" id="responsablePagoEstudianteFamiliar${indice}">
+                            <option value="Ninguno">Seleccione...</option>
+                            <option value="Sí">Sí</option>
+                            <option value="No">No</option>
+                        </select>
+                        <label id="errorResponsablePagoFamiliar${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                </div>
             </div>
         `;
     }
 
-    static actualizarTabla(dataTable, matriculas, estudiantes) {
-        if (!dataTable) return;
+    static generarCamposBeca(indice, becas) {
+        let opciones = '<option value="Ninguno">Seleccione...</option>';
+        if (becas && becas.length) {
+            becas.forEach(b => {
+                opciones += `<option value="${b.idBeca}">${b.institucionBeca} - ${b.tipoBeca}</option>`;
+            });
+        }
         
-        dataTable.clear();
-        
-        matriculas.forEach(m => {
-            const estudiante = estudiantes.find(e => e.idEstudiante == m.idEstudiante);
-            const nombreEstudiante = estudiante ? `${estudiante.nombre} ${estudiante.apellidos}` : 'Desconocido';
-            
-            const fila = [
-                nombreEstudiante,
-                m.cursoAcademico || 'Sin curso',
-                m.fechaMatricula || 'Sin fecha',
-                m.modalidadMatricula || 'Sin modalidad',
-                m.totalCreditos || '0',
-                m.estado || 'Sin estado',
-                this.generarBotonesMatricula(m.idMatricula)
-            ];
-            
-            dataTable.row.add(fila).draw();
-        });
-        
-        dataTable.draw();
+        return `
+            <div class="beca-adicional mt-3 p-3 border rounded">
+                <div class="text-end mb-2">
+                    <button type="button" class="btn btn-sm btn-danger eliminar-beca">
+                        <i class="fas fa-times"></i> Eliminar beca
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <label>Institución</label>
+                        <select class="form-select" id="comboNombreInstitucionBeca${indice}">
+                            ${opciones}
+                        </select>
+                        <label id="errorNombreInstitucionBeca${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-3">
+                        <label>Tipo</label>
+                        <select class="form-select" id="tiposBeca${indice}">
+                            <option value="Ninguno">Seleccione...</option>
+                            <option value="Externa">Externa</option>
+                            <option value="Interna">Interna</option>
+                        </select>
+                        <label id="errorTiposBeca${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-3">
+                        <label>Fecha inicio</label>
+                        <input type="date" class="form-control" id="fechaInicioBeca${indice}">
+                        <label id="errorFechaInicioBeca${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-3">
+                        <label>Fecha fin</label>
+                        <input type="date" class="form-control" id="fechaFinBeca${indice}">
+                        <label id="errorFechaFinBeca${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                    <div class="col-3">
+                        <label>Estado</label>
+                        <select class="form-select" id="estadosBeca${indice}">
+                            <option value="Ninguno">Seleccione...</option>
+                            <option value="Vigente">Vigente</option>
+                            <option value="No vigente">No vigente</option>
+                        </select>
+                        <label id="errorEstadosBeca${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <label>Observaciones</label>
+                        <textarea class="form-control" id="observacionesBeca${indice}" rows="2"></textarea>
+                        <label id="errorObservacionesBeca${indice}" class="errorMensaje d-none"></label>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
-    // ========== DETALLES DE MATRÍCULA ==========
-    static mostrarDetalles(matricula, estudiante) {
-        // Aquí se implementaría la lógica para mostrar detalles en el modal
-        // Por ahora solo mostramos una alerta
-        console.log('Mostrar detalles de matrícula:', matricula, estudiante);
+    static configurarValidacionesContacto(indice) {
+        $(`#nombreEstudianteFamiliar${indice}`).on('input', function() {
+            const valido = u_matricula.validarNombre($(this).val());
+            u_matricula.colorearCampo(valido, `#nombreEstudianteFamiliar${indice}`, `#errorNombreEstudianteFamiliar${indice}`, 'Mínimo 3 letras');
+        });
+        
+        $(`#apellidosEstudianteFamiliar${indice}`).on('input', function() {
+            const valido = u_matricula.validarNombre($(this).val());
+            u_matricula.colorearCampo(valido, `#apellidosEstudianteFamiliar${indice}`, `#errorApellidosEstudianteFamiliar${indice}`, 'Mínimo 3 letras');
+        });
+        
+        $(`#dipEstudianteFamiliar${indice}`).on('input', function() {
+            const valido = u_matricula.validarDip($(this).val());
+            u_matricula.colorearCampo(valido, `#dipEstudianteFamiliar${indice}`, `#errorDipEstudianteFamiliar${indice}`, 'Formato: 000 000 000');
+        });
+        
+        $(`#correoEstudianteFamiliar${indice}`).on('input', function() {
+            const valido = u_matricula.validarCorreo($(this).val());
+            u_matricula.colorearCampo(valido, `#correoEstudianteFamiliar${indice}`, `#errorCorreoEstudianteFamiliar${indice}`, 'Correo inválido');
+        });
+        
+        $(`#telefonoEstudianteFamiliar${indice}`).on('input', function() {
+            const valido = u_matricula.validarTelefono($(this).val());
+            u_matricula.colorearCampo(valido, `#telefonoEstudianteFamiliar${indice}`, `#errorTelefonoEstudianteFamiliar${indice}`, 'Teléfono inválido');
+        });
+    }
+
+    static configurarValidacionesBeca(indice) {
+        $(`#comboNombreInstitucionBeca${indice}`).on('change', function() {
+            const valido = u_matricula.validarSelect($(this).val());
+            u_matricula.colorearCampo(valido, `#comboNombreInstitucionBeca${indice}`, `#errorNombreInstitucionBeca${indice}`, 'Seleccione una institución');
+        });
+    }
+
+    static cargarPlanesEstudio(planes) {
+        this.setPlanesEstudio(planes);
+        
+        const $input = $('#comboPlanEstudioMatricula');
+        if ($input.length) {
+            $input.val('');
+            $input.removeData('id-plan');
+            $input.attr('placeholder', planes?.length ? 'Buscar o seleccionar plan de estudio' : 'No hay planes disponibles');
+        }
+    }
+
+    static cargarSemestres(semestres) {
+        const $select = $('#semestresMatricula');
+        $select.empty().append('<option value="Ninguno">Seleccione un semestre...</option>');
+        
+        if (semestres?.length) {
+            semestres.forEach(s => {
+                $select.append(`<option value="${s.idSemestre}">Semestre ${s.numeroSemestre}</option>`);
+            });
+        }
+    }
+
+    static cargarBecas(becas) {
+        const $select = $('#comboNombreInstitucionBeca');
+        $select.empty().append('<option value="Ninguno">Seleccione una institución...</option>');
+        
+        if (becas?.length) {
+            becas.forEach(b => {
+                $select.append(`<option value="${b.idBeca}">${b.institucionBeca} - ${b.tipoBeca}</option>`);
+            });
+        }
+    }
+
+    static configurarComboPlanes() {
+        const $input = $('#comboPlanEstudioMatricula');
+        const $opciones = $('#opcionesPlanEstudioMatricula');
+        
+        if (!$input.length) return;
+        
+        $input.off().on('focus', function() {
+            u_matricula.mostrarOpcionesPlanes($(this), $opciones);
+        }).on('input', function() {
+            const texto = $(this).val().toLowerCase();
+            u_matricula.filtrarOpcionesPlanes(texto, $opciones);
+        }).on('keydown', function(e) {
+            if (e.key === 'Escape') $opciones.hide();
+        });
+        
+        $(document).on('click', function(e) {
+            if (!$input.is(e.target) && !$opciones.is(e.target)) {
+                $opciones.hide();
+            }
+        });
+    }
+
+    static setPlanesEstudio(planes) {
+        this.planesEstudio = planes || [];
+    }
+
+    static mostrarOpcionesPlanes($input, $contenedor) {
+        if (!this.planesEstudio?.length) {
+            $contenedor.html('<div class="dropdown-item text-muted">No hay planes disponibles</div>');
+        } else {
+            let html = '';
+            this.planesEstudio.forEach(plan => {
+                const nombrePlan = plan.nombre || plan.nombrePlan || 'Plan sin nombre';
+                const idPlan = plan.idPlanEstudio;
+                html += `<div class="dropdown-item" data-value="${idPlan}" data-text="${nombrePlan}">${nombrePlan}</div>`;
+            });
+            $contenedor.html(html);
+        }
+        
+        const pos = $input.position();
+        const altura = $input.outerHeight();
+        
+        $contenedor.css({
+            'position': 'absolute',
+            'top': pos.top + altura + 'px',
+            'left': pos.left + 'px',
+            'width': $input.outerWidth() + 'px',
+            'max-height': '200px',
+            'overflow-y': 'auto',
+            'z-index': '9999',
+            'display': 'block',
+            'background': 'white',
+            'border': '1px solid #ccc',
+            'border-radius': '4px',
+            'box-shadow': '0 4px 8px rgba(0,0,0,0.1)'
+        });
+        
+        $contenedor.find('.dropdown-item').off().on('click', function() {
+            const valor = $(this).data('value');
+            const texto = $(this).data('text');
+            $input.val(texto);
+            $input.data('id-plan', valor);
+            $contenedor.hide();
+            $input.trigger('change');
+        });
+    }
+
+    static filtrarOpcionesPlanes(texto, $contenedor) {
+        if (!this.planesEstudio?.length) {
+            $contenedor.html('<div class="dropdown-item text-muted">No hay planes disponibles</div>');
+        } else {
+            const filtrados = this.planesEstudio.filter(plan => 
+                (plan.nombre || plan.nombrePlan || '').toLowerCase().includes(texto)
+            );
+            
+            if (filtrados.length === 0) {
+                $contenedor.html('<div class="dropdown-item text-muted">No hay resultados</div>');
+            } else {
+                let html = '';
+                filtrados.forEach(plan => {
+                    const nombrePlan = plan.nombre || plan.nombrePlan || 'Plan sin nombre';
+                    const idPlan = plan.idPlanEstudio;
+                    html += `<div class="dropdown-item" data-value="${idPlan}" data-text="${nombrePlan}">${nombrePlan}</div>`;
+                });
+                $contenedor.html(html);
+            }
+        }
+        
+        const $input = $('#comboPlanEstudioMatricula');
+        const pos = $input.position();
+        const altura = $input.outerHeight();
+        
+        $contenedor.css({
+            'top': pos.top + altura + 'px',
+            'left': pos.left + 'px',
+            'display': 'block'
+        });
+        
+        $contenedor.find('.dropdown-item').off().on('click', function() {
+            const valor = $(this).data('value');
+            const texto = $(this).data('text');
+            $input.val(texto);
+            $input.data('id-plan', valor);
+            $contenedor.hide();
+            $input.trigger('change');
+        });
+    }
+
+    static getIdPlanSeleccionado() {
+        return $('#comboPlanEstudioMatricula').data('id-plan') || 'Ninguno';
     }
 }

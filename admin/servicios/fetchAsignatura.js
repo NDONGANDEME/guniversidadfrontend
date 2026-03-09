@@ -43,6 +43,23 @@ export class fetchAsignatura
      * Enviar solicitud para cargar las asignaturas de la BDD
      * @returns array de asignaturas
      */
+    static async obtenerAsignaturasPorPlanEstudioDelBackend(idEstudiante) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPorPlanEstudio&actor=admin&valor=${idEstudiante}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar las asignaturas de la BDD
+     * @returns array de asignaturas
+     */
     static async obtenerAsignaturasPendientesYBloqueadasDelBackend(numeroSemestre) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPendientesYBloqueadas&actor=admin&valor=${numeroSemestre}`);

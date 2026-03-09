@@ -81,7 +81,7 @@ export class fetchUsuario
             }
             
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=insertarUsuario&actor=admin`, options);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

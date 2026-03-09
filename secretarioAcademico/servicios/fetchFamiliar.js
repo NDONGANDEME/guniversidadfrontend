@@ -59,40 +59,70 @@ export class fetchFamiliar
 
     /**
      * Envia solicitud para insertar un nuevo familiar en la BDD
-     * @param {m_familiar} objeto 
+     * @param {m_familiar|FormData} objeto 
      * @returns id del nuevo registro insertado
      */
     static async insertarFamiliarEnBDD(objeto) {
+        objeto.forEach((valor, clave) => {
+            console.log(clave + ': ' + valor);
+        });
+
         try {
-            let solicitud = await fetch(`${this.url}?ruta=familiar&accion=insertarFamiliar&actor=secretario`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
-            let respuesta = await solicitud.json();
+            // Detectar si es FormData
+            const esFormData = objeto instanceof FormData;
+            
+            const options = {
+                method: 'POST',
+                body: esFormData ? objeto : JSON.stringify(objeto)
+            };
+            
+            // Solo agregar headers si NO es FormData
+            if (!esFormData) {
+                options.headers = { 'Content-Type': 'application/json' };
+            }
+            
+            let solicitud = await fetch(`${this.url}?ruta=familiar&accion=insertarFamiliar&actor=secretario`, options);
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
-        } catch(error){
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFamiliar]. ${error}`, 3000);
+        } catch(error) {
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario. insertar]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
      * Enviar solicitud para actualizar un familiar guardado en la BDD
-     * @param {m_familiar} objeto 
+     * @param {m_familiar|FormData} objeto 
      * @returns id del registro actualizado
      */
     static async actualizarFamiliarEnBDD(objeto) {
+        objeto.forEach((valor, clave) => {
+            console.log(clave + ': ' + valor);
+        });
+        
         try {
-            let solicitud = await fetch(`${this.url}?ruta=familiar&accion=actualizarFamiliar&actor=secretario`, {
-                method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
-            let respuesta = await solicitud.json();
+            // Detectar si es FormData
+            const esFormData = objeto instanceof FormData;
+            
+            const options = {
+                method: 'POST',
+                body: esFormData ? objeto : JSON.stringify(objeto)
+            };
+            
+            // Solo agregar headers si NO es FormData
+            if (!esFormData) {
+                options.headers = { 'Content-Type': 'application/json' };
+            }
+            
+            let solicitud = await fetch(`${this.url}?ruta=familiar&accion=actualizarFamiliar&actor=secretario`, options);
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
-        } catch(error){
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFamiliar]. ${error}`, 3000);
+        } catch(error) {
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario. actualizacion]. ${error}`, 3000);
             return null;
         }
     }
