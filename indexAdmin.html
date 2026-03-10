@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Panel del Secretario Académico - Consultas</title>
-    <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg">
-    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="../css/profesor.css">
-    <link rel="stylesheet" href="../../../public/template/css/globalModulos.css">
+    <title> Panel del Administrador </title>
+    <link rel="icon" href="../public/img/escudo_AAUCA.jpg">
+    <link rel="stylesheet" href="../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
+    <link rel="stylesheet" href="../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../public/template/css/globalModulos.css">
+    <link rel="stylesheet" href="template/css/admin.css">
 </head>
 <body id="page-top">
     <!-- Page Wrapper -->
@@ -21,13 +20,13 @@
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <div class="sidebar-brand-text" id="profesorPanel"> Profesor </div>
+                <div class="sidebar-brand-text" id="administrador"> Administrador </div>
             </div>
 
             <hr class="sidebar-divider">
 
-            <li class="nav-item">
-                <a class="nav-link tableroP">
+            <li class="nav-item active">
+                <a class="nav-link tableroA">
                     <i class="fas fa-chalkboard"></i> <span> Tablero </span>
                 </a>
             </li>
@@ -35,26 +34,32 @@
             <hr class="sidebar-divider">
 
             <li class="nav-item">
-                <a class="nav-link horario">
-                    <i class="fas fa-calendar-alt"></i> <span> Horario </span>
+                <a class="nav-link usuario">
+                    <i class="fas fa-users"></i> <span> Usuarios </span>
                 </a>
             </li>
-
             <li class="nav-item">
-                <a class="nav-link evaluacion">
-                    <i class="fas fa-tasks"></i> <span> Evaluaciones </span>
+                <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" 
+                        aria-controls="collapseTwo">
+                    <i class="fas fa-list-alt"></i> <span>Currículo</span>
                 </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item facultad">Facultad</a>
+                        <a class="collapse-item departamento">Departamento</a>
+                        <a class="collapse-item curso">Curso</a>
+                        <a class="collapse-item asignatura">Asignatura</a>
+                    </div>
+                </div>
             </li>
-
             <li class="nav-item">
                 <a class="nav-link noticia">
                     <i class="fas fa-newspaper"></i> <span> Noticias </span>
                 </a>
             </li>
-
-            <li class="nav-item active">
-                <a class="nav-link consulta">
-                    <i class="fas fa-comments"></i> <span> Consultas </span>
+            <li class="nav-item">
+                <a class="nav-link parametro">
+                    <i class="fas fa-cogs"></i> <span> Parámetros del sistema </span>
                 </a>
             </li>
 
@@ -86,7 +91,7 @@
                     <!-- Page Heading -->
                     <div class="mb-4">
                         <h1 class="h3 mb-0 text-gray-800">
-                            <span class="text-warning ms-2"></span> Consultas
+                            <span class="text-warning ms-2"></span> Tablero
                         </h1>
                     </div>
 
@@ -107,12 +112,9 @@
     <!-- Logout Modal-->
     <div class="importandoModalCierreSesion"> </div>
     
-    <script src="../../../public/nomodules/jquery/dist/jquery.min.js"></script>
-    <script src="../../../public/nomodules/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../public/nomodules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
-    <script src="../../../public/nomodules/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script type="module" src="../../controlador/c_consulta.js"></script>
+    <script src="../public/nomodules/jquery/dist/jquery.min.js"></script>
+    <script src="../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../public/nomodules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script type="module" src="controlador/index.js"></script>
 </body>
 </html>

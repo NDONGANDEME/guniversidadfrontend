@@ -1,22 +1,128 @@
-export class u_noticias 
-{
+// Constante para la URL base de las imágenes
+const BASE_IMG_URL = '/guniversidadfrontend/public/img/';
+
+export class u_noticias {
+
     // ============================================
-    // MANEJO DE FOTOS
+    // MANEJO DE FOTOS (MEJORADO como en u_noticia_admin)
     // ============================================
     
-    // Obtiene la foto principal de una noticia. Si no tiene fotos, usa una imagen por defecto
-    static obtenerFotoPrincipal(noticia) {
-        if (noticia.fotos && noticia.fotos.length > 0) {
-            return noticia.fotos[0].url;
+    /**
+     * Obtiene la URL completa de una foto, manejando diferentes formatos.
+     * @param {object|string} foto - El objeto foto o el nombre del archivo.
+     * @returns {string} La URL completa de la imagen.
+     */
+    static obtenerUrlFoto(foto) {
+        if (!foto) return null;
+
+        // Si ya es un string, asumimos que es el nombre o la URL relativa
+        if (typeof foto === 'string') {
+            // Si ya contiene 'http' o comienza con '/', es una URL completa o absoluta
+            if (foto.startsWith('http') || foto.startsWith('/')) {
+                return foto;
+            }
+            // Si no, es solo el nombre, construimos la URL
+            return BASE_IMG_URL + foto;
         }
-        return "/guniversidadfrontend/public/img/IMG-20251114-WA0022-copia.jpg";
+
+        // Si es un objeto, intentamos obtener la URL de diferentes maneras
+        if (typeof foto === 'object' && foto !== null) {
+            // Prioridad 1: Si ya tiene una url_completa calculada (del admin)
+            if (foto.url_completa) {
+                return foto.url_completa;
+            }
+            // Prioridad 2: Si tiene una propiedad 'url'
+            if (foto.url) {
+                return foto.url.startsWith('http') || foto.url.startsWith('/') ? foto.url : BASE_IMG_URL + foto.url;
+            }
+            // Prioridad 3: Si tiene una propiedad 'nombre'
+            if (foto.nombre) {
+                return BASE_IMG_URL + foto.nombre;
+            }
+        }
+
+        // Si no se pudo determinar, devolvemos null
+        return null;
+    }
+
+    /**
+     * Obtiene la URL de la foto principal de una noticia.
+     * Si no hay fotos, devuelve la imagen por defecto.
+     * @param {object} noticia - El objeto noticia.
+     * @returns {string} URL de la foto principal o imagen por defecto.
+     */
+    static obtenerFotoPrincipal(noticia) {
+        // Imagen por defecto (ajusta la ruta a tu imagen por defecto real)
+        const defaultImage = "/guniversidadfrontend/public/img/escudo_AAUCA.jpg"; 
+        
+        if (noticia.fotos && noticia.fotos.length > 0) {
+            const primeraFoto = noticia.fotos[0];
+            const urlFoto = this.obtenerUrlFoto(primeraFoto);
+            return urlFoto || defaultImage;
+        }
+        
+        return defaultImage;
+    }
+
+    // ============================================
+    // CONVERSIÓN DE DATOS (MEJORADO como en u_noticia_admin)
+    // ============================================
+    
+    /**
+     * Convierte los datos del backend en objetos noticia estandarizados,
+     * procesando las fotos para tener URLs completas.
+     * @param {Array} datosBackend - Array de noticias del backend.
+     * @returns {Promise<Array>} Array de noticias procesadas.
+     */
+    static async convertirANoticias(datosBackend) {
+        if (!datosBackend || !Array.isArray(datosBackend)) return [];
+        
+        return datosBackend.map(item => {
+            let fotosProcesadas = [];
+
+            if (item.fotos && Array.isArray(item.fotos)) {
+                fotosProcesadas = item.fotos.map(foto => {
+                    // Procesar cada foto para obtener su URL completa
+                    const urlCompleta = this.obtenerUrlFoto(foto);
+                    
+                    // Devolver un objeto estandarizado para la foto
+                    if (typeof foto === 'object' && foto !== null) {
+                        return {
+                            ...foto,
+                            url: urlCompleta, // Aseguramos que tenga una propiedad 'url' con la ruta completa
+                            url_completa: urlCompleta
+                        };
+                    } else {
+                        // Si era un string, devolvemos un objeto
+                        return {
+                            nombre: foto,
+                            url: urlCompleta,
+                            url_completa: urlCompleta
+                        };
+                    }
+                });
+            }
+            
+            return {
+                idNoticia: item.idNoticia || item.id,
+                asunto: item.asunto,
+                descripcion: item.descripcion,
+                tipo: item.tipo || 'Comunicado',
+                fechaPublicacion: item.fechaPublicacion,
+                fotos: fotosProcesadas
+            };
+        });
     }
 
     // ============================================
     // GENERACIÓN DE HTML
     // ============================================
     
-    // Crea el HTML de una tarjeta de noticia
+    /**
+     * Crea el HTML de una tarjeta de noticia.
+     * @param {object} noticia - Objeto noticia.
+     * @returns {string} HTML de la tarjeta.
+     */
     static crearTarjetaHTML(noticia) {
         const foto = this.obtenerFotoPrincipal(noticia);
         const resumen = noticia.descripcion.length > 100 
@@ -29,7 +135,8 @@ export class u_noticias
                     <img class="card-img-top imgNoticias" 
                         src="${foto}"
                         alt="${noticia.asunto}" 
-                        style="height: 200px; object-fit: cover;">
+                        style="height: 200px; object-fit: cover;"
+                        onerror="this.onerror=null; this.src='/guniversidadfrontend/public/img/escudo_AAUCA.jpg';">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">${noticia.asunto}</h5>
                         <p class="card-text flex-grow-1">${resumen}</p>
@@ -47,7 +154,12 @@ export class u_noticias
         `;
     }
 
-    // Crea el HTML de un item del carousel
+    /**
+     * Crea el HTML de un item del carousel.
+     * @param {object} noticia - Objeto noticia.
+     * @param {number} index - Índice para la clase 'active'.
+     * @returns {string} HTML del item del carousel.
+     */
     static crearItemCarouselHTML(noticia, index) {
         const foto = this.obtenerFotoPrincipal(noticia);
         const activo = index === 0 ? 'active' : '';
@@ -59,7 +171,8 @@ export class u_noticias
             <div class="carousel-item ${activo}">
                 <img src="${foto}" 
                     class="d-block img"
-                    alt="${noticia.asunto}">
+                    alt="${noticia.asunto}"
+                    onerror="this.onerror=null; this.src='/guniversidadfrontend/public/img/escudo_AAUCA.jpg';">
                 <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-4 rounded">
                     <h3>${noticia.asunto}</h3>
                     <p>${resumen}</p>
@@ -72,42 +185,54 @@ export class u_noticias
         `;
     }
 
-    // Crea el HTML de la vista completa de una noticia (para el modal)
+    /**
+     * Crea el HTML de la vista completa de una noticia (para modal o página completa).
+     * @param {object} noticia - Objeto noticia.
+     * @returns {string} HTML de la noticia completa.
+     */
     static crearNoticiaCompletaHTML(noticia) {
-        const foto = this.obtenerFotoPrincipal(noticia);
+        const fotoPrincipal = this.obtenerFotoPrincipal(noticia);
         
         // Si hay más fotos, crear galería
         let galeria = '';
         if (noticia.fotos && noticia.fotos.length > 1) {
             let fotosHTML = '';
+            // Empezamos desde 1 para omitir la foto principal (índice 0) si queremos
             for (let i = 1; i < noticia.fotos.length; i++) {
-                fotosHTML += `
-                    <div class="col-md-3 col-sm-4 col-6">
-                        <img src="${noticia.fotos[i].url}"
-                            class="img-fluid rounded" 
-                            alt="Foto noticia" 
-                            style="height: 120px; width: 100%; object-fit: cover;">
+                const fotoUrl = this.obtenerUrlFoto(noticia.fotos[i]);
+                if (fotoUrl) {
+                    fotosHTML += `
+                        <div class="col-md-3 col-sm-4 col-6 mb-3">
+                            <img src="${fotoUrl}"
+                                class="img-fluid rounded" 
+                                alt="Foto noticia" 
+                                style="height: 120px; width: 100%; object-fit: cover;"
+                                onerror="this.onerror=null; this.src='/guniversidadfrontend/public/img/escudo_AAUCA.jpg';">
+                        </div>
+                    `;
+                }
+            }
+            
+            if (fotosHTML) {
+                galeria = `
+                    <div class="galeria-fotos mt-5">
+                        <h4 class="mb-3">Galería de imágenes</h4>
+                        <div class="row g-3">
+                            ${fotosHTML}
+                        </div>
                     </div>
                 `;
             }
-            
-            galeria = `
-                <div class="galeria-fotos mt-5">
-                    <h4 class="mb-3">Galería de imágenes</h4>
-                    <div class="row g-3">
-                        ${fotosHTML}
-                    </div>
-                </div>
-            `;
         }
 
         return `
             <article class="noticia-completa">
                 <div class="text-center mb-4">
-                    <img src="${foto}" 
+                    <img src="${fotoPrincipal}" 
                         class="img-fluid rounded" 
                         alt="${noticia.asunto}" 
-                        style="max-height: 500px; width: 100%; object-fit: cover;">
+                        style="max-height: 500px; width: 100%; object-fit: cover;"
+                        onerror="this.onerror=null; this.src='/guniversidadfrontend/public/img/escudo_AAUCA.jpg';">
                 </div>
                 
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -115,7 +240,7 @@ export class u_noticias
                     <span class="badge bg-warning text-dark fs-6">${noticia.tipo}</span>
                 </div>
                 
-                <div class="contenido-noticia fs-5 lh-lg mb-5">
+                <div class="contenido-noticia fs-5 lh-lg mb-5" style="white-space: pre-wrap;">
                     ${noticia.descripcion}
                 </div>
                 
@@ -195,27 +320,12 @@ export class u_noticias
     // UTILIDADES
     // ============================================
     
-    // Convierte datos del backend a objetos noticia
-    static async convertirANoticias(datosBackend) {
-        if (!datosBackend || !Array.isArray(datosBackend)) return [];
-        
-        return datosBackend.map(item => ({
-            idNoticia: item.idNoticia || item.id,
-            asunto: item.asunto,
-            descripcion: item.descripcion,
-            tipo: item.tipo || 'Comunicado',
-            fechaPublicacion: item.fechaPublicacion,
-            fotos: item.fotos || []
-        }));
-    }
-
     // Limpia el contenido del modal
     static limpiarModal() {
-        const titulo = document.getElementById('tituloNoticiaDetalle');
-        const contenido = document.getElementById('contenidoNoticiadetalle');
-        
-        if (titulo) titulo.innerHTML = '';
-        if (contenido) contenido.innerHTML = '';
+        const modalBody = document.querySelector('#modalNoticias .modal-body');
+        if (modalBody) {
+            modalBody.innerHTML = ''; // O podrías poner un placeholder
+        }
     }
 
     // Crea los botones de paginación

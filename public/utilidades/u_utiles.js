@@ -45,12 +45,12 @@ export class u_utiles
             u_utiles.botonesNavegacion();
             u_utiles.manejoDatosSesion();
             
-            if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador(); 
+            //if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador(); 
             if(document.querySelector('#secretarioAcademico')) u_utiles.botonesNavegacionSecretario();
             if(document.querySelector('#comprobante')) u_utiles.botonesNavegacionComprobante();
             if(document.querySelector('#profesorPanel')) u_utiles.botonesNavegacionProfesor();
         } catch(error) {
-            Alerta.error('Error', `Fallo al hacer fetch para cargar los archivos de importacion, estoy en u_utiles: ${error}`);
+            //Alerta.error('Error', `Fallo al hacer fetch para cargar los archivos de importacion, estoy en u_utiles: ${error}`);
         }
     }
 
@@ -199,25 +199,25 @@ export class u_utiles
     static botonesNavegacionAdministrador(){
         let url = '/guniversidadfrontend/admin/template/html';
 
-        u_utiles.redirigirA(document.querySelector('.tableroA'), '/guniversidadfrontend/admin/index.html');
+        //u_utiles.redirigirA(document.querySelector('.tableroA'), '/guniversidadfrontend/admin/index.html');
 
-        u_utiles.redirigirA(document.querySelector('.usuario'), `${url}/usuario.html`);
+        //u_utiles.redirigirA(document.querySelector('.usuario'), `${url}/usuario.html`);
 
-        u_utiles.redirigirA(document.querySelector('.facultad'), `${url}/facultad.html`);
+        //u_utiles.redirigirA(document.querySelector('.facultad'), `${url}/facultad.html`);
 
-        u_utiles.redirigirA(document.querySelector('.departamento'), `${url}/departamento.html`);
+        //u_utiles.redirigirA(document.querySelector('.departamento'), `${url}/departamento.html`);
 
-        u_utiles.redirigirA(document.querySelector('.curso'), `${url}/curso.html`);
+        //u_utiles.redirigirA(document.querySelector('.curso'), `${url}/curso.html`);
 
-        u_utiles.redirigirA(document.querySelector('.asignatura'), `${url}/asignatura.html`);
+        //u_utiles.redirigirA(document.querySelector('.asignatura'), `${url}/asignatura.html`);
 
-        u_utiles.redirigirA(document.querySelector('.noticia'), `${url}/noticia.html`);
+        //u_utiles.redirigirA(document.querySelector('.noticia'), `${url}/noticia.html`);
 
-        u_utiles.redirigirA(document.querySelector('.parametro'), `${url}/parametros.html`);
+        //u_utiles.redirigirA(document.querySelector('.parametro'), `${url}/parametros.html`);
 
-        if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
+        //if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
-        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
+        //$(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
 
     /**********************************************************************************************************/

@@ -48,7 +48,7 @@ export class fetchUsuario
     static async obtenerUsuariosEnBDD() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=obtenerUsuarios&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];

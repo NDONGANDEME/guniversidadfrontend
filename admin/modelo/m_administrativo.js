@@ -2,8 +2,8 @@ import { fetchAdministrativo } from "../servicios/fetchAdministrativo.js";
 
 export class m_administrativo
 {
-    constructor (idAdministrativos, idUsuario, nombreAdministrativo, apellidosAdministrativo, correo, telefono, idFacultad) {
-        this.idAdministrativos = idAdministrativos;
+    constructor (idAdministrativo, idUsuario, nombreAdministrativo, apellidosAdministrativo, correo, telefono, idFacultad) {
+        this.idAdministrativo = idAdministrativo;
         this.idUsuario = idUsuario;
         this.nombreAdministrativo = nombreAdministrativo;
         this.apellidosAdministrativo = apellidosAdministrativo;

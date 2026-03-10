@@ -1,4 +1,3 @@
-// c_noticia.js - Controlador para la parte pública de noticias
 import { m_noticia } from "../modelo/m_noticia.js";
 import { u_noticias } from "../utilidades/u_noticias.js";
 import { u_utiles } from "../utilidades/u_utiles.js";
@@ -24,6 +23,7 @@ export class c_noticia {
             await this.cargarCarousel();
             this.inicializarEventosComunes();
         } catch (error) {
+            console.error('Error al inicializar inicio:', error);
             Alerta.notificarError(`Error al inicializar inicio: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar las noticias');
         }
@@ -52,6 +52,7 @@ export class c_noticia {
             this.inicializarEventosComunes();
 
         } catch (error) {
+            console.error('Error al inicializar noticias:', error);
             Alerta.notificarError(`Error al inicializar noticias: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar las noticias');
         }
@@ -82,19 +83,21 @@ export class c_noticia {
         if (!contenedorCarousel) return;
 
         try {
-            const datosCarousel = await m_noticia.obtenerNoticiasRecientes(); console.log(datosCarousel)
+            const datosCarousel = await m_noticia.obtenerNoticiasRecientes(); 
             
             if (!datosCarousel || datosCarousel.length === 0) {
                 contenedorCarousel.innerHTML = '<div class="text-center text-white py-5"><h3>No hay noticias</h3></div>';
                 return;
             }
             
+            // Usar el método mejorado de u_noticias para convertir
             this.noticiasCarousel = await u_noticias.convertirANoticias(datosCarousel);
-
+            
             // Renderizar el carousel
             this.renderizarCarousel();
 
         } catch (error) {
+            console.error('Error cargando carousel:', error);
             Alerta.notificarError(`Error cargando carousel: ${error}`, 1500);
             contenedorCarousel.innerHTML = '<div class="text-center text-white py-5"><h3>Error al cargar noticias</h3></div>';
         }
@@ -111,11 +114,11 @@ export class c_noticia {
                 return;
             }
 
-            // Convertir a objetos noticia
+            // Usar el método mejorado de u_noticias para convertir
             const todasNoticias = await u_noticias.convertirANoticias(datosBackend);
 
-            // Calcular total de páginas (simulado - ajusta según tu backend)
-            this.totalPaginas = await m_noticia.obtenerTotalPaginas();
+            // TODO: Ajusta esto según tu backend real
+            this.totalPaginas = await m_noticia.obtenerTotalPaginas() || Math.ceil(todasNoticias.length / 9);
 
             // Filtrar noticias de la página actual
             const noticiasPorPagina = 9; // 3 filas de 3 columnas
@@ -127,6 +130,7 @@ export class c_noticia {
             this.renderizarPaginacion();
 
         } catch (error) {
+            console.error('Error cargando lista de noticias:', error);
             Alerta.notificarError(`Error cargando lista de noticias: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar las noticias');
         }
@@ -138,7 +142,6 @@ export class c_noticia {
             const datosNoticia = await m_noticia.obtenerNoticiaPorId(id);
             
             if (!datosNoticia) {
-                u_noticias.mostrarMensajeError('Noticia no encontrada');
                 return null;
             }
 
@@ -146,6 +149,7 @@ export class c_noticia {
             return noticiasArray[0];
 
         } catch (error) {
+            console.error('Error cargando noticia para modal:', error);
             Alerta.notificarError(`Error cargando noticia: ${error}`, 1500);
             return null;
         }
@@ -183,6 +187,7 @@ export class c_noticia {
             contenedorDetalles.innerHTML = u_noticias.crearNoticiaCompletaHTML(noticia);
 
         } catch (error) {
+            console.error('Error mostrando noticia en página:', error);
             Alerta.notificarError(`Error mostrando noticia: ${error}`, 1500);
             contenedorDetalles.innerHTML = '<div class="text-center py-5"><h3 class="text-danger">Error al cargar la noticia</h3></div>';
         }
@@ -218,9 +223,9 @@ export class c_noticia {
         const fila = document.createElement('div');
         fila.className = 'row';
 
-        for (const noticia of this.noticiasLista) {
+        this.noticiasLista.forEach(noticia => {
             fila.innerHTML += u_noticias.crearTarjetaHTML(noticia);
-        }
+        });
 
         contenedor.appendChild(fila);
     }
@@ -261,7 +266,7 @@ export class c_noticia {
         document.addEventListener('click', async (e) => {
             if (e.target.classList.contains('btnLeerMasNoticias')) {
                 e.preventDefault();
-                e.stopPropagation(); // Evitar propagación
+                e.stopPropagation();
                 
                 const id = e.target.getAttribute('data-id');
                 
@@ -274,7 +279,11 @@ export class c_noticia {
         // Evento para cerrar modal y limpiar contenido
         const modal = document.getElementById('modalNoticias');
         if (modal) {
-            modal.addEventListener('hidden.bs.modal', () => u_noticias.limpiarModal());
+            modal.addEventListener('hidden.bs.modal', () => {
+                u_noticias.limpiarModal();
+                // También podríamos limpiar la URL si es necesario
+                // u_noticias.actualizarURLPagina(this.paginaActual);
+            });
         }
 
         // Evento para botón de cerrar manual
@@ -347,9 +356,11 @@ export class c_noticia {
             const noticia = await this.cargarNoticiaParaModal(id);
             
             if (noticia) {
-                // Mostrar los datos en el modal
-                document.getElementById('tituloNoticiaDetalle').innerHTML = noticia.asunto;
-                document.getElementById('contenidoNoticiadetalle').innerHTML = noticia.descripcion;
+                // Mostrar los datos en el modal usando el HTML generado
+                const modalBody = document.querySelector('#modalNoticias .modal-body');
+                if (modalBody) {
+                    modalBody.innerHTML = u_noticias.crearNoticiaCompletaHTML(noticia);
+                }
                 
                 // Abrir el modal
                 if (this.modalInstance) {
@@ -364,6 +375,7 @@ export class c_noticia {
                 u_noticias.mostrarMensajeError('No se pudo cargar la noticia');
             }
         } catch (error) {
+            console.error('Error abriendo modal:', error);
             Alerta.notificarError(`Error abriendo modal: ${error}`, 1500);
             u_noticias.mostrarMensajeError('Error al cargar la noticia');
         }

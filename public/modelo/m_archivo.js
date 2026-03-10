@@ -2,8 +2,7 @@ import { fetchArchivo } from "../servicios/fetchArchivo.js";
 
 export class m_archivo
 {
-    constructor(idArchivo, url, tipoArchivo, idReferencia, tablaReferencia)
-    {
+    constructor(idArchivo, url, tipoArchivo, idReferencia, tablaReferencia) {
         this.idArchivo = idArchivo;
         this.url = url;
         this.tipoArchivo = tipoArchivo;
