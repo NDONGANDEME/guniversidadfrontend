@@ -36,7 +36,7 @@ export class c_index {
 
         const rutas = {
             'gestionPlanesEstudios': `${url}/planEstudio.html`,
-            'gestionEstudiantes': `${url}/estudinte.html`,
+            'gestionEstudiantes': `${url}/estudiante.html`,
             'gestionProfesores': `${url}/profesor.html`,
             'gestionHorarios': `${url}/horario.html`
         };

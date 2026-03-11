@@ -50,14 +50,6 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /***************************************************************************/
-/* MANEJO DE TABLAS */
-/***************************************************************************/
-.tbodyTabla tr {
-  height: 20px;
-}
-
-
-/***************************************************************************/
 /* PARTE DE PERFIL DE USUARIO */
 /***************************************************************************/
 .file-input-wrapper2 {
@@ -69,8 +61,6 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.3s ease;
   background-color: var(--color-blanco);
 }
-
-
 
 #campoArchivoFotoPerfil {
   display: none;
@@ -141,137 +131,6 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: none;
 }
 
-/***************************************************************************/
-/* SIDEBAR - MEJORADA LEGIBILIDAD */
-/***************************************************************************/
-.sidebar {
-    background-color: #1a1a1a !important; /* Gris oscuro en lugar de negro puro */
-    color: var(--color-blanco) !important;
-}
-
-.sidebar-brand {
-    background-color: var(--color-primario) !important;
-    color: var(--color-secundario) !important;
-    padding: 1.2rem 0;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-}
-
-.sidebar-brand-icon i {
-    color: var(--color-secundario) !important;
-    font-size: 1.8rem;
-    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
-}
-
-.sidebar-brand-text {
-    color: var(--color-secundario) !important;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.5px;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
-}
-
-/* Items del sidebar - MEJOR CONTRASTE */
-.nav-link {
-    color: #e0e0e0 !important; /* Gris claro para mejor legibilidad */
-    padding: 0.5rem 0 !important;
-    border-radius: 10px !important;
-    margin-left: 2px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.nav-link i {
-    color: var(--color-primario) !important;
-    width: 1.5rem;
-    text-align: center;
-    margin-right: 10px;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-}
-
-.nav-link span {
-    color: #e0e0e0 !important;
-    transition: all 0.3s ease;
-}
-
-/* Estados hover y activo - MÁS VISIBLES */
-.nav-link:hover {
-    background-color: rgba(255, 214, 0, 0.15) !important;
-    color: var(--color-primario);
-}
-
-.nav-link:hover span {
-    color: var(--color-primario) !important;
-}
-
-.nav-link:hover i {
-    color: var(--color-blanco) !important;
-    transform: scale(1.1);
-}
-
-.nav-item.active .nav-link {
-    background-color: rgba(255, 214, 0, 0.2) !important;
-    border-left: 4px solid var(--color-primario) !important;
-    color: var(--color-blanco) !important;
-}
-
-.nav-item.active .nav-link i {
-    color: var(--color-blanco) !important;
-}
-
-.nav-item.active .nav-link span {
-    color: var(--color-blanco) !important;
-    font-weight: 600;
-}
-
-/* Submenús (para el elemento collapse) */
-.collapse {
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    margin: 5px 10px;
-    border-radius: 5px;
-}
-
-.collapse-inner {
-    padding: 0.5rem 0 !important;
-}
-
-.collapse-item {
-    padding: 0.6rem 1rem !important;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    border-left: 2px solid transparent;
-}
-
-.collapse-item:hover {
-    background-color: var(--color-primario) !important;
-    color: var(--color-secundario) !important;
-    border-left: 3px solid var(--color-secundario);
-    font-weight: 500;
-}
-
-/* Divider mejorado */
-.sidebar-divider {
-    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-    margin: 0.3rem 10px !important;
-}
-
-/* Botón toggle del sidebar */
-#sidebarToggle {
-    background-color: var(--color-primario) !important;
-    color: var(--color-secundario) !important;
-    width: 40px;
-    height: 40px;
-    transition: all 0.3s ease;
-    border: 2px solid var(--color-primario);
-}
-
-#sidebarToggle:hover {
-    background-color: var(--color-secundario) !important;
-    color: var(--color-primario) !important;
-    border-color: var(--color-primario);
-    transform: rotate(180deg);
-}
-
 
 /***************************************************************************/
 /* TOPBAR - BARRA SUPERIOR */
@@ -324,6 +183,7 @@ h1, h2, h3, h4, h5, h6 {
 .dropdown-item:hover {
     background-color: var(--color-primario) !important;
     color: var(--color-secundario) !important;
+    cursor: pointer;
 }
 
 
@@ -397,6 +257,10 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: 2px solid var(--color-primario-oscuro);
 }
 
+.tbody tr {
+    height: 20px;
+}
+
 .table-striped tbody tr:nth-of-type(odd) {
     background-color: rgba(255, 214, 0, 0.05);
 }
@@ -409,6 +273,9 @@ h1, h2, h3, h4, h5, h6 {
 .form-check-input:checked{
     background-color: #ffd600;
     border-color: #f1c40f;
+}
+.form-check-input:hover{
+    cursor: pointer;
 }
 .form-check-input:focus{
     box-shadow: 0 0 0 0.25rem rgba(241, 196, 15, 0.5);
@@ -537,20 +404,6 @@ h1, h2, h3, h4, h5, h6 {
     pointer-events: none;
     background-color: #fff;
     border-color: #dee2e6;
-}
-
-
-/***************************************************************************/
-/* RESPONSIVE */
-/***************************************************************************/
-@media (max-width: 768px) {
-    .sidebar-brand-text {
-        font-size: 0.8rem;
-    }
-    
-    .sidebar-brand-icon i {
-        font-size: 1.3rem;
-    }
 }
 
 

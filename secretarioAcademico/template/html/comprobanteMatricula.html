@@ -23,10 +23,10 @@
         <div class="importandoTopBar w-100 d-flex justify-content-end"> </div>
     </nav>
 
-    <div class="container">
+    <div class="container" style="margin-top: 6rem !important; margin-bottom: 3rem !important;">
         <div class="mb-4">
             <h1 class="h3 mb-0 text-gray-800">
-                <span class="text-warning ms-2"></span> Comprobante de matricula
+                <span class="text-warning ms-2"></span> Comprobante de matrícula
             </h1>
         </div>
 
@@ -41,12 +41,12 @@
                             <input type="text" class="form-control" id="nombreCompletoComprobante" placeholder="Ej: Jose Lola" required>
                             <label id="errorNombreCompletoComprobante" class="errorMensaje"></label>
                         </div>
-                        <div class="mt-1">
+                        <div class="mt-2">
                             <label for="dipOPasaporteComprobante" class="form-label">DIP o PASAPORTE</label>
                             <input type="text" class="form-control" id="dipOPasaporteComprobante" placeholder="Ej: 000 000 000" required>
                             <label id="errorDipOPasaporteComprobante" class="errorMensaje"></label>
                         </div>
-                        <div class="mt-1">
+                        <div class="mt-2">
                             <label for="añoAcademicoComprobante" class="form-label">Año académico</label>
                             <select class="form-select" id="añoAcademicoComprobante" required>
                                 <option value="Ninguno">Seleccione</option>
@@ -54,7 +54,7 @@
                             </select>
                             <label id="errorAñoAcademicoComprobante" class="errorMensaje"></label>
                         </div>
-                        <div class="mt-1">
+                        <div class="mt-2">
                             <label for="cursoComprobante" class="form-label">Curso</label>
                             <select class="form-select" id="cursoComprobante" required>
                                 <option value="Ninguno">Seleccione</option>
@@ -62,7 +62,7 @@
                             </select>
                             <label id="errorCursoComprobante" class="errorMensaje"></label>
                         </div>
-                        <div class="mt-1">
+                        <div class="mt-2">
                             <label for="carreraComprobante" class="form-label">Carrera</label>
                             <select class="form-select" id="carreraComprobante" required>
                                 <option value="Ninguno">Seleccione</option>
@@ -80,7 +80,7 @@
             </div>
 
             <!-- PARTE DEL PAPEL -->
-            <div class="col-9 mb-3">
+            <div class="col-9">
                 <!--COMPROBANTE-->
                 <div class="p-3 mb-3 border border-2 rounded" style="background: #ffffff;" id="documentoAImprimir">
                     <!-- COMPROBANTE DE MATRÍCULA - ESTILO WORD -->
@@ -134,7 +134,7 @@
                 </div>
 
                 <div class="mt-2 text-end">
-                    <button class="btn btn-primary" id="btnImprimir" onclick="imptimr()">
+                    <button class="btn btn-primary" id="btnImprimir">
                         <span class="icon text-white-50"> <i class="fas fa-print"></i> </span> <span class="text"> Imprimir </span>
                     </button>
                 </div>
@@ -152,15 +152,6 @@
     <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script type="module" src="../../controlador/comprobanteMatricula.js"></script>
     <script>
-    function imptimr() {
-        document.getElementById('btnImprimir').addEventListener('click', function() {
-            var contenido = document.getElementById('documentoAImprimir').innerHTML;
-            var ventanaImprimir = window.open('', '_blank', 'width=800, height=600');
-            ventanaImprimir.document.write('<html><head><title>Imprimir</title></head><body>'+contenido+'</body></html>');
-            ventanaImprimir.print();
-            ventanaImprimir.close();
-        })
-    }
 </script>
 </body>
 </html>

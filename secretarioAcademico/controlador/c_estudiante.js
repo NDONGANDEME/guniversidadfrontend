@@ -77,7 +77,7 @@ export class c_estudiante {
             
         } catch (error) {
             console.error('Error al inicializar:', error);
-            Alerta.error('Error', 'No se pudo inicializar el módulo');
+            //Alerta.error('Error', 'No se pudo inicializar el módulo');
         }
     }
 

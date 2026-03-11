@@ -16,7 +16,7 @@ export class c_comprobanteMatricula {
     async inicializar() {
         try {
             // Verificar sesión
-            sesiones.verificarExistenciaSesion();
+            //sesiones.verificarExistenciaSesion();
             
             // Cargar componentes comunes
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
@@ -93,7 +93,7 @@ export class c_comprobanteMatricula {
     configurarEventos() {
         // Botón volver
         $('.volver').off('click').on('click', () => {
-            window.location.href = 'matricula.html';
+            window.location.href = 'formularioEstudiante.html#btnComprobante';
         });
 
         // Botón guardar

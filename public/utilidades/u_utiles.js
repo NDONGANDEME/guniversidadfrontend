@@ -169,17 +169,21 @@ export class u_utiles
             u_utiles.redirigirA(document.querySelector('#btnVolverPanelPlanEstudio'), `${url}/planEstudio.html`);
         }
 
-        //u_utiles.redirigirA(document.querySelector('.horario'), `${url}/horario.html`);
+        if (document.querySelector('#btnVolverPanelEstudiante')) {
+            u_utiles.redirigirA(document.querySelector('#btnVolverPanelEstudiante'), `${url}/estudiante.html`);
+        }
 
-        //u_utiles.redirigirA(document.querySelector('.matricula'), `${url}/matricula.html`);
+        if (document.querySelector('#btnNuevoEstudiante')) {
+            u_utiles.redirigirA(document.querySelector('#btnNuevoEstudiante'), `${url}/formularioEstudiante.html`);
+        }
 
         if (document.querySelector('#btnNuevoPlanEstudio')) {
             u_utiles.redirigirA(document.querySelector('#btnNuevoPlanEstudio'), `${url}/formularioPlanEstudio.html`);
         }
 
-        //u_utiles.redirigirA(document.querySelector('.profesor'), `${url}/profesor.html`);
-
-        //if (document.querySelector('#imprimirComprobantePago')) u_utiles.redirigirA(document.querySelector('#imprimirComprobantePago'), `${url}/comprobanteMatricula.html`);
+        if (document.querySelector('#btnComprobante')) {
+            u_utiles.redirigirA(document.querySelector('#btnComprobante'), `${url}/comprobanteMatricula.html`);
+        }
 
         //if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
