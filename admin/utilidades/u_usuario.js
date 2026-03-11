@@ -1,34 +1,12 @@
+// u_gestion_usuarios.js
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 
-export class u_usuario {
+export class u_gestion_usuarios {
     
-    // ========== GENERAR CONTRASEÑA ALEATORIA DE 10 CARACTERES ==========
-    static generarContrasena(longitud = 10) {
-        const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const minusculas = 'abcdefghijklmnopqrstuvwxyz';
-        const numeros = '0123456789';
-        const especiales = '!@#$%^&*';
-        let contrasena = '';
-        
-        // Asegurar al menos un carácter de cada tipo
-        contrasena += mayusculas.charAt(Math.floor(Math.random() * mayusculas.length));
-        contrasena += minusculas.charAt(Math.floor(Math.random() * minusculas.length));
-        contrasena += numeros.charAt(Math.floor(Math.random() * numeros.length));
-        contrasena += especiales.charAt(Math.floor(Math.random() * especiales.length));
-        
-        // Completar el resto de la longitud (hasta 10)
-        const todos = mayusculas + minusculas + numeros + especiales;
-        for (let i = 4; i < longitud; i++) {
-            contrasena += todos.charAt(Math.floor(Math.random() * todos.length));
-        }
-        
-        // Mezclar la contraseña para que no siempre empiece con los mismos tipos
-        return contrasena.split('').sort(() => 0.5 - Math.random()).join('');
-    }
+    // ========== VALIDACIONES ESPECÍFICAS PARA GESTIÓN DE USUARIOS ==========
     
-    // ========== VALIDACIONES ==========
     static validarNombreUsuario(valor) {
         if (!valor) return false;
         return u_verificaciones.validarNombreOCorreo(valor);
@@ -62,8 +40,18 @@ export class u_usuario {
         return valor && valor !== '';
     }
 
+    static validarDepartamento(valor) {
+        return valor && valor !== '';
+    }
+
+    static esRolConDatosPersonales(rol) {
+        // Roles que requieren datos personales adicionales
+        const rolesConDatos = ['Secretario', 'Administrativo', 'Profesor', 'Estudiante'];
+        return rolesConDatos.includes(rol);
+    }
+
     // ========== VALIDACIONES EN TIEMPO REAL ==========
-    static  configurarValidaciones() {
+    static configurarValidaciones() {
         // Validación del nombre de usuario o correo
         $('#nombreOCorreoUsuario').off('input').on('input', function() {
             const valor = $(this).val().trim();
@@ -72,10 +60,10 @@ export class u_usuario {
             let mensaje;
             
             if (esCorreo) {
-                valido = u_usuario.validarCorreo(valor);
+                valido = u_gestion_usuarios.validarCorreo(valor);
                 mensaje = 'Correo inválido (ej: usuario@dominio.com)';
             } else {
-                valido = u_usuario.validarNombreUsuario(valor);
+                valido = u_gestion_usuarios.validarNombreUsuario(valor);
                 mensaje = 'Mínimo 3 caracteres, solo letras y números';
             }
             
@@ -85,57 +73,126 @@ export class u_usuario {
         // Validación del rol
         $('#rolUsuario').off('change').on('change', function() {
             const valor = $(this).val();
-            const valido = u_usuario.validarRol(valor);
+            const valido = u_gestion_usuarios.validarRol(valor);
             u_utiles.colorearCampo(valido, '#rolUsuario', '#errorRolUsuario', 'Seleccione un rol');
             
             // Mostrar u ocultar panel de datos personales según el rol
-            if (valor === 'Secretario') {
+            const necesitaDatos = u_gestion_usuarios.esRolConDatosPersonales(valor);
+            
+            if (necesitaDatos) {
                 $('#panelDatosPersonales').removeClass('d-none');
                 // Activar validaciones de datos personales
-                $('#nombreUsuario, #apellidosUsuario, #correoUsuario, #telefonoUsuario, #facultadesUsuario').trigger('input');
+                $('#nombrePersona, #apellidosPersona, #correoPersonal, #telefonoPersona, #facultadPersona, #departamentoPersona').trigger('input');
             } else {
                 $('#panelDatosPersonales').addClass('d-none');
                 // Limpiar validaciones de datos personales
-                $('#nombreUsuario, #apellidosUsuario, #correoUsuario, #telefonoUsuario, #facultadesUsuario').removeClass('border-success border-danger');
-                $('#errorNombreUsuario, #errorApellidosUsuario, #errorCorreoUsuario, #errorTelefonoUsuario, #errorFacultadesUsuario').text('').addClass('d-none');
+                $('#nombrePersona, #apellidosPersona, #correoPersonal, #telefonoPersona, #facultadPersona, #departamentoPersona').removeClass('border-success border-danger');
+                $('#errorNombrePersona, #errorApellidosPersona, #errorCorreoPersonal, #errorTelefonoPersona, #errorFacultadPersona, #errorDepartamentoPersona').text('').addClass('d-none');
             }
         });
 
         // Validaciones de datos personales
-        $('#nombreUsuario').off('input').on('input', function() {
+        $('#nombrePersona').off('input').on('input', function() {
             const valor = $(this).val().trim();
-            const valido = u_usuario.validarNombrePersona(valor);
-            u_utiles.colorearCampo(valido, '#nombreUsuario', '#errorNombreUsuario', 'Mínimo 3 caracteres, solo letras');
+            const valido = u_gestion_usuarios.validarNombrePersona(valor);
+            u_utiles.colorearCampo(valido, '#nombrePersona', '#errorNombrePersona', 'Mínimo 3 caracteres, solo letras');
         });
 
-        $('#apellidosUsuario').off('input').on('input', function() {
+        $('#apellidosPersona').off('input').on('input', function() {
             const valor = $(this).val().trim();
-            const valido = u_usuario.validarApellidos(valor);
-            u_utiles.colorearCampo(valido, '#apellidosUsuario', '#errorApellidosUsuario', 'Mínimo 3 caracteres, solo letras');
+            const valido = u_gestion_usuarios.validarApellidos(valor);
+            u_utiles.colorearCampo(valido, '#apellidosPersona', '#errorApellidosPersona', 'Mínimo 3 caracteres, solo letras');
         });
 
-        $('#correoUsuario').off('input').on('input', function() {
+        $('#correoPersonal').off('input').on('input', function() {
             const valor = $(this).val().trim();
-            const valido = u_usuario.validarCorreo(valor);
-            u_utiles.colorearCampo(valido, '#correoUsuario', '#errorCorreoUsuario', 'Correo inválido (ej: usuario@dominio.com)');
+            const valido = u_gestion_usuarios.validarCorreo(valor);
+            u_utiles.colorearCampo(valido, '#correoPersonal', '#errorCorreoPersonal', 'Correo inválido (ej: usuario@dominio.com)');
         });
 
-        $('#telefonoUsuario').off('input').on('input', function() {
+        $('#telefonoPersona').off('input').on('input', function() {
             const valor = $(this).val().trim();
-            const valido = u_usuario.validarTelefono(valor);
-            u_utiles.colorearCampo(valido, '#telefonoUsuario', '#errorTelefonoUsuario', 'Formato: +240 222 123 456');
+            const valido = u_gestion_usuarios.validarTelefono(valor);
+            u_utiles.colorearCampo(valido, '#telefonoPersona', '#errorTelefonoPersona', 'Formato: +240 222 123 456');
         });
 
-        $('#facultadesUsuario').off('change').on('change', function() {
+        $('#facultadPersona').off('change').on('change', function() {
             const valor = $(this).val();
-            const valido = u_usuario.validarFacultad(valor);
-            u_utiles.colorearCampo(valido, '#facultadesUsuario', '#errorFacultadesUsuario', 'Seleccione una facultad');
+            const valido = u_gestion_usuarios.validarFacultad(valor);
+            u_utiles.colorearCampo(valido, '#facultadPersona', '#errorFacultadPersona', 'Seleccione una facultad');
+        });
+
+        $('#departamentoPersona').off('change').on('change', function() {
+            const valor = $(this).val();
+            const valido = u_gestion_usuarios.validarDepartamento(valor);
+            u_utiles.colorearCampo(valido, '#departamentoPersona', '#errorDepartamentoPersona', 'Seleccione un departamento');
         });
     }
 
+    // ========== RENDERIZADO DE TARJETAS ==========
+    
+    static generarTarjetaUsuario(usuario, personaData = null, vistaActual = 'tarjetas') {
+        const estadoClass = usuario.estado === 'Activo' ? 'success' : 'secondary';
+        const estadoIcon = usuario.estado === 'Activo' ? 'fa-check-circle' : 'fa-ban';
+        const foto = usuario.foto || '../../public/img/default-avatar.png';
+        const nombreCompleto = personaData ? 
+            `${personaData.nombre || ''} ${personaData.apellidos || ''}`.trim() : 
+            usuario.nombreUsuario;
+        
+        return `
+            <div class="col-12 ${vistaActual === 'tarjetas' ? 'col-md-6 col-lg-4' : ''}">
+                <div class="usuario-tarjeta" data-id="${usuario.idUsuario}">
+                    <img src="${foto}" alt="Foto de ${usuario.nombreUsuario}" class="foto-perfil" 
+                         onerror="this.onerror=null; this.src='../../public/img/default-avatar.png';">
+                    
+                    <div class="info-usuario">
+                        <div class="nombre-usuario">${usuario.nombreUsuario}</div>
+                        ${nombreCompleto !== usuario.nombreUsuario ? 
+                            `<div class="nombre-completo text-muted small">${nombreCompleto}</div>` : ''}
+                        <div class="correo-usuario">${usuario.correo}</div>
+                        <div class="rol-usuario">
+                            <span class="badge bg-info">${usuario.rol}</span>
+                        </div>
+                        <div class="estado-usuario">
+                            <span class="badge bg-${estadoClass}">
+                                <i class="fas ${estadoIcon} me-1"></i> ${usuario.estado}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="acciones-usuario">
+                        <button class="btn btn-sm btn-info btn-accion ver-usuario" title="Ver detalles">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning btn-accion editar-usuario" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm ${usuario.estado === 'Activo' ? 'btn-secondary' : 'btn-success'} btn-accion cambiar-estado" 
+                                title="${usuario.estado === 'Activo' ? 'Deshabilitar' : 'Habilitar'}">
+                            <i class="fas ${usuario.estado === 'Activo' ? 'fa-ban' : 'fa-check'}"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    static renderizarVacia(mensaje = 'No hay usuarios para mostrar') {
+        return `
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">${mensaje}</h5>
+                    <p class="text-muted">Prueba con otros filtros o crea un nuevo usuario</p>
+                </div>
+            </div>
+        `;
+    }
+
     // ========== MANEJO DE IMAGEN ==========
+    
     static configurarSubidaImagen() {
-        $('#añadirImagen').off('click').on('click', function() {
+        $('#btnAgregarImagen').off('click').on('click', function() {
             $('#campoArchivoFotoPerfil').click();
         });
 
@@ -159,7 +216,7 @@ export class u_usuario {
                 // Guardar el archivo en el data del formulario para usarlo después
                 $('#formUsuario').data('imagen-perfil', archivo);
                 
-                // Mostrar preview con mejor estilo
+                // Mostrar preview
                 const lector = new FileReader();
                 lector.onload = function(e) {
                     $('#contenedorFotoPerfil').html(`
@@ -175,7 +232,7 @@ export class u_usuario {
                     
                     // Botón para eliminar la imagen temporal
                     $('#btnEliminarImagenTemp').off('click').on('click', function() {
-                        u_usuario.limpiarImagen();
+                        u_gestion_usuarios.limpiarImagen();
                     });
                 };
                 lector.readAsDataURL(archivo);
@@ -194,114 +251,24 @@ export class u_usuario {
         $('#formUsuario').removeData('imagen-perfil');
     }
 
-    // ========== OBTENER IMAGEN PARA SUBIR ==========
-    static obtenerImagenParaSubir() { return $('#formUsuario').data('imagen-perfil'); }
+    static obtenerImagenParaSubir() { 
+        return $('#formUsuario').data('imagen-perfil'); 
+    }
 
     // ========== MODO EDICIÓN ==========
+    
     static configurarModoEdicion(activo) {
         if (activo) {
-            $('#modalNuevoUsuarioLabel').text('Editar usuario');
+            $('#modalUsuarioLabel').text('Editar usuario');
             $('#btnGuardarUsuario').text('Actualizar Usuario');
         } else {
-            $('#modalNuevoUsuarioLabel').text('Agregar nuevo usuario');
+            $('#modalUsuarioLabel').text('Agregar nuevo usuario');
             $('#btnGuardarUsuario').text('Guardar Usuario');
         }
     }
 
-    // ========== GENERAR BOTONES PARA USUARIO ==========
-    static generarBotonesUsuario(id, estado) {
-        const iconoToggle = estado === 'activo' ? 'fa-toggle-on' : 'fa-toggle-off';
-        const claseToggle = estado === 'activo' ? 'btn-outline-danger' : 'btn-outline-success';
-        const textoToggle = estado === 'activo' ? 'Habilitar' : 'Deshabilitar';
-
-        /*<button class="btn btn-sm ${claseToggle} toggle-estado-usuario" title="${textoToggle}" data-id="${id}">
-                    <i class="fas ${iconoToggle}"></i>
-                </button>*/
-        
-        return `
-            <div class="d-flex justify-content-center gap-1">
-                <button class="btn btn-sm btn-outline-warning editar-usuario" title="Editar" data-id="${id}" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario">
-                    <i class="fas fa-edit"></i>
-                </button>
-            </div>
-        `;
-    }
-
-    // ========== ACTUALIZAR TABLA DE USUARIOS ==========
-    static actualizarTablaUsuarios(dataTable, usuarios) {
-        if (!dataTable) return;
-
-        const baseUrl = '/guniversidadfrontend/public/img/';
-        
-        dataTable.clear();
-        
-        usuarios.forEach(u => {
-            let fotoNombre = baseUrl +  u.foto;
-            const estadoTexto = u.estado == 'activo' ? 'Activo' : 'Inactivo';
-            
-            let imagenHtml = '<span class="text-muted">Sin imagen</span>';
-            if (fotoNombre) {
-                imagenHtml = `<img src="${fotoNombre}" class="img-thumbnail" style="max-width: 40px; max-height: 40px;">`;
-            }
-            
-            const fila = [
-                imagenHtml, u.nombreUsuario || 'Sin nombre', u.correo || 'Sin correo', '**********',
-                u.rol || 'Sin rol', estadoTexto, this.generarBotonesUsuario(u.idUsuario, estadoTexto)
-            ];
-            
-            const nodoFila = dataTable.row.add(fila).draw().node();
-            
-            if (u.estado == 0) {
-                $(nodoFila).addClass('text-muted bg-light');
-                $(nodoFila).find('td:not(:last-child)').css('opacity', '0.6');
-            }
-        });
-        
-        dataTable.draw();
-    }
-
-    // ========== ACTUALIZAR TABLA DE ADMINISTRATIVOS ==========
-    static actualizarTablaAdministrativos(dataTable, administrativos, usuarios, facultades) {
-        if (!dataTable) return;
-
-        const baseUrl = '/guniversidadfrontend/public/img/';
-        
-        dataTable.clear();
-        
-        administrativos.forEach(a => {
-            const usuario = usuarios.find(u => u.idUsuario == a.idUsuario);
-            const facultad = facultades.find(f => f.idFacultad == a.idFacultad);
-            let fotoNombre = baseUrl + usuario.foto;
-            const nombreFacultad = facultad ? facultad.nombreFacultad : 'Ninguna';
-            
-            let imagenHtml = '<span class="text-muted">Sin imagen</span>';
-            if (usuario && fotoNombre) {
-                imagenHtml = `<img src="${fotoNombre}" class="img-thumbnail" style="max-width: 40px; max-height: 40px;">`;
-            }
-            
-            const fila = [
-                imagenHtml, `${a.nombreAdministrativo || ''} ${a.apellidosAdministrativo || ''}`, 
-                a.correo || usuario?.correo || 'Sin correo', a.telefono || 'Sin teléfono', usuario?.rol || 'Sin rol', nombreFacultad
-            ];
-            
-            dataTable.row.add(fila).draw();
-        });
-        
-        dataTable.draw();
-    }
-
-    // ========== CARGAR FACULTADES EN EL SELECT ==========
-    static cargarFacultadesEnSelect(facultades) {
-        const select = $('#facultadesUsuario');
-        select.empty();
-        select.append('<option value="">Seleccione...</option>');
-        
-        facultades.forEach(f => {
-            select.append(`<option value="${f.idFacultad}">${f.nombreFacultad}</option>`);
-        });
-    }
-
-    // ========== LIMPIAR MODAL ==========
+    // ========== LIMPIEZA DE MODAL ==========
+    
     static limpiarModal() {
         $('#formUsuario')[0].reset();
         $('#panelDatosPersonales').addClass('d-none');
@@ -318,10 +285,12 @@ export class u_usuario {
         
         // Eliminar cualquier contraseña generada previamente
         $('#formUsuario').removeData('contrasena-generada');
+        $('#formUsuario').removeData('imagen-perfil');
     }
 
-    // ========== CARGAR DATOS EN MODAL PARA EDICIÓN ==========
-    static cargarDatosEnModal(usuario, administrativo, facultades) {
+    // ========== CARGA DE DATOS EN MODAL PARA EDICIÓN ==========
+    
+    static async cargarDatosEnModal(usuario, personaData = null, facultades = [], departamentos = []) {
         // Limpiar primero
         this.limpiarModal();
 
@@ -335,49 +304,107 @@ export class u_usuario {
         $('#nombreOCorreoUsuario').trigger('input');
         $('#rolUsuario').trigger('change');
         
-        // Mostrar imagen existente con mejor estilo
+        // Mostrar imagen existente
         if (usuario.foto) {
-            const fotoNombre = baseUrl + usuario.foto;
+            const fotoUrl = usuario.foto.startsWith('http') ? usuario.foto : baseUrl + usuario.foto;
             $('#contenedorFotoPerfil').html(`
                 <div class="position-relative">
-                    <img src="${fotoNombre}" class="img-fluid rounded-3 border border-2 border-warning" 
+                    <img src="${fotoUrl}" class="img-fluid rounded-3 border border-2 border-warning" 
                         style="width: 120px; height: 120px; object-fit: cover;"
-                        onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div class=\'d-flex justify-content-center align-items-center bg-light rounded-3 border\' style=\'width: 120px; height: 120px;\'><i class=\'fas fa-user text-secondary\' style=\'font-size: 3rem;\'></i></div>';">
+                        onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'d-flex justify-content-center align-items-center bg-light rounded-3 border\\' style=\\'width: 120px; height: 120px;\\'><i class=\\'fas fa-user text-secondary\\' style=\\'font-size: 3rem;\\'></i></div>';">
                 </div>
             `);
         }
         
-        // Si es administrativo, cargar datos personales
-        if ((usuario.rol === 'Secretario') && administrativo) {
-            $('#nombreUsuario').val(administrativo.nombreAdministrativo || '');
-            $('#apellidosUsuario').val(administrativo.apellidosAdministrativo || '');
-            $('#correoUsuario').val(administrativo.correo || '');
-            $('#telefonoUsuario').val(administrativo.telefono || '');
+        // Si el rol requiere datos personales y tenemos datos
+        if (this.esRolConDatosPersonales(usuario.rol) && personaData) {
+            // Cargar facultades y departamentos primero
+            await this.cargarFacultadesEnSelect(facultades);
             
-            // Cargar facultades primero
-            this.cargarFacultadesEnSelect(facultades);
-            $('#facultadesUsuario').val(administrativo.idFacultad || '');
+            $('#nombrePersona').val(personaData.nombre || '');
+            $('#apellidosPersona').val(personaData.apellidos || '');
+            $('#correoPersonal').val(personaData.correo || '');
+            $('#telefonoPersona').val(personaData.telefono || '');
+            
+            if (personaData.idFacultad) {
+                $('#facultadPersona').val(personaData.idFacultad);
+                // Cargar departamentos de esa facultad
+                if (departamentos.length > 0) {
+                    const depsFiltrados = departamentos.filter(d => d.idFacultad == personaData.idFacultad);
+                    this.cargarDepartamentosEnSelect(depsFiltrados);
+                    if (personaData.idDepartamento) {
+                        $('#departamentoPersona').val(personaData.idDepartamento);
+                    }
+                }
+            }
             
             // Validar campos cargados
-            $('#nombreUsuario, #apellidosUsuario, #correoUsuario, #telefonoUsuario, #facultadesUsuario').trigger('input');
+            $('#nombrePersona, #apellidosPersona, #correoPersonal, #telefonoPersona, #facultadPersona, #departamentoPersona').trigger('input');
         }
         
         // En edición, no generamos nueva contraseña
         $('#formUsuario').removeData('contrasena-generada');
     }
 
-    // ========== GENERAR CONTRASEÑA SOLO PARA NUEVO USUARIO ==========
+    // ========== GENERAR CONTRASEÑA PARA NUEVO USUARIO ==========
+    
+    static generarContrasena(longitud = 10) {
+        const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const minusculas = 'abcdefghijklmnopqrstuvwxyz';
+        const numeros = '0123456789';
+        const especiales = '!@#$%^&*';
+        let contrasena = '';
+        
+        // Asegurar al menos un carácter de cada tipo
+        contrasena += mayusculas.charAt(Math.floor(Math.random() * mayusculas.length));
+        contrasena += minusculas.charAt(Math.floor(Math.random() * minusculas.length));
+        contrasena += numeros.charAt(Math.floor(Math.random() * numeros.length));
+        contrasena += especiales.charAt(Math.floor(Math.random() * especiales.length));
+        
+        // Completar el resto de la longitud
+        const todos = mayusculas + minusculas + numeros + especiales;
+        for (let i = 4; i < longitud; i++) {
+            contrasena += todos.charAt(Math.floor(Math.random() * todos.length));
+        }
+        
+        // Mezclar la contraseña
+        return contrasena.split('').sort(() => 0.5 - Math.random()).join('');
+    }
+
     static prepararNuevoUsuario() {
-        // Generar contraseña pero no mostrarla
         const nuevaContrasena = this.generarContrasena(10);
         $('#formUsuario').data('contrasena-generada', nuevaContrasena);
     }
 
-    // ========== OBTENER CONTRASEÑA GENERADA ==========
-    static obtenerContrasenaGenerada() { return $('#formUsuario').data('contrasena-generada'); }
+    static obtenerContrasenaGenerada() { 
+        return $('#formUsuario').data('contrasena-generada'); 
+    }
 
-    // ========== VALIDAR FORMULARIO COMPLETO ==========
-    static validarFormularioCompleto(_modoEdicion = false) {
+    // ========== CARGA DE SELECTORES ==========
+    
+    static cargarFacultadesEnSelect(facultades) {
+        const select = $('#facultadPersona');
+        select.empty();
+        select.append('<option value="">Seleccione facultad...</option>');
+        
+        facultades.forEach(f => {
+            select.append(`<option value="${f.idFacultad}">${f.nombreFacultad}</option>`);
+        });
+    }
+
+    static cargarDepartamentosEnSelect(departamentos) {
+        const select = $('#departamentoPersona');
+        select.empty();
+        select.append('<option value="">Seleccione departamento...</option>');
+        
+        departamentos.forEach(d => {
+            select.append(`<option value="${d.idDepartamento}">${d.nombreDepartamento}</option>`);
+        });
+    }
+
+    // ========== VALIDACIÓN COMPLETA DEL FORMULARIO ==========
+    
+    static validarFormularioCompleto(modoEdicion = false) {
         const nombreOCorreo = $('#nombreOCorreoUsuario').val().trim();
         const rol = $('#rolUsuario').val();
         
@@ -386,29 +413,47 @@ export class u_usuario {
         let validoNombreOCorreo;
         
         if (esCorreo) {
-            validoNombreOCorreo = u_usuario.validarCorreo(nombreOCorreo);
+            validoNombreOCorreo = u_gestion_usuarios.validarCorreo(nombreOCorreo);
         } else {
-            validoNombreOCorreo = u_usuario.validarNombreUsuario(nombreOCorreo);
+            validoNombreOCorreo = u_gestion_usuarios.validarNombreUsuario(nombreOCorreo);
         }
         
         if (!validoNombreOCorreo) return false;
-        if (!u_usuario.validarRol(rol)) return false;
+        if (!u_gestion_usuarios.validarRol(rol)) return false;
         
-        // Si es administrativo, validar datos personales
-        if (rol === 'Secretario') {
-            const nombre = $('#nombreUsuario').val().trim();
-            const apellidos = $('#apellidosUsuario').val().trim();
-            const correo = $('#correoUsuario').val().trim();
-            const telefono = $('#telefonoUsuario').val().trim();
-            const facultad = $('#facultadesUsuario').val();
+        // Si el rol requiere datos personales, validarlos
+        if (this.esRolConDatosPersonales(rol)) {
+            const nombre = $('#nombrePersona').val().trim();
+            const apellidos = $('#apellidosPersona').val().trim();
+            const correo = $('#correoPersonal').val().trim();
+            const telefono = $('#telefonoPersona').val().trim();
+            const facultad = $('#facultadPersona').val();
+            const departamento = $('#departamentoPersona').val();
             
-            if (!u_usuario.validarNombrePersona(nombre)) return false;
-            if (!u_usuario.validarApellidos(apellidos)) return false;
-            if (!u_usuario.validarCorreo(correo)) return false;
-            if (!u_usuario.validarTelefono(telefono)) return false;
-            if (!u_usuario.validarFacultad(facultad)) return false;
+            if (!u_gestion_usuarios.validarNombrePersona(nombre)) return false;
+            if (!u_gestion_usuarios.validarApellidos(apellidos)) return false;
+            if (!u_gestion_usuarios.validarCorreo(correo)) return false;
+            if (!u_gestion_usuarios.validarTelefono(telefono)) return false;
+            if (!u_gestion_usuarios.validarFacultad(facultad)) return false;
+            if (!u_gestion_usuarios.validarDepartamento(departamento)) return false;
         }
         
         return true;
+    }
+
+    // ========== AJUSTE DE MODAL PARA NAVBAR FIJA ==========
+    
+    static ajustarModalParaNavbarFija() {
+        // Ajustar el modal para que no quede detrás de la navbar fija
+        $(document).on('show.bs.modal', '.modal', function() {
+            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+            $('body').css('padding-right', scrollBarWidth);
+            $('body').addClass('modal-open');
+        });
+
+        $(document).on('hidden.bs.modal', '.modal', function() {
+            $('body').css('padding-right', '');
+            $('body').removeClass('modal-open');
+        });
     }
 }

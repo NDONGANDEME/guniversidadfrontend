@@ -37,6 +37,9 @@ textarea{
   margin: 2rem 20rem 4rem 20rem;
 }
 
+.modal-dialog{
+  margin-top: 5rem !important;
+}
 
 /* Estilos para las tarjetas de módulos */
 .tarjetaModulo {
@@ -127,4 +130,148 @@ width: 0;
   #content {
     margin-top: 60px !important; /* Un poco menos en móviles */
   }
+}
+
+ /* Estilos para las tarjetas de usuario */
+.usuario-tarjeta {
+    background-color: #fff3cd;
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.usuario-tarjeta:hover {
+    transform: scale(1.02);
+    background-color: #ffe69c;
+    box-shadow: 0 5px 15px rgba(255, 214, 0, 0.3);
+}
+
+.usuario-tarjeta .foto-perfil {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ffd600;
+    margin-bottom: 15px;
+}
+
+.usuario-tarjeta .nombre-usuario {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.usuario-tarjeta .correo-usuario {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.usuario-tarjeta .rol-usuario {
+    margin-bottom: 10px;
+}
+
+.usuario-tarjeta .estado-usuario {
+    margin-bottom: 15px;
+}
+
+.usuario-tarjeta .acciones-usuario {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: auto;
+}
+
+.usuario-tarjeta .btn-accion {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.usuario-tarjeta .btn-accion:hover {
+    transform: scale(1.1);
+}
+
+/* Estilos para vista de lista */
+.vista-lista .usuario-tarjeta {
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+}
+
+.vista-lista .usuario-tarjeta .foto-perfil {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 0;
+}
+
+.vista-lista .usuario-tarjeta .info-usuario {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.vista-lista .usuario-tarjeta .nombre-usuario {
+    min-width: 150px;
+    margin-bottom: 0;
+}
+
+.vista-lista .usuario-tarjeta .correo-usuario {
+    min-width: 200px;
+    margin-bottom: 0;
+}
+
+.vista-lista .usuario-tarjeta .rol-usuario {
+    min-width: 120px;
+    margin-bottom: 0;
+}
+
+.vista-lista .usuario-tarjeta .estado-usuario {
+    min-width: 100px;
+    margin-bottom: 0;
+}
+
+.vista-lista .usuario-tarjeta .acciones-usuario {
+    margin-top: 0;
+}
+
+/* Botones de cambio de vista */
+.vista-botones {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-vista {
+    background: white;
+    border: 2px solid #ffd600;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-vista.active {
+    background: #ffd600;
+    color: #333;
+    font-weight: bold;
+}
+
+.btn-vista:hover {
+    background: #ffe69c;
 }

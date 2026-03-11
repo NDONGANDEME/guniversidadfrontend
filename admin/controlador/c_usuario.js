@@ -1,88 +1,91 @@
+// c_gestion_usuarios.js
 import { sesiones } from "../../public/core/sesiones.js";
 import { m_usuario } from "../../public/modelo/m_usuario.js";
 import { m_administrativo } from "../modelo/m_administrativo.js";
 import { m_facultad } from "../modelo/m_facultad.js";
+import { m_departamento } from "../modelo/m_departamento.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
-import { u_usuario } from "../utilidades/u_usuario.js";
+import { u_gestion_usuarios } from "../utilidades/u_usuario.js";
 
-export class c_usuario {
+export class c_gestion_usuarios {
     constructor() {
         // Usuarios
         this.usuarios = [];
         this.usuarioActual = null;
         this.modoEdicion = false;
-        this.dataTableUsuarios = null;
+        this.vistaActual = 'tarjetas'; // 'tarjetas' o 'lista'
         
-        // Administrativos
-        this.administrativos = [];
-        this.administrativoActual = null;
-        this.dataTableAdministrativos = null;
+        // Datos personales según rol
+        this.personasData = new Map(); // Mapa idUsuario -> datos personales
         
-        // Facultades
+        // Filtros
+        this.filtros = {
+            busqueda: '',
+            rol: '',
+            estado: ''
+        };
+        
+        // Facultades y departamentos
         this.facultades = [];
+        this.departamentos = [];
     }
 
     // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
             // Verificar sesión
-            sesiones.verificarExistenciaSesion();
+            //sesiones.verificarExistenciaSesion();
             
             // Cargar componentes comunes
-            await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
-            await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
-            u_utiles.botonesNavegacionAdministrador();
+            await this.cargarComponentes();
             
-            // Inicializar DataTables
-            this.inicializarDataTables();
+            // Ajustar modal para navbar fija
+            u_gestion_usuarios.ajustarModalParaNavbarFija();
             
-            // Cargar datos
+            // Cargar datos necesarios
             await this.cargarFacultades();
+            await this.cargarDepartamentos();
             await this.cargarUsuarios();
-            await this.cargarAdministrativos();
             
-            // Configurar eventos y validaciones
+            // Configurar eventos
             this.configurarEventos();
             this.configurarValidaciones();
             
             // Configurar subida de imagen
-            u_usuario.configurarSubidaImagen();
+            u_gestion_usuarios.configurarSubidaImagen();
             
         } catch (error) {
+            console.error('Error en inicialización:', error);
             Alerta.error('Error', `No se pudo inicializar el módulo: ${error}`);
         }
     }
 
-    // ========== DATATABLES ==========
-    inicializarDataTables() {
-        // DataTable de usuarios
-        if ($.fn.dataTable.isDataTable('#tablaUsuarios')) {
-            $('#tablaUsuarios').DataTable().destroy();
-        }
-        this.dataTableUsuarios = $('#tablaUsuarios').DataTable({
-            language: { url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json' },
-            columnDefs: [{ orderable: false, targets: [0, 6] }] // Imagen y acciones no se ordenan
-        });
-
-        // DataTable de administrativos
-        if ($.fn.dataTable.isDataTable('#tablaAdministrativos')) {
-            $('#tablaAdministrativos').DataTable().destroy();
-        }
-        this.dataTableAdministrativos = $('#tablaAdministrativos').DataTable({
-            language: { url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json' }
-        });
+    async cargarComponentes() {
+        await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
+        await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
+        u_utiles.botonesNavegacionAdministrador();
     }
 
     // ========== CARGA DE DATOS ==========
+    
     async cargarFacultades() {
         try {
             const datos = await m_facultad.obtenerFacultades();
             this.facultades = datos || [];
-            u_usuario.cargarFacultadesEnSelect(this.facultades);
         } catch (error) {
-            Alerta.notificarError(`Error al cargar facultades: ${error}`, 1500);
+            console.error('Error cargando facultades:', error);
             this.facultades = [];
+        }
+    }
+
+    async cargarDepartamentos() {
+        try {
+            const datos = await m_departamento.obtenerDepartamentos();
+            this.departamentos = datos || [];
+        } catch (error) {
+            console.error('Error cargando departamentos:', error);
+            this.departamentos = [];
         }
     }
 
@@ -90,72 +93,217 @@ export class c_usuario {
         try {
             const datos = await m_usuario.obtenerUsuarios();
             this.usuarios = datos || [];
-            this.actualizarTablaUsuarios();
+            
+            // Cargar datos personales según el rol
+            await this.cargarDatosPersonales();
+            
+            this.renderizarUsuarios();
         } catch (error) {
-            Alerta.error('Error', `Fallo al cargar usuarios: ${error}`);
+            console.error('Error cargando usuarios:', error);
             this.usuarios = [];
+            this.renderizarUsuarios();
         }
     }
 
-    async cargarAdministrativos() {
+    async cargarDatosPersonales() {
+        // Limpiar mapa de datos personales
+        this.personasData.clear();
+        
+        // Cargar administrativos (incluye Secretario)
         try {
-            const datos = await m_administrativo.obtenerAdministrativos();
-            this.administrativos = datos || [];
-            this.actualizarTablaAdministrativos();
+            const administrativos = await m_administrativo.obtenerAdministrativos() || [];
+            administrativos.forEach(adm => {
+                this.personasData.set(adm.idUsuario, {
+                    tipo: 'administrativo',
+                    id: adm.idAdministrativo,
+                    nombre: adm.nombreAdministrativo,
+                    apellidos: adm.apellidosAdministrativo,
+                    correo: adm.correo,
+                    telefono: adm.telefono,
+                    idFacultad: adm.idFacultad
+                });
+            });
         } catch (error) {
-            Alerta.error('Error', `Fallo al cargar administrativos: ${error}`);
-            this.administrativos = [];
+            console.error('Error cargando administrativos:', error);
         }
+        
+        // Aquí puedes cargar otros tipos (Profesor, Estudiante) si existen
+    }
+
+    // ========== RENDERIZADO ==========
+    
+    renderizarUsuarios() {
+        const contenedor = document.getElementById('contenedorUsuarios');
+        if (!contenedor) return;
+
+        // Aplicar filtros
+        let usuariosFiltrados = this.aplicarFiltros();
+
+        if (usuariosFiltrados.length === 0) {
+            contenedor.innerHTML = u_gestion_usuarios.renderizarVacia();
+            return;
+        }
+
+        let html = '';
+        
+        if (this.vistaActual === 'tarjetas') {
+            contenedor.className = 'row g-4';
+            usuariosFiltrados.forEach(usuario => {
+                const personaData = this.personasData.get(usuario.idUsuario);
+                html += u_gestion_usuarios.generarTarjetaUsuario(usuario, personaData, 'tarjetas');
+            });
+        } else {
+            contenedor.className = 'vista-lista row g-3';
+            usuariosFiltrados.forEach(usuario => {
+                const personaData = this.personasData.get(usuario.idUsuario);
+                html += u_gestion_usuarios.generarTarjetaUsuario(usuario, personaData, 'lista');
+            });
+        }
+
+        contenedor.innerHTML = html;
+    }
+
+    // ========== FILTROS ==========
+    
+    aplicarFiltros() {
+        return this.usuarios.filter(usuario => {
+            // Filtro de búsqueda
+            if (this.filtros.busqueda) {
+                const busqueda = this.filtros.busqueda.toLowerCase();
+                const personaData = this.personasData.get(usuario.idUsuario);
+                const nombreCompleto = personaData ? 
+                    `${personaData.nombre} ${personaData.apellidos}`.toLowerCase() : '';
+                
+                if (!usuario.nombreUsuario.toLowerCase().includes(busqueda) && 
+                    !usuario.correo.toLowerCase().includes(busqueda) &&
+                    !nombreCompleto.includes(busqueda)) {
+                    return false;
+                }
+            }
+            
+            // Filtro por rol
+            if (this.filtros.rol && usuario.rol !== this.filtros.rol) {
+                return false;
+            }
+            
+            // Filtro por estado
+            if (this.filtros.estado && usuario.estado !== this.filtros.estado) {
+                return false;
+            }
+            
+            return true;
+        });
     }
 
     // ========== VALIDACIONES ==========
+    
     configurarValidaciones() { 
-        u_usuario.configurarValidaciones(); 
+        u_gestion_usuarios.configurarValidaciones(); 
+        
+        // Cargar facultades en el select cuando se muestre
+        $('#facultadPersona').off('change').on('change', (e) => {
+            const idFacultad = e.target.value;
+            this.filtrarDepartamentosPorFacultad(idFacultad);
+        });
+    }
+
+    filtrarDepartamentosPorFacultad(idFacultad) {
+        const departamentosFiltrados = this.departamentos.filter(d => d.idFacultad == idFacultad);
+        u_gestion_usuarios.cargarDepartamentosEnSelect(departamentosFiltrados);
     }
 
     // ========== EVENTOS ==========
+    
     configurarEventos() {
+        // Cambio de vista
+        $('#vistaTarjetas').off('click').on('click', () => {
+            this.vistaActual = 'tarjetas';
+            $('#vistaTarjetas').addClass('active');
+            $('#vistaLista').removeClass('active');
+            this.renderizarUsuarios();
+        });
+
+        $('#vistaLista').off('click').on('click', () => {
+            this.vistaActual = 'lista';
+            $('#vistaLista').addClass('active');
+            $('#vistaTarjetas').removeClass('active');
+            this.renderizarUsuarios();
+        });
+
         // Botón nuevo usuario
-        $('.nuevo').off('click').on('click', () => {
+        $('#btnNuevoUsuario').off('click').on('click', () => {
             this.modoEdicion = false;
             this.usuarioActual = null;
-            this.administrativoActual = null;
-            u_usuario.limpiarModal();
-            u_usuario.configurarModoEdicion(false);
+            u_gestion_usuarios.limpiarModal();
+            u_gestion_usuarios.configurarModoEdicion(false);
             
-            // Generar contraseña para el nuevo usuario (no se muestra)
-            u_usuario.prepararNuevoUsuario();
+            // Cargar facultades en el select
+            u_gestion_usuarios.cargarFacultadesEnSelect(this.facultades);
+            
+            // Generar contraseña para el nuevo usuario
+            u_gestion_usuarios.prepararNuevoUsuario();
         });
 
         // Guardar usuario
         $('#btnGuardarUsuario').off('click').on('click', () => this.guardarUsuario());
 
-        // Eventos de la tabla de usuarios
-        $(document).off('click', '.editar-usuario').on('click', '.editar-usuario', (e) => {
-            this.editarUsuario($(e.currentTarget).data('id'));
+        // Eventos de las tarjetas (delegación)
+        $(document).off('click', '.ver-usuario').on('click', '.ver-usuario', (e) => {
+            const tarjeta = $(e.target).closest('.usuario-tarjeta');
+            this.verUsuario(tarjeta.data('id'));
         });
-        
-        $(document).off('click', '.toggle-estado-usuario').on('click', '.toggle-estado-usuario', (e) => {
-            this.cambiarEstadoUsuario($(e.currentTarget).data('id'));
+
+        $(document).off('click', '.editar-usuario').on('click', '.editar-usuario', (e) => {
+            const tarjeta = $(e.target).closest('.usuario-tarjeta');
+            this.editarUsuario(tarjeta.data('id'));
+        });
+
+        $(document).off('click', '.cambiar-estado').on('click', '.cambiar-estado', (e) => {
+            const tarjeta = $(e.target).closest('.usuario-tarjeta');
+            this.cambiarEstadoUsuario(tarjeta.data('id'));
         });
 
         // Filtros
-        $('#filtroPorRol, #filtroPorEstado').off('change').on('change', () => this.aplicarFiltros());
-        $('#btnLimpiarFiltros').off('click').on('click', () => this.limpiarFiltros());
+        $('#buscadorUsuario').off('input').on('input', (e) => {
+            this.filtros.busqueda = e.target.value;
+            this.renderizarUsuarios();
+        });
 
-        // Cuando se cierra el modal, limpiar
-        $('#modalNuevoUsuario').off('hidden.bs.modal').on('hidden.bs.modal', () => {
-            if (!this.modoEdicion) {
-                u_usuario.limpiarModal();
-            }
+        $('#filtroRol').off('change').on('change', (e) => {
+            this.filtros.rol = e.target.value;
+            this.renderizarUsuarios();
+        });
+
+        $('#filtroEstado').off('change').on('change', (e) => {
+            this.filtros.estado = e.target.value;
+            this.renderizarUsuarios();
+        });
+
+        $('#btnLimpiarFiltros').off('click').on('click', () => {
+            $('#buscadorUsuario').val('');
+            $('#filtroRol').val('');
+            $('#filtroEstado').val('');
+            this.filtros = { busqueda: '', rol: '', estado: '' };
+            this.renderizarUsuarios();
+        });
+
+        // Confirmar cambio de estado
+        $('#confirmarCambioEstado').off('click').on('click', () => {
+            this.confirmarCambioEstado();
+        });
+
+        // Cuando se abre el modal, ajustar para navbar fija
+        $('#modalUsuario').on('show.bs.modal', function() {
+            $(this).css('padding-top', '70px');
         });
     }
 
-    // ========== FUNCIONES PARA USUARIOS ==========
+    // ========== CRUD DE USUARIOS ==========
     
     async guardarUsuario() {
+        console.log('eeeeeeeeeeee')
         // Validar formulario
-        if (!u_usuario.validarFormularioCompleto(this.modoEdicion)) {
+        if (!u_gestion_usuarios.validarFormularioCompleto(this.modoEdicion)) {
             Alerta.notificarAdvertencia('Complete correctamente todos los campos', 1500);
             return;
         }
@@ -166,14 +314,14 @@ export class c_usuario {
             
             const esCorreo = nombreOCorreo.includes('@');
             
-            // Crear FormData para enviar los datos al backend
+            // Crear FormData
             const formData = new FormData();
             
-            // Añadir datos del usuario al FormData
+            // Datos del usuario
             formData.append('nombreUsuario', esCorreo ? nombreOCorreo.split('@')[0] : nombreOCorreo);
             formData.append('correo', esCorreo ? nombreOCorreo : `${nombreOCorreo}@sistema.com`);
             formData.append('rol', rol);
-            formData.append('estado', 'activo');
+            formData.append('estado', 'Activo');
             
             // Si es modo edición, añadir el ID
             if (this.modoEdicion && this.usuarioActual) {
@@ -182,7 +330,7 @@ export class c_usuario {
             
             // Si es nuevo usuario, añadir contraseña
             if (!this.modoEdicion) {
-                const contrasenaGenerada = u_usuario.obtenerContrasenaGenerada();
+                const contrasenaGenerada = u_gestion_usuarios.obtenerContrasenaGenerada();
                 if (!contrasenaGenerada) {
                     Alerta.notificarError('Error al generar la contraseña', 1000);
                     return;
@@ -190,55 +338,32 @@ export class c_usuario {
                 formData.append('contrasena', contrasenaGenerada);
             }
             
-            // Añadir imagen si existe (solo si hay un archivo nuevo)
-            const archivoImagen = u_usuario.obtenerImagenParaSubir();
+            // Añadir imagen si existe
+            const archivoImagen = u_gestion_usuarios.obtenerImagenParaSubir();
             if (archivoImagen) {
                 formData.append('foto', archivoImagen);
             }
-            
-            /*console.log('FormData a enviar:');
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
-            }*/
             
             let resultado;
             let idUsuario;
             
             if (this.modoEdicion) {
-                // Actualizar usuario
                 resultado = await m_usuario.actualizarUsuario(formData);
                 idUsuario = this.usuarioActual.idUsuario;
-                
             } else {
-                // Insertar nuevo usuario
                 resultado = await m_usuario.insertarUsuario(formData);
                 idUsuario = resultado?.idUsuario || resultado;
             }
             
-            // Guardar datos personales si es administrativo
-            if ((rol === 'Secretario') && idUsuario) {
-                const formDataAdmin = new FormData();
-                formDataAdmin.append('idUsuario', idUsuario);
-                formDataAdmin.append('nombreAdministrativo', $('#nombreUsuario').val().trim());
-                formDataAdmin.append('apellidosAdministrativo', $('#apellidosUsuario').val().trim());
-                formDataAdmin.append('correo', $('#correoUsuario').val().trim());
-                formDataAdmin.append('telefono', $('#telefonoUsuario').val().trim());
-                formDataAdmin.append('idFacultad', $('#facultadesUsuario').val());
-
-                
-                
-                if (this.modoEdicion && this.administrativoActual) {
-                    formDataAdmin.append('idAdministrativo', this.administrativoActual.idAdministrativos);
-                    await m_administrativo.actualizarAdministrativo(formDataAdmin);
-                } else {
-                    await m_administrativo.insertarAdministrativo(formDataAdmin);
-                }
+            // Guardar datos personales si el rol lo requiere
+            if (u_gestion_usuarios.esRolConDatosPersonales(rol) && idUsuario) {
+                await this.guardarDatosPersonales(idUsuario, rol);
             }
             
             if (resultado) {
                 // Mostrar contraseña solo si es nuevo usuario
                 if (!this.modoEdicion) {
-                    const contrasenaGenerada = u_usuario.obtenerContrasenaGenerada();
+                    const contrasenaGenerada = u_gestion_usuarios.obtenerContrasenaGenerada();
                     await Alerta.informacion(
                         'Usuario creado correctamente', 
                         `La contraseña para el usuario es: ${contrasenaGenerada}\n\nGuárdala en un lugar seguro.`
@@ -247,17 +372,45 @@ export class c_usuario {
                 
                 // Recargar datos
                 await this.cargarUsuarios();
-                await this.cargarAdministrativos();
                 
                 // Cerrar modal
-                $('#modalNuevoUsuario').modal('hide');
+                $('#modalUsuario').modal('hide');
                 
                 // Mostrar mensaje de éxito
                 Alerta.exito('Éxito', this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado');
             }
+            console.log('eeeeeeeeeeee')
         } catch (error) {
             console.error('Error en guardarUsuario:', error);
             Alerta.notificarError(`No se pudo guardar el usuario: ${error}`, 1500);
+        }
+    }
+
+    async guardarDatosPersonales(idUsuario, rol) {
+        const formData = new FormData();
+        formData.append('idUsuario', idUsuario);
+        formData.append('nombre', $('#nombrePersona').val().trim());
+        formData.append('apellidos', $('#apellidosPersona').val().trim());
+        formData.append('correo', $('#correoPersonal').val().trim());
+        formData.append('telefono', $('#telefonoPersona').val().trim());
+        formData.append('idFacultad', $('#facultadPersona').val());
+        formData.append('idDepartamento', $('#departamentoPersona').val());
+
+        const personaExistente = this.personasData.get(idUsuario);
+        
+        if (personaExistente && personaExistente.id) {
+            formData.append('id', personaExistente.id);
+            
+            // Según el rol, llamar al servicio correspondiente
+            if (rol === 'Secretario' || rol === 'Administrativo') {
+                await m_administrativo.actualizarAdministrativo(formData);
+            }
+            // Aquí puedes añadir más condiciones para Profesor, Estudiante, etc.
+        } else {
+            if (rol === 'Secretario' || rol === 'Administrativo') {
+                await m_administrativo.insertarAdministrativo(formData);
+            }
+            // Aquí puedes añadir más condiciones
         }
     }
 
@@ -267,90 +420,102 @@ export class c_usuario {
         
         this.modoEdicion = true;
         this.usuarioActual = usuario;
-        this.administrativoActual = this.administrativos.find(a => a.idUsuario == id);
         
-        u_usuario.cargarDatosEnModal(usuario, this.administrativoActual, this.facultades);
-        u_usuario.configurarModoEdicion(true);
+        const personaData = this.personasData.get(id);
+        
+        await u_gestion_usuarios.cargarDatosEnModal(
+            usuario, 
+            personaData, 
+            this.facultades, 
+            this.departamentos
+        );
+        
+        u_gestion_usuarios.configurarModoEdicion(true);
+        
+        // Si tiene facultad seleccionada, filtrar departamentos
+        if (personaData && personaData.idFacultad) {
+            this.filtrarDepartamentosPorFacultad(personaData.idFacultad);
+        }
     }
 
-    /*async cambiarEstadoUsuario(id) {
+    async verUsuario(id) {
         const usuario = this.usuarios.find(u => u.idUsuario == id);
         if (!usuario) return;
         
-        const nuevoEstado = usuario.estado == 1 ? 0 : 1;
-        const accion = nuevoEstado == 1 ? 'habilitar' : 'deshabilitar';
+        const personaData = this.personasData.get(id);
         
-        const confirmacion = await Alerta.confirmar('Confirmar', `¿${accion} este usuario?`);
-        if (!confirmacion) return;
+        // Llenar modal de detalles
+        $('#detalleFoto').attr('src', usuario.foto || '../../public/img/default-avatar.png');
+        $('#detalleUsuario').text(usuario.nombreUsuario);
+        $('#detalleCorreo').text(usuario.correo);
+        $('#detalleRol').text(usuario.rol);
         
+        const estadoBadge = usuario.estado === 'Activo' 
+            ? '<span class="badge bg-success">Activo</span>' 
+            : '<span class="badge bg-secondary">Inactivo</span>';
+        $('#detalleEstado').html(estadoBadge);
+        
+        $('#detalleUltimoAcceso').text(usuario.ultimoAcceso || 'Nunca');
+        
+        // Mostrar datos personales si existen
+        if (personaData) {
+            $('#detalleNombreCompleto').text(`${personaData.nombre || ''} ${personaData.apellidos || ''}`.trim() || 'No especificado');
+            $('#detalleTelefono').text(personaData.telefono || 'No especificado');
+            
+            const facultad = this.facultades.find(f => f.idFacultad == personaData.idFacultad);
+            $('#detalleFacultad').text(facultad?.nombreFacultad || 'No especificada');
+            
+            const departamento = this.departamentos.find(d => d.idDepartamento == personaData.idDepartamento);
+            $('#detalleDepartamento').text(departamento?.nombreDepartamento || 'No especificado');
+            
+            $('#detalleDatosPersonales').removeClass('d-none');
+        } else {
+            $('#detalleDatosPersonales').addClass('d-none');
+        }
+        
+        $('#modalVerUsuario').modal('show');
+    }
+
+    async cambiarEstadoUsuario(id) {
+        const usuario = this.usuarios.find(u => u.idUsuario == id);
+        if (!usuario) return;
+
+        this.usuarioSeleccionado = usuario;
+        const accion = usuario.estado === 'Activo' ? 'deshabilitar' : 'habilitar';
+        $('#mensajeConfirmacion').text(`¿Estás seguro que deseas ${accion} al usuario "${usuario.nombreUsuario}"?`);
+        
+        $('#modalConfirmarEstado').modal('show');
+    }
+
+    async confirmarCambioEstado() {
+        if (!this.usuarioSeleccionado) return;
+
         try {
             let resultado;
-            if (nuevoEstado == 1) {
-                resultado = await m_usuario.habilitarUsuario(id);
+            if (this.usuarioSeleccionado.estado === 'Activo') {
+                resultado = await m_usuario.deshabilitarUsuario(this.usuarioSeleccionado.idUsuario);
             } else {
-                resultado = await m_usuario.deshabilitarUsuario(id);
+                resultado = await m_usuario.habilitarUsuario(this.usuarioSeleccionado.idUsuario);
             }
-            
-            if (resultado) {
-                usuario.estado = nuevoEstado;
-                this.actualizarTablaUsuarios();
-                Alerta.notificarExito(`Usuario ${accion}do`, 1000);
+
+            if (resultado && resultado.success) {
+                Alerta.notificarExito('Estado actualizado correctamente', 1500);
+                await this.cargarUsuarios();
+            } else {
+                Alerta.notificarError(resultado?.mensaje || 'Error al cambiar estado', 1500);
             }
         } catch (error) {
-            Alerta.error('Error', `No se pudo ${accion} el usuario: ${error}`);
+            console.error('Error cambiando estado:', error);
+            Alerta.notificarError('Error al cambiar estado', 1500);
         }
-    }*/
 
-    actualizarTablaUsuarios() { 
-        u_usuario.actualizarTablaUsuarios(this.dataTableUsuarios, this.usuarios); 
-    }
-
-    // ========== FUNCIONES PARA ADMINISTRATIVOS ==========
-    actualizarTablaAdministrativos() {
-        u_usuario.actualizarTablaAdministrativos(
-            this.dataTableAdministrativos, 
-            this.administrativos, 
-            this.usuarios, 
-            this.facultades
-        );
-    }
-
-    // ========== FILTROS ==========
-    aplicarFiltros() {
-        const rol = $('#filtroPorRol').val();
-        const estado = $('#filtroPorEstado').val();
-        
-        // Limpiar filtros anteriores
-        this.dataTableUsuarios.search('').columns().search('').draw();
-        
-        // Aplicar filtros personalizados
-        if (rol !== 'Ninguno' || estado !== 'Ninguno') {
-            $.fn.dataTable.ext.search.push(
-                function(_settings, data) {
-                    const rolUsuario = data[4]; // Columna del rol
-                    const estadoUsuario = data[5]; // Columna del estado
-                    
-                    if (rol !== 'Ninguno' && rolUsuario !== rol) return false;
-                    if (estado !== 'Ninguno' && estadoUsuario !== estado) return false;
-                    
-                    return true;
-                }.bind(this)
-            );
-            
-            this.dataTableUsuarios.draw();
-            $.fn.dataTable.ext.search.pop();
-        }
-    }
-
-    limpiarFiltros() {
-        $('#filtroPorRol').val('Ninguno');
-        $('#filtroPorEstado').val('Ninguno');
-        this.dataTableUsuarios.search('').columns().search('').draw();
+        $('#modalConfirmarEstado').modal('hide');
+        this.usuarioSeleccionado = null;
     }
 }
 
-// ========== INICIALIZAR CUANDO EL DOCUMENTO ESTÉ LISTO ==========
+// ========== INICIALIZAR ==========
 $(document).ready(async function() {
-    const controlador = new c_usuario();
+    const controlador = new c_gestion_usuarios();
     await controlador.inicializar();
 });

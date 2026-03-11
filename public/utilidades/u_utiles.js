@@ -199,7 +199,7 @@ export class u_utiles
     static botonesNavegacionAdministrador(){
         let url = '/guniversidadfrontend/admin/template/html';
 
-        //u_utiles.redirigirA(document.querySelector('.tableroA'), '/guniversidadfrontend/admin/index.html');
+        if (document.querySelector('#btnVolverPanelPrincipal')) u_utiles.redirigirA(document.querySelector('#btnVolverPanelPrincipal'), '/guniversidadfrontend/admin/index.html');
 
         //u_utiles.redirigirA(document.querySelector('.usuario'), `${url}/usuario.html`);
 
@@ -217,7 +217,7 @@ export class u_utiles
 
         //if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
-        //$(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
+        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
 
     /**********************************************************************************************************/
