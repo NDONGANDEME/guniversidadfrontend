@@ -26,6 +26,18 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
 
+.separador{
+  background-color: #ffd600;
+  height: 4px;
+  margin: 2rem 20rem 4rem 20rem;
+}
+
+.separadorForm{
+    background-color: #ffd600;
+    height: 4px;
+    margin: 2rem 20rem;
+}
+
 
 /***************************************************************************/
 /* MANEJO DE ERRORES */
@@ -336,10 +348,10 @@ h1, h2, h3, h4, h5, h6 {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card:hover {
+/*.card:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
+}*/
 
 .card-header {
     background-color: var(--color-primario) !important;
@@ -539,4 +551,99 @@ h1, h2, h3, h4, h5, h6 {
     .sidebar-brand-icon i {
         font-size: 1.3rem;
     }
+}
+
+
+/***************************************************************************/
+/* PARA LA NUEVA PARTE DE LOS MÓDULOS */
+/***************************************************************************/
+/* Estilos para las tarjetas de módulos */
+.tarjetaModulo {
+  background-color: #faf7ef; /* Color amarillo suave (bg-warning-subtle) */
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 100px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.tarjetaModulo:hover {
+  transform: scale(1.05);
+  background-color: var(--color-primario); /* Color más vivo al hacer hover */
+  box-shadow: 0 5px 15px rgba(255, 214, 0, 0.3);
+}
+
+.icono-modulo {
+  font-size: 3rem;
+  color: #000000; /* Color secundario (negro) según tu paleta */
+  margin-bottom: 15px;
+}
+
+.tarjetaModulo label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333333; /* Color texto de tu paleta */
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .tarjetaModulo {
+    min-height: 120px;
+    padding: 15px;
+  }
+
+  .icono-modulo {
+    font-size: 2.5rem;
+  }
+
+  .tarjetaModulo label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Barra superior fija - SOLUCIÓN DEFINITIVA */
+.topbar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background-color: white !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+  margin-bottom: 0 !important;
+}
+
+/* Ajustar el contenido para que no quede debajo de la barra */
+#content {
+  margin-top: 70px !important; /* Ajusta según la altura de tu topbar */
+}
+
+/* Ajuste para el wrapper */
+#content-wrapper {
+  padding-top: 0 !important;
+}
+
+/* Si el sidebar también necesita ajuste */
+#wrapper.toggled #content-wrapper {
+  margin-left: 0;
+}
+
+#page-top::-webkit-scrollbar{
+width: 0;
+}
+
+/* Responsive - ajuste para móviles */
+@media (max-width: 768px) {
+  #content {
+    margin-top: 60px !important; /* Un poco menos en móviles */
+  }
 }

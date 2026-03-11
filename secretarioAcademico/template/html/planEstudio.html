@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Secretario Académico - Planes de Estudios</title>
+    <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg" />
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css" />
+    <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="../css/secretario.css" />
+    <link rel="stylesheet" href="../../../public/template/css/globalModulos.css" />
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper" class="toggled">
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand bg-white topbar mb-4 shadow d-flex justify-content-between sticky-top">
+                    <!--NOmbre del panel-->
+                    <div class="ms-3 d-flex align-items-center justify-content-center">
+                        <div class="h4 me-2">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="fw-bold h4" id="secretarioAcademico"> Secrtetario Académico </div>
+                    </div>
+
+                    <!-- Topbar Navbar -->
+                    <div class="importandoTopBar w-100 d-flex justify-content-end"> </div>
+                </nav>
+
+                <div class="container-fluid px-4">
+                    <!-- Encabezado con título y botones -->
+                    <div class="d-flex justify-content-between align-items-center my-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <i class="fas fa-users-cog me-2 text-warning"></i> Planes de estudio
+                        </h1>
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-warning" id="btnNuevoPlanEstudio">
+                                <i class="fas fa-plus-circle me-2"></i> Nuevo Plan Estudio
+                            </button>
+                            <button class="btn btn-warning" id="btnVolverPanelPrincipal">
+                                <i class="fas fa-arrow-right me-2"></i> Volver
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="mb-0">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nesciunt pariatur maxime error repellendus ratione cumque 
+                        qui dignissimos sint dolorum cum quisquam tempore expedita, iusto, quam aspernatur totam eos ab explicabo.
+                    </p>
+
+                    <div class="separador"></div>
+
+                    <!--PARTE DE LOS PLANES DE ESTUDIO-->
+                    <div>
+                        <!-- Tabla de planes de estudios -->
+                        <div class="border border-3 border-black mb-5 rounded-1">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center tabla" id="tablaPlanesEstudios" >
+                                        <thead>
+                                            <tr>
+                                                <th width="16.6%">Nombre</th>
+                                                <th width="16.6%">Fecha</th>
+                                                <th width="16.6%">Periodo</th>
+                                                <th width="16.6%">Carrera</th>
+                                                <th width="16.6%">Vigente</th>
+                                                <th width="16.6%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tbodyTabla" id="tbodyTablaPlanesEstudios"> <!-- Añadir dinamicamente --> </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Logout Modal-->
+    <div class="importandoModalCierreSesion"></div>
+
+    <script src="../../../public/nomodules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../public/nomodules/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/nomodules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="../../../public/nomodules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script type="module" src="../../controlador/c_planEstudio.js"></script>
+</body>
+</html>

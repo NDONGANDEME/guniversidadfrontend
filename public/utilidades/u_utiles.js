@@ -45,7 +45,7 @@ export class u_utiles
             u_utiles.botonesNavegacion();
             u_utiles.manejoDatosSesion();
             
-            //if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador(); 
+            if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador(); 
             if(document.querySelector('#secretarioAcademico')) u_utiles.botonesNavegacionSecretario();
             if(document.querySelector('#comprobante')) u_utiles.botonesNavegacionComprobante();
             if(document.querySelector('#profesorPanel')) u_utiles.botonesNavegacionProfesor();
@@ -161,23 +161,29 @@ export class u_utiles
     static botonesNavegacionSecretario() {
         let url = '/guniversidadfrontend/secretarioAcademico/template/html';
 
-        u_utiles.redirigirA(document.querySelector('.tableroS'), '/guniversidadfrontend/secretarioAcademico/index.html');
+        if (document.querySelector('#btnVolverPanelPrincipal')) {
+            u_utiles.redirigirA(document.querySelector('#btnVolverPanelPrincipal'), '/guniversidadfrontend/secretarioAcademico/index.html');
+        }
 
-        u_utiles.redirigirA(document.querySelector('.planEstudio'), `${url}/planEstudio.html`);
+        if (document.querySelector('#btnVolverPanelPlanEstudio')) {
+            u_utiles.redirigirA(document.querySelector('#btnVolverPanelPlanEstudio'), `${url}/planEstudio.html`);
+        }
 
-        u_utiles.redirigirA(document.querySelector('.horario'), `${url}/horario.html`);
+        //u_utiles.redirigirA(document.querySelector('.horario'), `${url}/horario.html`);
 
-        u_utiles.redirigirA(document.querySelector('.matricula'), `${url}/matricula.html`);
+        //u_utiles.redirigirA(document.querySelector('.matricula'), `${url}/matricula.html`);
 
-        u_utiles.redirigirA(document.querySelector('.estudiante'), `${url}/estudiante.html`);
+        if (document.querySelector('#btnNuevoPlanEstudio')) {
+            u_utiles.redirigirA(document.querySelector('#btnNuevoPlanEstudio'), `${url}/formularioPlanEstudio.html`);
+        }
 
-        u_utiles.redirigirA(document.querySelector('.profesor'), `${url}/profesor.html`);
+        //u_utiles.redirigirA(document.querySelector('.profesor'), `${url}/profesor.html`);
 
-        if (document.querySelector('#imprimirComprobantePago')) u_utiles.redirigirA(document.querySelector('#imprimirComprobantePago'), `${url}/comprobanteMatricula.html`);
+        //if (document.querySelector('#imprimirComprobantePago')) u_utiles.redirigirA(document.querySelector('#imprimirComprobantePago'), `${url}/comprobanteMatricula.html`);
 
-        if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
+        //if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
-        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
+        if ($('.cerrarSesion')) $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
 
     // navegacion para los botones de la parte del secretario academico (Comprobante)
@@ -217,7 +223,7 @@ export class u_utiles
 
         //if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
-        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
+        if ($('.cerrarSesion')) $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
 
     /**********************************************************************************************************/
