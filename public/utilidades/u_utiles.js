@@ -169,6 +169,10 @@ export class u_utiles
             u_utiles.redirigirA(document.querySelector('#btnVolverPanelPlanEstudio'), `${url}/planEstudio.html`);
         }
 
+        if (document.querySelector('#btnComprobante')) {
+            u_utiles.redirigirA(document.querySelector('#btnComprobante'), `${url}/comprobanteMatricula.html`);
+        }
+
         if (document.querySelector('#btnVolverPanelEstudiante')) {
             u_utiles.redirigirA(document.querySelector('#btnVolverPanelEstudiante'), `${url}/estudiante.html`);
         }
@@ -181,24 +185,15 @@ export class u_utiles
             u_utiles.redirigirA(document.querySelector('#btnNuevoPlanEstudio'), `${url}/formularioPlanEstudio.html`);
         }
 
-        if (document.querySelector('#btnComprobante')) {
-            u_utiles.redirigirA(document.querySelector('#btnComprobante'), `${url}/comprobanteMatricula.html`);
+        if (document.querySelector('#btnVolverPanelProfesor')) {
+            u_utiles.redirigirA(document.querySelector('#btnVolverPanelProfesor'), `${url}/profesor.html`);
         }
 
-        //if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
+        if (document.querySelector('#btnNuevoProfesor')) {
+            u_utiles.redirigirA(document.querySelector('#btnNuevoProfesor'), `${url}/formularioProfesor.html`);
+        }
 
         if ($('.cerrarSesion')) $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
-    }
-
-    // navegacion para los botones de la parte del secretario academico (Comprobante)
-    static botonesNavegacionComprobante() {
-        let url = '/guniversidadfrontend/secretarioAcademico/template/html';
-
-        u_utiles.redirigirA(document.querySelector('.volver'), `${url}/matricula.html`);
-
-        if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
-
-        $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
 
     /**********************************************************************************************************/
@@ -209,23 +204,9 @@ export class u_utiles
     static botonesNavegacionAdministrador(){
         let url = '/guniversidadfrontend/admin/template/html';
 
-        if (document.querySelector('#btnVolverPanelPrincipal')) u_utiles.redirigirA(document.querySelector('#btnVolverPanelPrincipal'), '/guniversidadfrontend/admin/index.html');
-
-        //u_utiles.redirigirA(document.querySelector('.usuario'), `${url}/usuario.html`);
-
-        //u_utiles.redirigirA(document.querySelector('.facultad'), `${url}/facultad.html`);
-
-        //u_utiles.redirigirA(document.querySelector('.departamento'), `${url}/departamento.html`);
-
-        //u_utiles.redirigirA(document.querySelector('.curso'), `${url}/curso.html`);
-
-        //u_utiles.redirigirA(document.querySelector('.asignatura'), `${url}/asignatura.html`);
-
-        //u_utiles.redirigirA(document.querySelector('.noticia'), `${url}/noticia.html`);
-
-        //u_utiles.redirigirA(document.querySelector('.parametro'), `${url}/parametros.html`);
-
-        //if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
+        if (document.querySelector('#btnVolverPanelPrincipal')) {
+            u_utiles.redirigirA(document.querySelector('#btnVolverPanelPrincipal'), '/guniversidadfrontend/admin/index.html');
+        }
 
         if ($('.cerrarSesion')) $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }

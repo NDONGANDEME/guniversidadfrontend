@@ -1,6 +1,6 @@
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 
-export class c_estudiante {
+export class formularioPlanEstudio {
     
 }
 

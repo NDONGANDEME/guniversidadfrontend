@@ -37,7 +37,8 @@ export class c_index {
         const rutas = {
             'gestionUsuarios': `${url}/usuario.html`,
             'gestionAcademica': `${url}/academico.html`,
-            'gestionNoticias': `${url}/noticia.html`
+            'gestionNoticias': `${url}/noticia.html`,
+            'gestionPermisos': `${url}/permiso.html`
         };
 
         // Agregar evento click a cada tarjeta
