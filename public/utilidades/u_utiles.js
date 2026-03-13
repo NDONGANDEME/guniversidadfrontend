@@ -241,7 +241,5 @@ export class u_utiles
         if(document.querySelector('.perfil')) u_utiles.redirigirA(document.querySelector('.perfil'), `${url}/perfil.html`);
 
         $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
-
-        //aeq
     }
 }
