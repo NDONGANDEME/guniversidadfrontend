@@ -114,6 +114,24 @@ export class fetchAsignatura
     }
 
     /**
+     * Envia solicitud para eliminar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
+     */
+    static async eliminarAsignaturaEnBackend(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=eliminarAsignatura&valor=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
+            return false;
+        }
+    }
+
+    /**
      * Envia solicitud para actualizar un registro existente de la BDD
      * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
      * @returns id del registro actualizado

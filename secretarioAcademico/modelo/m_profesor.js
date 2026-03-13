@@ -1,7 +1,10 @@
 import { fetchProfesor } from "../servicios/fetchProfesor.js";
+import { fetchFormacion } from "../servicios/fetchFormacion.js";
 
-export class m_profesor
-{
+/**
+ * CLASE PROFESOR
+ */
+export class m_profesor {
     constructor (idProfesor, nombreProfesor, apellidosProfesor, dipProfesor, especialidad, gradoEstudio, idDepartamento, idUsuario, genero, nacionalidad, 
         responsabilidad, correoProfesor, telefonoProfesor) {
             this.idProfesor = idProfesor;
@@ -33,5 +36,31 @@ export class m_profesor
 
     static async actualizarProfesor(objeto) {
         return await fetchProfesor.actualizarProfesorEnBDD(objeto);
+    }
+}
+
+/**
+ * CLASE FORMACION
+ */
+export class m_formacion {
+    constructor (idFormacion, institucion, tipoFormacion, titulo, nivel, idProfesor) {
+        this.idFormacion = idFormacion;
+        this.institucion = institucion;
+        this.tipoFormacion = tipoFormacion;
+        this.titulo = titulo;
+        this.nivel = nivel;
+        this.idProfesor = idProfesor;
+    }
+
+    static async obtenerFormacionPorProfesor(idProfesor) {
+        return await fetchFormacion.obtenerFormacionPorProfesorDelBackend(idProfesor);
+    }
+
+    static async insertarFormacion(objeto) {
+        return await fetchFormacion.insertarFormacionEnBDD(objeto);
+    }
+
+    static async actualizarFormacion(objeto) {
+        return await fetchFormacion.actualizarFormacionEnBDD(objeto);
     }
 }

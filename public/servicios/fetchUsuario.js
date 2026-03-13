@@ -134,4 +134,22 @@ export class fetchUsuario
             return null;
         }
     }
+
+    /**
+     * Envia solicitud para eliminar a un usuario deshabilitado
+     * @param {Integer} id 
+     * @returns booleano
+     */
+    static async eliminarUsuarioEnBDD(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=eliminarUsuario&valor=${id}&actor=admin`);
+            let respuesta = await solicitud.text();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.notificarError(`No se ha realizado la solicitud. [fetchUsuario]. ${error}`, 3000);
+            return false;
+        }
+    }
 }

@@ -1,7 +1,10 @@
+import { fetchAdministrativo } from "../../admin/servicios/fetchAdministrativo.js";
 import { fetchUsuario } from "../servicios/fetchUsuario.js";
 
-export class m_usuario
-{
+/**
+ * CLASE USUARIO
+ */
+export class m_usuario {
     constructor(idUsuario, nombreUsuario, contrasena, correo, rol, foto, estado, ultimoAcceso) {
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
@@ -31,5 +34,36 @@ export class m_usuario
 
     static async habilitarUsuario(id) {
         return await fetchUsuario.habilitarUsuarioEnBDD(id);
+    }
+
+    static async eliminarUsuario(id) {
+        return await fetchUsuario.eliminarUsuarioEnBDD(id);
+    }
+}
+
+/**
+ * CLASE ADMINISTRATIVO
+ */
+export class m_administrativo {
+    constructor (idAdministrativo, idUsuario, nombreAdministrativo, apellidosAdministrativo, correo, telefono, idFacultad) {
+        this.idAdministrativo = idAdministrativo;
+        this.idUsuario = idUsuario;
+        this.nombreAdministrativo = nombreAdministrativo;
+        this.apellidosAdministrativo = apellidosAdministrativo;
+        this.correo = correo;
+        this.telefono = telefono;
+        this.idFacultad = idFacultad;
+    }
+
+    static async obtenerAdministrativos() {
+        return await fetchAdministrativo.obtenerAdministrativosDelBackend();
+    }
+
+    static async insertarAdministrativo(formDataAdmin) {
+        return await fetchAdministrativo.insertarAdministrativoEnBackend(formDataAdmin);
+    }
+
+    static async actualizarAdministrativo(formDataAdmin) {
+        return await fetchAdministrativo.actualizarAdministrativoEnBackend(formDataAdmin);
     }
 }

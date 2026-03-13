@@ -1,36 +1,35 @@
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 
-export class fetchCarrera
+export class fetchTipoEvaluacion
 {
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * Envia solicitud para cargar las carreras de la BDD
-     * @returns array de carreras
-     * Ya es funcional
+     * Envia solicitud para cargar las asistencias de la BDD
+     * @returns array de asistencias
+     * Ya es funcioanal
      */
-    static async obtenerCarrerasDelBackend() {
+    static async obtenerTipoEvaluacionesDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerCarreras&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=evaluacion&accion=obtenerTipoEvaluaciones&actor=profesor`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchTipoEvaluacion]. ${error}`, 3000);
             return [];
         }
     }
 
     /**
-     * Envia solicitud para insertar una nueva carrera a la BDD
-     * @param {m_carrera} objeto - objeto que contiene los parametros de la clase facultad
+     * Envia solicitud para insertar una nueva asistencia a la BDD
+     * @param {m_asistencia} objeto - objeto que contiene los parametros de la clase curso
      * @returns id del nuevo registro insertado
-     * Ya es funcional
      */
-    static async insertarCarreraEnBackend(objeto) {
+    static async insertarTipoEvaluacionEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=insertarCarrera&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=evaluacion&accion=insertarTipoEvaluacion&actor=profesor`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -38,20 +37,20 @@ export class fetchCarrera
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchTipoEvaluacion]. ${error}`, 3000);
             return null;
         }
     }
 
     /**
      * Envia solicitud para actualizar un registro existente de la BDD
-     * @param {m_carrera} objeto - objeto que contiene los parametros de la clase facultad
+     * @param {m_asistencia} objeto - objeto que contiene los parametros de la clase curso
      * @returns id del registro actualizado
      * Ya es funcional
      */
-    static async actualizarCarreraEnBackend(objeto) {
+    static async actualizarTipoEvaluacionEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=actualizarCarrera&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=evaluacion&accion=actualizarTipoEvaluacion&actor=profesor`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -59,7 +58,7 @@ export class fetchCarrera
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
         } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchTipoEvaluacion]. ${error}`, 3000);
             return null;
         }
     }
@@ -69,15 +68,15 @@ export class fetchCarrera
      * @param {Integer} id 
      * @returns booleano
      */
-    static async eliminarCarreraEnBackend(id) {
+    static async eliminarTipoEvaluacionEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=eliminarCarrera&valor=${id}&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=evaluacion&accion=eliminarTipoEvaluacion&valor=${id}&actor=profesor`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
         } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchTipoEvaluacion]. ${error}`);
             return false;
         }
     }
