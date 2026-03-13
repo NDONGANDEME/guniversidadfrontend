@@ -68,8 +68,17 @@
                             <h5 class="h4 mb-3 text-gray-800"> Roles </h5>
 
                             <!--generar dinamicamente-->
-                            <div class="p-3 rounded-2">
-                                Admin
+                            <div class="p-2 rounded-3 border-warning border-start border-3 d-flex justify-content-between">
+                                <span class="h5 fw-light"> Admin </span>
+
+                                <span class="text-end">
+                                    <button class="btn btn-outline-info editar" data-bs-toggle="modal" data-bs-target="#modalNuevoRol" title="Editar Rol">
+                                            <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger eliminar" title="Eliminar Rol">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </span>
                             </div>
                         </div>
 
@@ -99,9 +108,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalNuevoRolLabel">
-                        <i class="fas fa- me-2"></i> Nuevo Rol
-                    </h5>
+                    <h5 class="modal-title" id="modalNuevoRolLabel"> <i class="fas fa-circle-plus me-2"></i> Nuevo Rol </h5>
                 </div>
 
                 <div class="modal-body">
@@ -119,33 +126,58 @@
 
                             <div class="container">
                                 <div class="row">
+                                    <!--si se clickea full todos los demas checkbox deben desabilitarse-->
                                     <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="plenoControl" id="plenoControl">
-                                        <label class="form-check-label" for="plenoControl"> Pleno control </label>
+                                        <input class="form-check-input" type="checkbox" value="plenoControl" id="full">
+                                        <label class="form-check-label" for="full"> Pleno control </label>
                                     </div>
                                     <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="crearUsuarioCheck" id="crearUsuarioCheck">
-                                        <label class="form-check-label" for="crearUsuarioCheck"> Crear usuarios </label>
+                                        <input class="form-check-input" type="checkbox" value="crearUsuarioCheck" id="insertarUsuario">
+                                        <label class="form-check-label" for="insertarUsuario"> Crear usuarios </label>
                                     </div>
                                     <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="editarUsuarioCheck" id="editarUsuarioCheck">
-                                        <label class="form-check-label" for="editarUsuarioCheck"> Editar usuarios </label>
+                                        <input class="form-check-input" type="checkbox" value="editarUsuarioCheck" id="actualizarUsuario">
+                                        <label class="form-check-label" for="actualizarUsuario"> Editar usuarios </label>
                                     </div>
                                     <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="eliminarUsuarioCheck" id="eliminarUsuarioCheck">
-                                        <label class="form-check-label" for="eliminarUsuarioCheck"> Eliminar usuarios </label>
+                                        <input class="form-check-input" type="checkbox" value="eliminarUsuarioCheck" id="eliminarUsuario">
+                                        <label class="form-check-label" for="eliminarUsuario"> Eliminar usuarios </label>
                                     </div>
                                     <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="insertarNotasCheck" id="insertarNotasCheck">
-                                        <label class="form-check-label" for="insertarNotasCheck"> Insertar notas </label>
+                                        <input class="form-check-input" type="checkbox" value="insertarNotasCheck" id="insertarNota">
+                                        <label class="form-check-label" for="insertarNota"> Insertar notas </label>
                                     </div>
                                     <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="editarNotasCheck" id="editarNotasCheck">
-                                        <label class="form-check-label" for="editarNotasCheck"> Editar notas </label>
+                                        <input class="form-check-input" type="checkbox" value="editarNotasCheck" id="actualizarNota">
+                                        <label class="form-check-label" for="actualizarNota"> Editar notas </label>
                                     </div>
                                     <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="eliminarNotasCheck" id="eliminarNotasCheck">
-                                        <label class="form-check-label" for="eliminarNotasCheck"> Eliminar notas </label>
+                                        <input class="form-check-input" type="checkbox" value="eliminarNotasCheck" id="eliminarNota">
+                                        <label class="form-check-label" for="eliminarNota"> Eliminar notas </label>
+                                    </div>
+                                    <div class="col-4 mt-1 form-check">
+                                        <input class="form-check-input" type="checkbox" value="insertarNotasCheck" id="insertarAsignatura">
+                                        <label class="form-check-label" for="insertarAsignatura"> Crear Asignaturas </label>
+                                    </div>
+                                    <div class="col-4 mt-1 form-check">
+                                        <input class="form-check-input" type="checkbox" value="editarNotasCheck" id="actualizarAsignatura">
+                                        <label class="form-check-label" for="actualizarAsignatura"> Editar Asignaturas </label>
+                                    </div>
+                                    <div class="col-4 mt-1 form-check">
+                                        <input class="form-check-input" type="checkbox" value="eliminarNotasCheck" id="eliminarAsignatura">
+                                        <label class="form-check-label" for="eliminarAsignatura"> Eliminar Asignaturas </label>
+                                    </div>
+                                    <div class="col-4 mt-1 form-check">
+                                        <input class="form-check-input" type="checkbox" value="insertarNotasCheck" id="insertarNoticia">
+                                        <label class="form-check-label" for="insertarNoticia"> Crear Asignaturas </label>
+                                    </div>
+                                    <div class="col-4 mt-1 form-check">
+                                        <input class="form-check-input" type="checkbox" value="editarNotasCheck" id="actualizarNoticia">
+                                        <label class="form-check-label" for="actualizarNoticia"> Editar Asignaturas </label>
+                                    </div>
+                                    <div class="col-4 mt-1 form-check">
+                                        <input class="form-check-input" type="checkbox" value="eliminarNotasCheck" id="eliminarNoticia">
+                                        <label class="form-check-label" for="eliminarNoticia"> Eliminar Asignaturas </label>
                                     </div>
                                     <div class="col-4 mt-1 form-check">
                                         <input class="form-check-input" type="checkbox" value="verExpedienteAcademicosCheck" id="verExpedienteAcademicosCheck">

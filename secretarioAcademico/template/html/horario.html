@@ -3,157 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Panel del Secretario Académico - Horarios</title>
-    <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg">
-    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
-    <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="../css/secretario.css">
-    <link rel="stylesheet" href="../../../public/template/css/globalModulos.css">
+    <title>Gestión de Horarios - Panel Secretario Académico</title>
+    <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg" />
+    <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+    <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css" />
+    <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="../css/secretario.css" />
+    <link rel="stylesheet" href="../../../public/template/css/globalModulos.css" />
 </head>
 <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper" class="toggled">
-        <!-- Sidebar -->
-        <ul class="navbar-nav sidebar sidebar-dark accordion toggled shadow-lg" id="accordionSidebar">
-            <div class="sidebar-brand d-flex align-items-center justify-content-center">
-                <div class="sidebar-brand-icon">
-                    <i class="fas fa-user-tie"></i>
-                </div>
-                <div class="sidebar-brand-text" id="secretarioAcademico"> Secretario Académico </div>
-            </div>
-
-            <hr class="sidebar-divider">
-
-            <li class="nav-item">
-                <a class="nav-link tableroS">
-                    <i class="fas fa-chalkboard"></i> <span> Tablero </span>
-                </a>
-            </li>
-
-            <hr class="sidebar-divider">
-
-            <li class="nav-item">
-                <a class="nav-link planEstudio">
-                    <i class="fas fa-list-alt"></i> <span> Planes de Estudios </span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link matricula">
-                    <i class="fas fa-clipboard-list"></i> <span> Matrícula </span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link profesor">
-                    <i class="fas fa-chalkboard-teacher"></i> <span> Profesores </span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link estudiante">
-                    <i class="fas fa-user-graduate"></i> <span> Estudiantes </span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link horario">
-                    <i class="fas fa-calendar-alt"></i> <span> Horario </span>
-                </a>
-            </li>
-
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="mt-3 text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-        </ul>
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow d-flex justify-content-between">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none mx-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+                <nav class="navbar navbar-expand bg-white topbar mb-4 shadow d-flex justify-content-between sticky-top">
+                    <!--NOmbre del panel-->
+                    <div class="ms-3 d-flex align-items-center justify-content-center">
+                        <div class="h4 me-2">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="fw-bold h4" id="secretarioAcademico"> Secrtetario Académico </div>
+                    </div>
 
                     <!-- Topbar Navbar -->
                     <div class="importandoTopBar w-100 d-flex justify-content-end"> </div>
                 </nav>
 
-                <div class="container-fluid">
-                    <!-- Page Heading -->
-                    <div class="mb-4">
+                <div class="container-fluid px-4">
+                    <!-- Encabezado con título y botones -->
+                    <div class="d-flex justify-content-between align-items-center my-4">
                         <h1 class="h3 mb-0 text-gray-800">
-                            <span class="text-warning ms-2"></span> Horarios
+                            <i class="fas fa-calendar-alt me-2 text-warning"></i> Horarios
                         </h1>
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-warning" id="btnVolverPanelPrincipal">
+                                <i class="fas fa-arrow-right me-2"></i> Volver
+                            </button>
+                        </div>
                     </div>
 
-                    <!--PARTE DE LA MATRICULA-->
-                    <div>
-                        <!--Botones-->
-                        <div class="my-3 text-end">
-                            <button class="btn btn-success btn-icon-split nuevo" data-bs-toggle="modal" data-bs-target="#modalNuevoHorario"> 
-                                <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
-                                <span class="text"> Nuevo </span>
+                    <p class="mb-0">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nesciunt pariatur maxime error repellendus ratione cumque 
+                        qui dignissimos sint dolorum cum quisquam tempore expedita, iusto, quam aspernatur totam eos ab explicabo.
+                    </p>
+
+                    <div class="separadorForm"></div>
+
+                    <!-- Filtros -->
+                    <div class="p-3 mb-3 border border-2 rounded">
+                        <div class="row">
+                            <div class="col-5">
+                                <select class="form-select" id="filtroPorCarreraHorario">
+                                    <option value="Ninguno">Elegir carrera</option>
+                                    <option value="Parcial">Parcial</option>
+                                    <option value="Completa">Completa</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <select class="form-select" id="filtroPorSemestreHorario">
+                                    <option value="Ninguno">Elegir semestre</option>
+                                    <option value="Completa">Completa</option>
+                                    <option value="Incompleta">Incompleta</option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="w-100 btn btn-outline-secondary" id="btnBuscarHorario">
+                                    <i class="fas fa-search"></i> Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--PARTE DE LOS HORARIOS-->
+                    <div class="card rounded-2 mb-4">
+                        <div class="card-header text-center">
+                            <h1 class="h5">Nombre del horario</h1>
+                        </div>
+
+                        <!--Boton para añadir mas contactos-->
+                        <div class="text-end mt-2">
+                            <button class="btn btn-sm btn-outline-warning me-4" id="añadirFilasHorario" type="button"> 
+                                <i class="fas fa-plus"></i> Añadir más filas
                             </button>
                         </div>
 
-                        <!-- Filtros -->
-                        <div class="p-3 mb-3 border border-2 rounded">
-                            <div class="row">
-                                <div class="col-5">
-                                    <select class="form-select" id="filtroPorCarreraHorario">
-                                        <option value="Ninguno">Elegir carrera</option>
-                                        <option value="Parcial">Parcial</option>
-                                        <option value="Completa">Completa</option>
-                                    </select>
-                                </div>
-                                <div class="col-5">
-                                    <select class="form-select" id="filtroPorSemestreHorario">
-                                        <option value="Ninguno">Elegir semestre</option>
-                                        <option value="Completa">Completa</option>
-                                        <option value="Incompleta">Incompleta</option>
-                                    </select>
-                                </div>
-                                <div class="col-2">
-                                    <button type="button" class="w-100 btn btn-outline-secondary" id="btnBuscarHorario">
-                                        <i class="fas fa-search"></i> Buscar
-                                    </button>
-                                </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center" id="tablaMatriculas">
+                                    <thead>
+                                        <tr>
+                                            <th width="16.7%">Horas</th>
+                                            <th width="16.7%">Lunes</th>
+                                            <th width="16.7%">Martes</th>
+                                            <th width="16.7%">Miercoles</th>
+                                            <th width="16.7%">Jueves</th>
+                                            <th width="16.7%">Viernes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tbodyTabla" id="tbodyTablaMatriculas"> <!-- Añadir dinámicamente --> 
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <button class="w-50 btn btn-sm btn-outline-warning" title="Añadir Horas"
+                                                        data-bs-toggle="modal" data-bs-target="#modalAñadirHora">
+                                                            <span class="icon"> <i class="fas fa-plus"></i> </span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <button class="w-50 btn btn-sm btn-outline-warning" title="Añadir Clases"
+                                                        data-bs-toggle="modal" data-bs-target="#modalAñadirClase">
+                                                            <span class="icon"> <i class="fas fa-plus"></i> </span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <button class="w-50 btn btn-sm btn-outline-warning" title="Añadir Clases"
+                                                        data-bs-toggle="modal" data-bs-target="#modalAñadirClase">
+                                                            <span class="icon"> <i class="fas fa-plus"></i> </span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <button class="w-50 btn btn-sm btn-outline-warning" title="Añadir Clases"
+                                                        data-bs-toggle="modal" data-bs-target="#modalAñadirClase">
+                                                            <span class="icon"> <i class="fas fa-plus"></i> </span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <button class="w-50 btn btn-sm btn-outline-warning" title="Añadir Clases"
+                                                        data-bs-toggle="modal" data-bs-target="#modalAñadirClase">
+                                                            <span class="icon"> <i class="fas fa-plus"></i> </span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <button class="w-50 btn btn-sm btn-outline-warning" title="Añadir Clases"
+                                                        data-bs-toggle="modal" data-bs-target="#modalAñadirClase">
+                                                            <span class="icon"> <i class="fas fa-plus"></i> </span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
-                        <!-- Tabla de matrículas -->
-                        <div class="card rounded-2">
-                            <div class="card-header text-center">
-                                <h1 class="h5">Horario de <span class="carrera">Carrera</span> <span class="semestre">Semestre</span></h1>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover text-center" id="tablaMatriculas">
-                                        <thead>
-                                            <tr>
-                                                <th width="16.7%">Horas</th>
-                                                <th width="16.7%">Lunes</th>
-                                                <th width="16.7%">Martes</th>
-                                                <th width="16.7%">Miercoles</th>
-                                                <th width="16.7%">Jueves</th>
-                                                <th width="16.7%">Viernes</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="tbodyTabla" id="tbodyTablaMatriculas"> <!-- Añadir dinámicamente --> </tbody>
-                                    </table>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="">
+                                    <input type="text" class="form-control" id="nombreHorario" placeholder="Nombre del Horario" required>
+                                    <span id="errorNombreHorario" class="errorMensaje"></span>
                                 </div>
                             </div>
-
-                            <div class="card-footer text-end">
-                                <button class="btn btn-primary" id="btnImprimir">
-                                    <span class="icon text-white-50"> <i class="fas fa-print"></i> </span> <span class="text"> Imprimir </span>
+                            <div>
+                                <button class="btn btn-outline-success" id="btnGuardarHoario">
+                                    <span class="icon"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar Horario </span>
+                                </button>
+                                <button class="btn btn-outline-primary" id="btnImprimir">
+                                    <span class="icon"> <i class="fas fa-print"></i> </span> <span class="text"> Imprimir </span>
                                 </button>
                             </div>
                         </div>
@@ -163,132 +182,59 @@
         </div>
     </div>
 
-    <!-- Modal para agregar/editar un nuevo horario -->
-    <div class="modal fade" id="modalNuevoHorario" tabindex="-1" aria-labelledby="modalNuevoHorarioLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <!-- Modal para agregar/editar una clase -->
+    <div class="modal fade mt-4" id="modalAñadirClase" tabindex="-1" aria-labelledby="modalAñadirClaseLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header justify-content-between align-items-center">
-                    <h5 class="modal-title" id="modalNuevoHorarioLabel">Agregar nuevo horario</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAñadirClaseLabel"> <i class="fas fa-plus-circle me-2"></i> Nueva clase </h5>
                 </div>
 
                 <div class="modal-body">
                     <form id="formHorario">
-                        <div class="mb-2">
-                            <label for="nombreHorario" class="form-label">Nombre del horario</label>
-                            <input type="text" class="form-control" id="nombreHorario" placeholder="Ej: Horario 1" required>
-                            <label id="errorNombreHorario" class="errorMensaje"></label>
+                        <div class="row mt-1">
+                            <div class="col-6 filter-group">
+                                <div class="combo-input-wrapper">
+                                    <label for="comboAsignaturasClase" class="form-label">Asignaturas</label>
+                                    <input type="text" id="comboAsignaturasClase" class="form-control" placeholder="Buscar o seleccionar...">
+                                    <div class="dropdown-options" id="opcionesAsignaturasClase"></div>
+                                    <label id="errorAsignaturasClase" class="errorMensaje"></label> 
+                                </div>
+                            </div>
+                            <div class="col-6 filter-group">
+                                <div class="combo-input-wrapper">
+                                    <label for="comboProfesoresClase" class="form-label">Profesores</label>
+                                    <input type="text" id="comboProfesoresClase" class="form-control" placeholder="Buscar o seleccionar...">
+                                    <div class="dropdown-options" id="opcionesProfesoresClase"></div>
+                                    <label id="errorProfesoresClase" class="errorMensaje"></label> 
+                                </div>
+                            </div>
                         </div>
 
-                        <!--Elaboracion delos horarios-->
-                        <div>
-                            <!--Datos para la realizacion de la matricula-->
-                            <div class="modal-header justify-content-center">
-                                <h5 class="modal-title">Elaboracion de los horarios</h5>
-                            </div>
-
-                            <!--PANEL DE DIAS DE LA SEMANA-->
-                            <div class="mt-2 d-flex">
-                                <div class="card flex-fill">
-                                <div class="card-header bg-warning d-flex justify-content-between align-items-center" >
-                                    <h6 class="mb-0"> Días de la semana</h6>
+                        <div class="row mt-1">
+                            <div class="col-4 row">
+                                <div class="col-12">
+                                    <label for="tipoSesionClase" class="form-label">Tipo de sesión</label>
+                                    <select class="form-select" id="tipoSesionClase" required>
+                                        <option value="Ninguno">Seleccione...</option>
+                                        <option value="Magistral">Magistral</option>
+                                        <option value="Practica">Práctica</option>
+                                    </select>
+                                    <label id="errorTipoSesionClase" class="errorMensaje"></label>
                                 </div>
-                                <div class="card-body" style="height: 550px; padding: 15px">
-                                    <!-- Contenedor con scroll horizontal -->
-                                    <div id="diasSemana-scroll">
-                                        <div class="row" id="diasSemana-container">
-                                            <!--Lunes-->
-                                            <div class="col diaSemana-horizontal" id="diasSemanaLunes">
-                                                <div class="card diaSemana-card h-100">
-                                                    <div class="card-header bg-warning d-flex justify-content-between align-items-center py-2">
-                                                        <h6 class="mb-0">Lunes</h6>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="clases-list" id="diasSemanaLunes-list"></div>
-                                                        <div class="mt-2 d-flex justify-content-between pt-2 border-top">
-                                                            <button class="w-100 btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAñadirClase"
-                                                                title="Añadir Clases">
-                                                                    <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!--Martes-->
-                                            <div class="col diaSemana-horizontal" id="diasSemanaMartes">
-                                                <div class="card diaSemana-card h-100">
-                                                    <div class="card-header bg-warning d-flex justify-content-between align-items-center py-2">
-                                                        <h6 class="mb-0">Martes</h6>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="clases-list" id="diasSemanaMartes-list"> </div>
-                                                        <div class="mt-2 d-flex justify-content-between pt-2 border-top">
-                                                            <button class="w-100 btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAñadirClase"
-                                                                title="Añadir Clases">
-                                                                    <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!--Miercoles-->
-                                            <div class="col diaSemana-horizontal" id="diasSemanaMiercoles">
-                                                <div class="card diaSemana-card h-100">
-                                                    <div class="card-header bg-warning d-flex justify-content-between align-items-center py-2">
-                                                        <h6 class="mb-0">Miercoles</h6>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="clases-list" id="diasSemanaMiercoles-list"></div>
-                                                        <div class="mt-2 d-flex justify-content-between pt-2 border-top">
-                                                            <button class="w-100 btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAñadirClase"
-                                                                title="Añadir Clases">
-                                                                    <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!--Jueves-->
-                                            <div class="col diaSemana-horizontal" id="diasSemanaJueves">
-                                                <div class="card diaSemana-card h-100">
-                                                    <div class="card-header bg-warning d-flex justify-content-between align-items-center py-2">
-                                                        <h6 class="mb-0">Jueves</h6>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="clases-list" id="diasSemanaJueves-list"></div>
-                                                        <div class="mt-2 d-flex justify-content-between pt-2 border-top">
-                                                            <button class="w-100 btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAñadirClase"
-                                                                title="Añadir Clases">
-                                                                    <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!--Viernes-->
-                                            <div class="col diaSemana-horizontal" id="diasSemanaViernes">
-                                                <div class="card diaSemana-card h-100">
-                                                    <div class="card-header bg-warning d-flex justify-content-between align-items-center py-2">
-                                                        <h6 class="mb-0">Viernes</h6>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="clases-list" id="diasSemanaViernes-list"></div>
-                                                        <div class="mt-2 d-flex justify-content-between pt-2 border-top">
-                                                            <button class="w-100 btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAñadirClase"
-                                                                title="Añadir Clases">
-                                                                    <span class="icon text-white-50"> <i class="fas fa-plus"></i> </span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="col-12 filter-group">
+                                    <div class="combo-input-wrapper">
+                                        <label for="comboAulasClase" class="form-label">Aulas</label>
+                                        <input type="text" id="comboAulasClase" class="form-control" placeholder="Buscar o seleccionar...">
+                                        <div class="dropdown-options" id="opcionesAulasClase"></div>
+                                        <label id="errorAulasClase" class="errorMensaje"></label> 
                                     </div>
                                 </div>
-                                </div>
+                            </div>
+                            <div class="col-8">
+                                <label for="observacionesClase" class="form-label">Observaciones</label>
+                                <textarea id="observacionesClase" class="form-control" placeholder="Ej: Describa las observaciones" required></textarea>
+                                <label id="errorObservacionesClase" class="errorMensaje"></label>
                             </div>
                         </div>
                     </form>
@@ -296,90 +242,52 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success" id="btnGuardarHorario">Guardar Horario</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarClase">Guardar Clase</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para agregar/editar un nuevo horario -->
-    <div class="modal fade" id="modalAñadirClase" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-md">
+    <!-- Modal para agregar/editar una hora -->
+    <div class="modal fade" id="modalAñadirHora" tabindex="-1" aria-labelledby="modalAñadirHoraLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title">Crear Clase</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAñadirHoraLabel"> <i class="fas fa-plus-circle me-2"></i> Nueva Hora </h5>
                 </div>
 
                 <div class="modal-body">
-                    <div class="">
-                        <div class="filter-group">
-                            <div class="combo-input-wrapper">
-                                <label for="comboAsignaturasClase" class="form-label">Asignaturas</label>
-                                <input type="text" id="comboAsignaturasClase" class="form-control" placeholder="Buscar o seleccionar...">
-                                <div class="dropdown-options" id="opcionesAsignaturasClase"></div>
-                                <label id="errorAsignaturasClase" class="errorMensaje"></label> 
-                            </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="horaInicioClase" class="form-label">Hora de inicio</label>
+                            <input type="time" class="form-control" id="horaInicioClase" required>
+                            <label id="errorHoraInicioClase" class="errorMensaje"></label>
                         </div>
-                        <div class="row">
-                            <div class="col-5">
-                                <label for="horaInicioClase" class="form-label">Hora de inicio</label>
-                                <input type="time" class="form-control" id="horaInicioClase" required>
-                                <label id="errorHoraInicioClase" class="errorMensaje"></label>
-                            </div>
-                            <div class="col-5">
-                                <label for="horaFinClase" class="form-label">Hora fibal</label>
-                                <input type="time" class="form-control" id="horaFinClase" required>
-                                <label id="errorHoraFinClase" class="errorMensaje"></label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-5">
-                                <label for="tipoSesionClase" class="form-label">Tipo de sesión</label>
-                                <select class="form-select" id="tipoSesionClase" required>
-                                    <option value="Ninguno">Seleccione...</option>
-                                    <option value="Magistral">Magistral</option>
-                                    <option value="Practica">Práctica</option>
-                                </select>
-                                <label id="errorTipoSesionClase" class="errorMensaje"></label>
-                            </div>
-                            <div class="col-5 filter-group">
-                                <div class="combo-input-wrapper">
-                                    <label for="comboAulasClase" class="form-label">Aulas</label>
-                                    <input type="text" id="comboAulasClase" class="form-control" placeholder="Buscar o seleccionar...">
-                                    <div class="dropdown-options" id="opcionesAulasClase"></div>
-                                    <label id="errorAulasClase" class="errorMensaje"></label> 
-                                </div>
-                            </div>
-                        </div>
-                        <div class="">
-                            <label for="observacionesClase" class="form-label">Observaciones</label>
-                            <textarea id="observacionesClase" class="form-control" placeholder="Ej: Describa las observaciones" required></textarea>
-                            <label id="errorObservacionesClase" class="errorMensaje"></label>
+                        <div class="col-6">
+                            <label for="horaFinClase" class="form-label">Hora final</label>
+                            <input type="time" class="form-control" id="horaFinClase" required>
+                            <label id="errorHoraFinClase" class="errorMensaje"></label>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-success" id="btnCrearClase">Crear Clase</button>
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btnGuardarHora">Guardar Hora</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>
-
-    <!-- Logout Modal-->
-    <div class="importandoModalCierreSesion"> </div>
     
+    <!-- Logout Modal-->
+    <div class="importandoModalCierreSesion"></div>
+
     <script src="../../../public/nomodules/jquery/dist/jquery.min.js"></script>
     <script src="../../../public/nomodules/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/nomodules/startbootstrap-sb-admin-2/js/sb-admin-2.min.js"></script>
     <script src="../../../public/nomodules/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="../../../public/nomodules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script type="module" src="../../controlador/c_horario.js"></script>
+    <script type="module" src="../../controlador/c_planEstudio.js"></script>
 </body>
 </html>
