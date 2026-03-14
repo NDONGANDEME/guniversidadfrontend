@@ -41,6 +41,64 @@ export class fetchUsuario
     }
 
     /**
+     * Enviar solicitud para cargar el total de los usuarios a paginar
+     * @returns entero
+     */
+    static async obtenerTotalPaginasUsuarioDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=obtenerTotalPaginasUsuario&actor=admin`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchUsuario]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar el total de usuarios a paginar
+     * @returns array de Usuarios
+     */
+    static async obtenerUsuariosAPaginarDelBackend(pagina) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=obtenerUsuariosAPaginar&actor=admin&pagina=${pagina}`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchUsuario]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Envia solicitud para cambiar el estado de un usuario
+     * @param {Integer} id 
+     * @returns boolean
+     */
+    static async cambioEstadoUsuarioEnBDD(id, estado) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=usuario&accion=cambioEstadoUsuario&id=${id}&nuevoEstado=${estado}&actor=admin`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
+            return false;
+        }
+    }
+
+
+
+    /**
+     * YA SON FUNCIONALES
+    */
+
+    /**
      * Envia solicitud para listar todos los usuarios de la BDD
      * @returns array de usuarios
      * Ya es funcional
@@ -81,7 +139,7 @@ export class fetchUsuario
             }
             
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=insertarUsuario&actor=admin`, options);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -122,7 +180,7 @@ export class fetchUsuario
             }
             
             let solicitud = await fetch(url, options);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else {
@@ -143,7 +201,7 @@ export class fetchUsuario
     static async eliminarUsuarioEnBDD(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=usuario&accion=eliminarUsuario&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.text();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;

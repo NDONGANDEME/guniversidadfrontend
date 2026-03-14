@@ -5,6 +5,46 @@ export class fetchPermiso
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
+     * Envia solicitud para cargar el campo tablas de permiso de la BDD
+     * @returns array de permisos
+     * Ya es funcional
+     */
+    static async obtenerTablasPermisosDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=permiso&accion=obtenerTablasPermisos&actor=admin`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchPermiso]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Envia solicitud para eliminar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
+     */
+    static async eliminarPermisoEnBackend(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=permiso&accion=eliminarPermiso&valor=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchPermiso]. ${error}`);
+            return false;
+        }
+    }
+
+    /**
+     * YA SON FUNCIONALES
+    */
+
+    /**
      * Envia solicitud para cargar las permisos de la BDD
      * @returns array de permisos
      * Ya es funcional
@@ -61,24 +101,6 @@ export class fetchPermiso
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchPermiso]. ${error}`, 3000);
             return null;
-        }
-    }
-
-    /**
-     * Envia solicitud para eliminar un registro de la BDD
-     * @param {Integer} id 
-     * @returns booleano
-     */
-    static async eliminarPermisoEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=permiso&accion=eliminarPermiso&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchPermiso]. ${error}`);
-            return false;
         }
     }
 }

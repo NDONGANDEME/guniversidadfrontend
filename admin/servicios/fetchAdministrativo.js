@@ -1,5 +1,4 @@
 import { Alerta } from "../../public/utilidades/u_alertas.js";
-import { m_administrativo } from "../modelo/m_administrativo.js";
 
 export class fetchAdministrativo
 {
@@ -12,7 +11,7 @@ export class fetchAdministrativo
     static async obtenerAdministrativosDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=obtenerAdministrativos&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -44,7 +43,7 @@ export class fetchAdministrativo
             }
             
             let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=insertarAdministrativo&actor=admin`, options);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -76,7 +75,7 @@ export class fetchAdministrativo
             
             // El ID va en el body, no en la URL
             let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=actualizarAdministrativo&actor=admin`, options);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.text(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

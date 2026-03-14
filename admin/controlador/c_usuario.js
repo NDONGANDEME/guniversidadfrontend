@@ -1,416 +1,337 @@
-// c_gestion_usuarios.js
 import { sesiones } from "../../public/core/sesiones.js";
-import { m_usuario } from "../../public/modelo/m_usuario.js";
-import { m_administrativo } from "../modelo/m_administrativo.js";
-import { m_facultad } from "../modelo/m_facultad.js";
-import { m_departamento } from "../modelo/m_departamento.js";
+//import { m_administrativo } from "../modelo/m_usuario.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
-import { u_gestion_usuarios } from "../utilidades/u_usuario.js";
+import { u_usuario } from "../utilidades/u_usuario.js";
+import { m_facultad } from "../modelo/m_academico.js";
+import { m_usuario } from "../../public/modelo/m_usuario.js";
 
-export class c_gestion_usuarios {
+export class c_usuario {
     constructor() {
         // Usuarios
         this.usuarios = [];
         this.usuarioActual = null;
         this.modoEdicion = false;
-        this.vistaActual = 'tarjetas'; // 'tarjetas' o 'lista'
         
-        // Datos personales según rol
-        this.personasData = new Map(); // Mapa idUsuario -> datos personales
+        // Paginación (21 por página como solicitaste)
+        this.paginaActual = 1;
+        this.totalPaginas = 1;
+        this.usuariosPorPagina = 21;
         
         // Filtros
         this.filtros = {
-            busqueda: '',
             rol: '',
-            estado: ''
+            estado: '',
+            busqueda: ''
         };
         
-        // Facultades y departamentos
+        // Modal
+        this.modalInstance = null;
+        
+        // Datos adicionales
         this.facultades = [];
-        this.departamentos = [];
     }
 
     // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
-            // Verificar sesión
             //sesiones.verificarExistenciaSesion();
+            await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
+            await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
+            u_utiles.botonesNavegacionAdministrador();
             
-            // Cargar componentes comunes
-            await this.cargarComponentes();
+            // Inicializar modal de Bootstrap
+            const modalElement = document.getElementById('modalNuevoUsuario');
+            if (modalElement) {
+                this.modalInstance = new bootstrap.Modal(modalElement);
+            }
             
-            // Ajustar modal para navbar fija
-            u_gestion_usuarios.ajustarModalParaNavbarFija();
-            
-            // Cargar datos necesarios
+            // Cargar facultades para los selectores
             await this.cargarFacultades();
-            await this.cargarDepartamentos();
+            await u_usuario.cargarRolesEnSelect();
+            
+            // Cargar usuarios
             await this.cargarUsuarios();
             
-            // Configurar eventos
             this.configurarEventos();
             this.configurarValidaciones();
-            
-            // Configurar subida de imagen
-            u_gestion_usuarios.configurarSubidaImagen();
+            this.configurarSubidaArchivos();
+            this.configurarCambioVista();
             
         } catch (error) {
-            console.error('Error en inicialización:', error);
-            Alerta.error('Error', `No se pudo inicializar el módulo: ${error}`);
+            console.error('Error al inicializar:', error);
+            Alerta.error('Error', 'No se pudo inicializar el módulo');
         }
-    }
-
-    async cargarComponentes() {
-        await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
-        await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
-        u_utiles.botonesNavegacionAdministrador();
     }
 
     // ========== CARGA DE DATOS ==========
-    
     async cargarFacultades() {
         try {
-            const datos = await m_facultad.obtenerFacultades();
-            this.facultades = datos || [];
+            this.facultades = await m_facultad.obtenerFacultades() || [];
+            u_usuario.cargarFacultadesEnSelect(this.facultades);
         } catch (error) {
-            console.error('Error cargando facultades:', error);
+            console.error('Error al cargar facultades:', error);
             this.facultades = [];
-        }
-    }
-
-    async cargarDepartamentos() {
-        try {
-            const datos = await m_departamento.obtenerDepartamentos();
-            this.departamentos = datos || [];
-        } catch (error) {
-            console.error('Error cargando departamentos:', error);
-            this.departamentos = [];
         }
     }
 
     async cargarUsuarios() {
         try {
-            const datos = await m_usuario.obtenerUsuarios();
-            this.usuarios = datos || [];
+            // Cargar usuarios desde el backend (21 por página)
+            const datosBackend = await m_usuario.obtenerUsuarios(this.paginaActual, this.usuariosPorPagina, this.filtros);
             
-            // Cargar datos personales según el rol
-            await this.cargarDatosPersonales();
+            if (!datosBackend || !datosBackend.usuarios) {
+                this.usuarios = [];
+                this.totalPaginas = 1;
+                this.actualizarVista();
+                return;
+            }
+
+            // Convertir a objetos usuario
+            this.usuarios = await u_usuario.convertirAUsuarios(datosBackend.usuarios);
             
-            this.renderizarUsuarios();
+            // Total de páginas desde el backend
+            this.totalPaginas = datosBackend.totalPaginas || 1;
+            
+            this.actualizarVista();
+
         } catch (error) {
-            console.error('Error cargando usuarios:', error);
+            console.error('Error al cargar usuarios:', error);
+            Alerta.error('Error', 'Fallo al cargar usuarios');
             this.usuarios = [];
-            this.renderizarUsuarios();
+            this.actualizarVista();
         }
-    }
-
-    async cargarDatosPersonales() {
-        // Limpiar mapa de datos personales
-        this.personasData.clear();
-        
-        // Cargar administrativos (incluye Secretario)
-        try {
-            const administrativos = await m_administrativo.obtenerAdministrativos() || [];
-            administrativos.forEach(adm => {
-                this.personasData.set(adm.idUsuario, {
-                    tipo: 'administrativo',
-                    id: adm.idAdministrativo,
-                    nombre: adm.nombreAdministrativo,
-                    apellidos: adm.apellidosAdministrativo,
-                    correo: adm.correo,
-                    telefono: adm.telefono,
-                    idFacultad: adm.idFacultad
-                });
-            });
-        } catch (error) {
-            console.error('Error cargando administrativos:', error);
-        }
-        
-        // Aquí puedes cargar otros tipos (Profesor, Estudiante) si existen
-    }
-
-    // ========== RENDERIZADO ==========
-    
-    renderizarUsuarios() {
-        const contenedor = document.getElementById('contenedorUsuarios');
-        if (!contenedor) return;
-
-        // Aplicar filtros
-        let usuariosFiltrados = this.aplicarFiltros();
-
-        if (usuariosFiltrados.length === 0) {
-            contenedor.innerHTML = u_gestion_usuarios.renderizarVacia();
-            return;
-        }
-
-        let html = '';
-        
-        if (this.vistaActual === 'tarjetas') {
-            contenedor.className = 'row g-4';
-            usuariosFiltrados.forEach(usuario => {
-                const personaData = this.personasData.get(usuario.idUsuario);
-                html += u_gestion_usuarios.generarTarjetaUsuario(usuario, personaData, 'tarjetas');
-            });
-        } else {
-            contenedor.className = 'vista-lista row g-3';
-            usuariosFiltrados.forEach(usuario => {
-                const personaData = this.personasData.get(usuario.idUsuario);
-                html += u_gestion_usuarios.generarTarjetaUsuario(usuario, personaData, 'lista');
-            });
-        }
-
-        contenedor.innerHTML = html;
-    }
-
-    // ========== FILTROS ==========
-    
-    aplicarFiltros() {
-        return this.usuarios.filter(usuario => {
-            // Filtro de búsqueda
-            if (this.filtros.busqueda) {
-                const busqueda = this.filtros.busqueda.toLowerCase();
-                const personaData = this.personasData.get(usuario.idUsuario);
-                const nombreCompleto = personaData ? 
-                    `${personaData.nombre} ${personaData.apellidos}`.toLowerCase() : '';
-                
-                if (!usuario.nombreUsuario.toLowerCase().includes(busqueda) && 
-                    !usuario.correo.toLowerCase().includes(busqueda) &&
-                    !nombreCompleto.includes(busqueda)) {
-                    return false;
-                }
-            }
-            
-            // Filtro por rol
-            if (this.filtros.rol && usuario.rol !== this.filtros.rol) {
-                return false;
-            }
-            
-            // Filtro por estado
-            if (this.filtros.estado && usuario.estado !== this.filtros.estado) {
-                return false;
-            }
-            
-            return true;
-        });
     }
 
     // ========== VALIDACIONES ==========
-    
-    configurarValidaciones() { 
-        u_gestion_usuarios.configurarValidaciones(); 
+    configurarValidaciones() {
+        u_usuario.configurarValidaciones();
         
-        // Cargar facultades en el select cuando se muestre
-        $('#facultadPersona').off('change').on('change', (e) => {
-            const idFacultad = e.target.value;
-            this.filtrarDepartamentosPorFacultad(idFacultad);
+        // Mostrar/ocultar panel de datos personales según el rol
+        $('#rolUsuario').on('change', (e) => {
+            const rol = e.target.value;
+            u_usuario.mostrarOcultarPanelDatosPersonales(rol);
         });
     }
 
-    filtrarDepartamentosPorFacultad(idFacultad) {
-        const departamentosFiltrados = this.departamentos.filter(d => d.idFacultad == idFacultad);
-        u_gestion_usuarios.cargarDepartamentosEnSelect(departamentosFiltrados);
+    // ========== CONFIGURAR SUBIDA DE ARCHIVOS ==========
+    configurarSubidaArchivos() {
+        u_usuario.configurarSubidaArchivos();
+    }
+
+    // ========== CAMBIO DE VISTA (TARJETAS/LISTA) ==========
+    configurarCambioVista() {
+        $('#vistaTarjetas').on('click', () => {
+            $('#vistaTarjetas').addClass('active');
+            $('#vistaLista').removeClass('active');
+            this.actualizarVista();
+        });
+
+        $('#vistaLista').on('click', () => {
+            $('#vistaLista').addClass('active');
+            $('#vistaTarjetas').removeClass('active');
+            this.actualizarVista();
+        });
     }
 
     // ========== EVENTOS ==========
-    
     configurarEventos() {
-        // Cambio de vista
-        $('#vistaTarjetas').off('click').on('click', () => {
-            this.vistaActual = 'tarjetas';
-            $('#vistaTarjetas').addClass('active');
-            $('#vistaLista').removeClass('active');
-            this.renderizarUsuarios();
-        });
-
-        $('#vistaLista').off('click').on('click', () => {
-            this.vistaActual = 'lista';
-            $('#vistaLista').addClass('active');
-            $('#vistaTarjetas').removeClass('active');
-            this.renderizarUsuarios();
-        });
-
         // Botón nuevo usuario
-        $('#btnNuevoUsuario').off('click').on('click', () => {
+        $('#btnNuevoUsuario').on('click', () => {
             this.modoEdicion = false;
             this.usuarioActual = null;
-            u_gestion_usuarios.limpiarModal();
-            u_gestion_usuarios.configurarModoEdicion(false);
-            
-            // Cargar facultades en el select
-            u_gestion_usuarios.cargarFacultadesEnSelect(this.facultades);
-            
-            // Generar contraseña para el nuevo usuario
-            u_gestion_usuarios.prepararNuevoUsuario();
+            u_usuario.limpiarModal();
+            u_usuario.configurarModoEdicion(false);
+            $('#panelDatosPersonales').addClass('d-none');
         });
 
         // Guardar usuario
-        $('#btnGuardarUsuario').off('click').on('click', () => this.guardarUsuario());
+        $('#btnGuardarUsuario').on('click', () => this.guardarUsuario());
 
-        // Eventos de las tarjetas (delegación)
-        $(document).off('click', '.ver-usuario').on('click', '.ver-usuario', (e) => {
-            const tarjeta = $(e.target).closest('.usuario-tarjeta');
-            this.verUsuario(tarjeta.data('id'));
+        // Editar usuario
+        $(document).on('click', '.editar-usuario', (e) => {
+            e.stopPropagation();
+            this.editarUsuario($(e.currentTarget).data('id'));
         });
 
-        $(document).off('click', '.editar-usuario').on('click', '.editar-usuario', (e) => {
-            const tarjeta = $(e.target).closest('.usuario-tarjeta');
-            this.editarUsuario(tarjeta.data('id'));
+        // Eliminar/Deshabilitar usuario
+        $(document).on('click', '.eliminar-usuario', (e) => {
+            e.stopPropagation();
+            this.cambiarEstadoUsuario($(e.currentTarget).data('id'));
         });
 
-        $(document).off('click', '.cambiar-estado').on('click', '.cambiar-estado', (e) => {
-            const tarjeta = $(e.target).closest('.usuario-tarjeta');
-            this.cambiarEstadoUsuario(tarjeta.data('id'));
+        // Ver detalles de usuario
+        $(document).on('click', '.ver-detalles-usuario', (e) => {
+            e.stopPropagation();
+            this.verDetallesUsuario($(e.currentTarget).data('id'));
         });
 
-        // Filtros
-        $('#buscadorUsuario').off('input').on('input', (e) => {
-            this.filtros.busqueda = e.target.value;
-            this.renderizarUsuarios();
+        // Filtros y búsqueda
+        $('#filtroRol, #filtroEstado').on('change', (e) => {
+            this.filtros[e.target.id === 'filtroRol' ? 'rol' : 'estado'] = e.target.value;
+            this.paginaActual = 1;
+            this.cargarUsuarios();
         });
 
-        $('#filtroRol').off('change').on('change', (e) => {
-            this.filtros.rol = e.target.value;
-            this.renderizarUsuarios();
-        });
+        $('#buscadorUsuario').on('keyup', u_utiles.debounce(() => {
+            this.filtros.busqueda = $('#buscadorUsuario').val();
+            this.paginaActual = 1;
+            this.cargarUsuarios();
+        }, 500));
 
-        $('#filtroEstado').off('change').on('change', (e) => {
-            this.filtros.estado = e.target.value;
-            this.renderizarUsuarios();
-        });
-
-        $('#btnLimpiarFiltros').off('click').on('click', () => {
-            $('#buscadorUsuario').val('');
+        $('#btnLimpiarFiltros').on('click', () => {
             $('#filtroRol').val('');
             $('#filtroEstado').val('');
-            this.filtros = { busqueda: '', rol: '', estado: '' };
-            this.renderizarUsuarios();
+            $('#buscadorUsuario').val('');
+            this.filtros = { rol: '', estado: '', busqueda: '' };
+            this.paginaActual = 1;
+            this.cargarUsuarios();
         });
 
-        // Confirmar cambio de estado
-        $('#confirmarCambioEstado').off('click').on('click', () => {
-            this.confirmarCambioEstado();
+        // Volver al panel principal
+        $('#btnVolverPanelPrincipal').on('click', () => {
+            window.location.href = '/guniversidadfrontend/admin/index.html';
         });
 
-        // Cuando se abre el modal, ajustar para navbar fija
-        $('#modalUsuario').on('show.bs.modal', function() {
-            $(this).css('padding-top', '70px');
+        // Cuando se cierra el modal, limpiar
+        $('#modalNuevoUsuario').on('hidden.bs.modal', () => {
+            if (!this.modoEdicion) {
+                u_usuario.limpiarModal();
+            }
+        });
+
+        // Generar contraseña aleatoria
+        $('#generarContraseña').on('change', function() {
+            if ($(this).is(':checked')) {
+                const contraseña = u_usuario.generarContraseñaAleatoria();
+                // Aquí podrías mostrar la contraseña generada o guardarla en un campo oculto
+                console.log('Contraseña generada:', contraseña);
+                Alerta.notificarInfo('Contraseña generada: ' + contraseña);
+            }
         });
     }
 
-    // ========== CRUD DE USUARIOS ==========
+    // ========== FUNCIONES PARA USUARIOS ==========
+
+    // ========== VER DETALLES DE USUARIO ==========
+    async verDetallesUsuario(id) {
+        const usuario = this.usuarios.find(u => u.idUsuario == id);
+        if (!usuario) return;
+        
+        try {
+            const detallesHtml = u_usuario.crearDetallesUsuarioHTML(usuario);
+            $('#modalVerUsuario .modal-body').html(detallesHtml);
+            $('#modalVerUsuario').modal('show');
+        } catch (error) {
+            console.error('Error al ver detalles:', error);
+            Alerta.error('Error', 'No se pudieron cargar los detalles');
+        }
+    }
     
+    formularioUsuarioEsValido() {
+        const nombreOCorreo = $('#nombreOCorreoUsuario').val().trim();
+        const rol = $('#rolUsuario').val();
+        
+        // Validaciones básicas
+        if (!u_usuario.validarNombreOCorreo(nombreOCorreo)) return false;
+        if (!u_usuario.validarRol(rol)) return false;
+        
+        // Si el rol requiere datos personales (no es Ninguno, Estudiante ni Profesor)
+        if (u_usuario.requiereDatosPersonales(rol)) {
+            const nombre = $('#nombreUsuario').val().trim();
+            const apellidos = $('#apellidosUsuario').val().trim();
+            const correo = $('#correoUsuario').val().trim();
+            const telefono = $('#telefonoUsuario').val().trim();
+            const facultad = $('#facultadesUsuario').val();
+            
+            if (!u_usuario.validarNombre(nombre)) return false;
+            if (!u_usuario.validarApellidos(apellidos)) return false;
+            if (!u_usuario.validarCorreo(correo)) return false;
+            if (!u_usuario.validarTelefono(telefono)) return false;
+            //if (!facultad || facultad === '') return false;
+        }
+        
+        return true;
+    }
+
     async guardarUsuario() {
-        console.log('eeeeeeeeeeee')
-        // Validar formulario
-        if (!u_gestion_usuarios.validarFormularioCompleto(this.modoEdicion)) {
-            Alerta.notificarAdvertencia('Complete correctamente todos los campos', 1500);
+        if (!this.formularioUsuarioEsValido()) {
+            Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
             return;
         }
         
         try {
-            const nombreOCorreo = $('#nombreOCorreoUsuario').val().trim();
-            const rol = $('#rolUsuario').val();
+            // ===== 1. DATOS DE USUARIO (tabla usuario) =====
+            const formDataUsuario = new FormData();
             
-            const esCorreo = nombreOCorreo.includes('@');
+            formDataUsuario.append('nombreUsuario', $('#nombreOCorreoUsuario').val().trim());
+            formDataUsuario.append('rol', $('#rolUsuario').val());
             
-            // Crear FormData
-            const formData = new FormData();
-            
-            // Datos del usuario
-            formData.append('nombreUsuario', esCorreo ? nombreOCorreo.split('@')[0] : nombreOCorreo);
-            formData.append('correo', esCorreo ? nombreOCorreo : `${nombreOCorreo}@sistema.com`);
-            formData.append('rol', rol);
-            formData.append('estado', 'Activo');
-            
-            // Si es modo edición, añadir el ID
-            if (this.modoEdicion && this.usuarioActual) {
-                formData.append('idUsuario', this.usuarioActual.idUsuario);
+            // Contraseña
+            if ($('#generarContraseña').is(':checked')) {
+                const contraseñaGenerada = u_usuario.generarContraseñaAleatoria();
+                formDataUsuario.append('contrasena', contraseñaGenerada);
+                Alerta.informacion('Info', 'Contraseña generada automáticamente');
+            } else {
+                formDataUsuario.append('contrasena', 'contraseña123');
             }
             
-            // Si es nuevo usuario, añadir contraseña
-            if (!this.modoEdicion) {
-                const contrasenaGenerada = u_gestion_usuarios.obtenerContrasenaGenerada();
-                if (!contrasenaGenerada) {
-                    Alerta.notificarError('Error al generar la contraseña', 1000);
-                    return;
-                }
-                formData.append('contrasena', contrasenaGenerada);
+            // Foto
+            const foto = u_usuario.obtenerFotoParaEnviar();
+            if (foto) {
+                formDataUsuario.append('foto', foto);
             }
             
-            // Añadir imagen si existe
-            const archivoImagen = u_gestion_usuarios.obtenerImagenParaSubir();
-            if (archivoImagen) {
-                formData.append('foto', archivoImagen);
-            }
-            
-            let resultado;
             let idUsuario;
+            let resultadoUsuario;
             
             if (this.modoEdicion) {
-                resultado = await m_usuario.actualizarUsuario(formData);
+                formDataUsuario.append('idUsuario', this.usuarioActual.idUsuario);
+                resultadoUsuario = await m_usuario.actualizarUsuario(formDataUsuario);
                 idUsuario = this.usuarioActual.idUsuario;
             } else {
-                resultado = await m_usuario.insertarUsuario(formData);
-                idUsuario = resultado?.idUsuario || resultado;
+                resultadoUsuario = await m_usuario.insertarUsuario(formDataUsuario);
+                idUsuario = resultadoUsuario.idUsuario; // El backend debe devolver el ID insertado
             }
             
-            // Guardar datos personales si el rol lo requiere
-            if (u_gestion_usuarios.esRolConDatosPersonales(rol) && idUsuario) {
-                await this.guardarDatosPersonales(idUsuario, rol);
+            if (!resultadoUsuario) {
+                throw new Error('Error al guardar el usuario');
             }
             
-            if (resultado) {
-                // Mostrar contraseña solo si es nuevo usuario
-                if (!this.modoEdicion) {
-                    const contrasenaGenerada = u_gestion_usuarios.obtenerContrasenaGenerada();
-                    await Alerta.informacion(
-                        'Usuario creado correctamente', 
-                        `La contraseña para el usuario es: ${contrasenaGenerada}\n\nGuárdala en un lugar seguro.`
-                    );
+            // ===== 2. DATOS PERSONALES (tabla administrativo) =====
+            const rol = $('#rolUsuario').val();
+            if (u_usuario.requiereDatosPersonales(rol)) {
+                const formDataAdmin = new FormData();
+                
+                formDataAdmin.append('idUsuario', idUsuario);
+                formDataAdmin.append('nombre', $('#nombreUsuario').val().trim());
+                formDataAdmin.append('apellidos', $('#apellidosUsuario').val().trim());
+                formDataAdmin.append('correo', $('#correoUsuario').val().trim());
+                formDataAdmin.append('telefono', $('#telefonoUsuario').val().trim());
+                formDataAdmin.append('idFacultad', $('#facultadesUsuario').val());
+                
+                // Si estamos en edición y ya tiene datos administrativos
+                if (this.modoEdicion && this.usuarioActual.datosAdministrativos) {
+                    formDataAdmin.append('idAdministrativo', this.usuarioActual.datosAdministrativos.idAdministrativo);
+                    await m_administrativo.actualizarAdministrativo(formDataAdmin);
+                } else {
+                    await m_administrativo.insertarAdministrativo(formDataAdmin);
                 }
-                
-                // Recargar datos
-                await this.cargarUsuarios();
-                
-                // Cerrar modal
-                $('#modalUsuario').modal('hide');
-                
-                // Mostrar mensaje de éxito
-                Alerta.exito('Éxito', this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado');
             }
-            console.log('eeeeeeeeeeee')
-        } catch (error) {
-            console.error('Error en guardarUsuario:', error);
-            Alerta.notificarError(`No se pudo guardar el usuario: ${error}`, 1500);
-        }
-    }
-
-    async guardarDatosPersonales(idUsuario, rol) {
-        const formData = new FormData();
-        formData.append('idUsuario', idUsuario);
-        formData.append('nombre', $('#nombrePersona').val().trim());
-        formData.append('apellidos', $('#apellidosPersona').val().trim());
-        formData.append('correo', $('#correoPersonal').val().trim());
-        formData.append('telefono', $('#telefonoPersona').val().trim());
-        formData.append('idFacultad', $('#facultadPersona').val());
-        formData.append('idDepartamento', $('#departamentoPersona').val());
-
-        const personaExistente = this.personasData.get(idUsuario);
-        
-        if (personaExistente && personaExistente.id) {
-            formData.append('id', personaExistente.id);
             
-            // Según el rol, llamar al servicio correspondiente
-            if (rol === 'Secretario' || rol === 'Administrativo') {
-                await m_administrativo.actualizarAdministrativo(formData);
+            // ===== 3. FINALIZAR =====
+            u_usuario.limpiarArchivos();
+            await this.cargarUsuarios();
+            
+            if (this.modalInstance) {
+                this.modalInstance.hide();
             }
-            // Aquí puedes añadir más condiciones para Profesor, Estudiante, etc.
-        } else {
-            if (rol === 'Secretario' || rol === 'Administrativo') {
-                await m_administrativo.insertarAdministrativo(formData);
-            }
-            // Aquí puedes añadir más condiciones
+            
+            Alerta.exito('Éxito', this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado');
+            
+        } catch (error) {
+            console.error('Error al guardar usuario:', error);
+            Alerta.notificarError(`No se pudo guardar el usuario: ${error}`, 1500);
         }
     }
 
@@ -421,101 +342,80 @@ export class c_gestion_usuarios {
         this.modoEdicion = true;
         this.usuarioActual = usuario;
         
-        const personaData = this.personasData.get(id);
+        // Cargar datos en el modal
+        u_usuario.cargarDatosEnModal(usuario);
+        u_usuario.configurarModoEdicion(true);
         
-        await u_gestion_usuarios.cargarDatosEnModal(
-            usuario, 
-            personaData, 
-            this.facultades, 
-            this.departamentos
-        );
+        // Mostrar panel de datos personales si corresponde
+        u_usuario.mostrarOcultarPanelDatosPersonales(usuario.rol);
         
-        u_gestion_usuarios.configurarModoEdicion(true);
-        
-        // Si tiene facultad seleccionada, filtrar departamentos
-        if (personaData && personaData.idFacultad) {
-            this.filtrarDepartamentosPorFacultad(personaData.idFacultad);
+        // Abrir el modal
+        if (this.modalInstance) {
+            this.modalInstance.show();
         }
-    }
-
-    async verUsuario(id) {
-        const usuario = this.usuarios.find(u => u.idUsuario == id);
-        if (!usuario) return;
-        
-        const personaData = this.personasData.get(id);
-        
-        // Llenar modal de detalles
-        $('#detalleFoto').attr('src', usuario.foto || '../../public/img/default-avatar.png');
-        $('#detalleUsuario').text(usuario.nombreUsuario);
-        $('#detalleCorreo').text(usuario.correo);
-        $('#detalleRol').text(usuario.rol);
-        
-        const estadoBadge = usuario.estado === 'Activo' 
-            ? '<span class="badge bg-success">Activo</span>' 
-            : '<span class="badge bg-secondary">Inactivo</span>';
-        $('#detalleEstado').html(estadoBadge);
-        
-        $('#detalleUltimoAcceso').text(usuario.ultimoAcceso || 'Nunca');
-        
-        // Mostrar datos personales si existen
-        if (personaData) {
-            $('#detalleNombreCompleto').text(`${personaData.nombre || ''} ${personaData.apellidos || ''}`.trim() || 'No especificado');
-            $('#detalleTelefono').text(personaData.telefono || 'No especificado');
-            
-            const facultad = this.facultades.find(f => f.idFacultad == personaData.idFacultad);
-            $('#detalleFacultad').text(facultad?.nombreFacultad || 'No especificada');
-            
-            const departamento = this.departamentos.find(d => d.idDepartamento == personaData.idDepartamento);
-            $('#detalleDepartamento').text(departamento?.nombreDepartamento || 'No especificado');
-            
-            $('#detalleDatosPersonales').removeClass('d-none');
-        } else {
-            $('#detalleDatosPersonales').addClass('d-none');
-        }
-        
-        $('#modalVerUsuario').modal('show');
     }
 
     async cambiarEstadoUsuario(id) {
         const usuario = this.usuarios.find(u => u.idUsuario == id);
         if (!usuario) return;
-
-        this.usuarioSeleccionado = usuario;
-        const accion = usuario.estado === 'Activo' ? 'deshabilitar' : 'habilitar';
-        $('#mensajeConfirmacion').text(`¿Estás seguro que deseas ${accion} al usuario "${usuario.nombreUsuario}"?`);
         
-        $('#modalConfirmarEstado').modal('show');
-    }
-
-    async confirmarCambioEstado() {
-        if (!this.usuarioSeleccionado) return;
-
+        const accion = usuario.estado === 'Activo' ? 'deshabilitar' : 'habilitar';
+        const confirmacion = await Alerta.confirmar('Confirmar', `¿${accion === 'deshabilitar' ? 'Deshabilitar' : 'Habilitar'} al usuario "${usuario.nombreUsuario}"?`);
+        
+        if (!confirmacion) return;
+        
         try {
             let resultado;
-            if (this.usuarioSeleccionado.estado === 'Activo') {
-                resultado = await m_usuario.deshabilitarUsuario(this.usuarioSeleccionado.idUsuario);
+            
+            if (usuario.estado === 'Activo') {
+                resultado = await m_usuario.deshabilitarUsuario(id);
             } else {
-                resultado = await m_usuario.habilitarUsuario(this.usuarioSeleccionado.idUsuario);
+                resultado = await m_usuario.habilitarUsuario(id);
             }
-
-            if (resultado && resultado.success) {
-                Alerta.notificarExito('Estado actualizado correctamente', 1500);
+            
+            if (resultado) {
                 await this.cargarUsuarios();
-            } else {
-                Alerta.notificarError(resultado?.mensaje || 'Error al cambiar estado', 1500);
+                Alerta.exito('Éxito', `Usuario ${accion === 'deshabilitar' ? 'deshabilitado' : 'habilitado'}`);
             }
         } catch (error) {
-            console.error('Error cambiando estado:', error);
-            Alerta.notificarError('Error al cambiar estado', 1500);
+            console.error('Error al cambiar estado del usuario:', error);
+            Alerta.error('Error', 'No se pudo cambiar el estado del usuario');
         }
+    }
 
-        $('#modalConfirmarEstado').modal('hide');
-        this.usuarioSeleccionado = null;
+    // ========== ACTUALIZAR VISTA ==========
+    actualizarVista() {
+        const vistaActual = $('#vistaTarjetas').hasClass('active') ? 'tarjetas' : 'lista';
+        
+        if (vistaActual === 'tarjetas') {
+            u_usuario.renderizarTarjetas(this.usuarios);
+        } else {
+            u_usuario.renderizarLista(this.usuarios);
+        }
+        
+        // Renderizar paginación
+        u_usuario.renderizarPaginacion(
+            this.paginaActual,
+            this.totalPaginas,
+            (nuevaPagina) => this.cambiarPagina(nuevaPagina)
+        );
+    }
+
+    // ========== CAMBIAR PÁGINA ==========
+    cambiarPagina(nuevaPagina) {
+        if (nuevaPagina < 1 || nuevaPagina > this.totalPaginas || nuevaPagina === this.paginaActual) return;
+        
+        this.paginaActual = nuevaPagina;
+        this.cargarUsuarios(); // Recargar desde backend con la nueva página
+        
+        // Hacer scroll hacia arriba suavemente
+        const contenedor = document.getElementById('contenedorUsuarios');
+        if (contenedor) contenedor.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
 // ========== INICIALIZAR ==========
 $(document).ready(async function() {
-    const controlador = new c_gestion_usuarios();
+    const controlador = new c_usuario();
     await controlador.inicializar();
 });

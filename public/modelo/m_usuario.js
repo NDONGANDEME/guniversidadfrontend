@@ -28,16 +28,20 @@ export class m_usuario {
         return await fetchUsuario.actualizarUsuarioEnBDD(formData);
     }
 
-    static async deshabilitarUsuario(id) {
-        return await fetchUsuario.deshabilitarUsuarioEnBDD(id);
-    }
-
-    static async habilitarUsuario(id) {
-        return await fetchUsuario.habilitarUsuarioEnBDD(id);
-    }
-
     static async eliminarUsuario(id) {
         return await fetchUsuario.eliminarUsuarioEnBDD(id);
+    }
+
+    static async obtenerTotalPaginasUsuario(id) {
+        return await fetchUsuario.obtenerTotalPaginasUsuarioDelBackend(id);
+    }
+
+    static async obtenerUsuariosAPaginar(id) {
+        return await fetchUsuario.obtenerUsuariosAPaginarDelBackend(id);
+    }
+
+    static async cambioEstadoUsuario(id, estado) {
+        return await fetchUsuario.cambioEstadoUsuarioEnBDD(id, estado);
     }
 }
 

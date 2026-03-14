@@ -98,6 +98,24 @@ export class u_utiles
         }));
     }
 
+    /**
+     * Función debounce para limitar la frecuencia de ejecución de una función
+     * @param {Function} func - La función a ejecutar
+     * @param {number} wait - Tiempo de espera en milisegundos
+     * @returns {Function} Función con debounce aplicado
+     */
+    static debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
 
     /**********************************************************************************************************/
     /* PARTE PUBLICA */
@@ -206,6 +224,22 @@ export class u_utiles
 
         if (document.querySelector('#btnVolverPanelPrincipal')) {
             u_utiles.redirigirA(document.querySelector('#btnVolverPanelPrincipal'), '/guniversidadfrontend/admin/index.html');
+        }
+
+        if (document.querySelector('#gestionUsuarios')) {
+            u_utiles.redirigirA(document.querySelector('#gestionUsuarios'), `${url}/usuario.html`);
+        }
+
+        if (document.querySelector('#gestionAcademica')) {
+            u_utiles.redirigirA(document.querySelector('#gestionAcademica'), `${url}/academico.html`);
+        }
+
+        if (document.querySelector('#gestionNoticias')) {
+            u_utiles.redirigirA(document.querySelector('#gestionNoticias'), `${url}/noticia.html`);
+        }
+
+        if (document.querySelector('#gestionPermisos')) {
+            u_utiles.redirigirA(document.querySelector('#gestionPermisos'), `${url}/permiso.html`);
         }
 
         if ($('.cerrarSesion')) $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );

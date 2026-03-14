@@ -2,6 +2,11 @@ import { sesiones } from "../../public/core/sesiones.js"
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 
 export class c_index {
+
+
+
+
+    
     constructor() {
         this.inicializar();
     }

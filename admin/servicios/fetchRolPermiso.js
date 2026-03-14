@@ -5,13 +5,35 @@ export class fetchRolPermiso
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
+     * Envia solicitud para eliminar un registro de la BDD
+     * @param {Integer} id 
+     * @returns booleano
+     */
+    static async eliminarRolPermisoEnBackend(id) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=rolPermiso&accion=eliminarRolPermiso&valor=${id}&actor=admin`);
+            let respuesta = await solicitud.text(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return false;
+        } catch(error) {
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchRolPermiso]. ${error}`);
+            return false;
+        }
+    }
+
+    /**
+     * YA SON FUNCIONALES
+    */
+
+    /**
      * Envia solicitud para cargar las permisos de la BDD
      * @returns array de permisos
      * Ya es funcional
      */
     static async obtenerRolPermisosDelBackend() {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=permiso&accion=obtenerRolPermisos&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=rolPermiso&accion=obtenerRolPermisos&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -30,7 +52,7 @@ export class fetchRolPermiso
      */
     static async insertarRolPermisoEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=permiso&accion=insertarRolPermiso&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=rolPermiso&accion=insertarRolPermiso&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -51,7 +73,7 @@ export class fetchRolPermiso
      */
     static async actualizarRolPermisoEnBackend(objeto) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=permiso&accion=actualizarRolPermiso&actor=admin`, {
+            let solicitud = await fetch(`${this.url}?ruta=rolPermiso&accion=actualizarRolPermiso&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
             let respuesta = await solicitud.json();
@@ -61,24 +83,6 @@ export class fetchRolPermiso
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchRolPermiso]. ${error}`, 3000);
             return null;
-        }
-    }
-
-    /**
-     * Envia solicitud para eliminar un registro de la BDD
-     * @param {Integer} id 
-     * @returns booleano
-     */
-    static async eliminarRolPermisoEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=permiso&accion=eliminarRolPermiso&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchRolPermiso]. ${error}`);
-            return false;
         }
     }
 }

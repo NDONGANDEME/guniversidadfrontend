@@ -12,7 +12,7 @@ export class fetchAsignatura
     static async obtenerAsignaturasDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturas&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -21,6 +21,97 @@ export class fetchAsignatura
             return [];
         }
     }
+
+    /**
+     * Envia solicitud para insertar una nueva asignatura en la BDD
+     * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
+     * @returns id del nuevo registro insertado
+     * Ya es funcional
+     */
+    static async insertarAsignaturaEnBackend(objeto) {
+        console.log(objeto)
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=insertarAsignatura&actor=admin`, {
+                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
+            });
+            let respuesta = await solicitud.text(); console.log(respuesta)
+            
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return null;
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            return null;
+        }
+    }
+
+    /**
+     * Envia solicitud para actualizar un registro existente de la BDD
+     * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
+     * @returns id del registro actualizado
+     * Ya es funcional
+     */
+    static async actualizarAsignaturaEnBackend(objeto) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=actualizarAsignatura&actor=admin`, {
+                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
+            });
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return null;
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            return null;
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar el total de las asignaturas a paginar
+     * @returns entero
+     */
+    static async obtenerTotalPaginasAsignaturaDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerTotalPaginasAsignatura&actor=admin`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar el total las asignaturas a paginar
+     * @returns array de asignaturas
+     */
+    static async obtenerAsignaturasAPaginarDelBackend(pagina) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasAPaginar&actor=admin&pagina=${pagina}`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Enviar solicitud para cargar las asignaturas de la BDD
@@ -38,6 +129,8 @@ export class fetchAsignatura
             return [];
         }
     }
+
+    
 
     /**
      * Enviar solicitud para cargar las asignaturas de la BDD
@@ -91,27 +184,7 @@ export class fetchAsignatura
         }
     }
 
-    /**
-     * Envia solicitud para insertar una nueva asignatura en la BDD
-     * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
-     * @returns id del nuevo registro insertado
-     * Ya es funcional
-     */
-    static async insertarAsignaturaEnBackend(objeto) {
-        console.log(objeto)
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=insertarAsignatura&actor=admin`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
-            let respuesta = await solicitud.json();
-            
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
-            return null;
-        }
-    }
+    
 
     /**
      * Envia solicitud para eliminar un registro de la BDD
@@ -121,7 +194,7 @@ export class fetchAsignatura
     static async eliminarAsignaturaEnBackend(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=eliminarAsignatura&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
@@ -131,26 +204,7 @@ export class fetchAsignatura
         }
     }
 
-    /**
-     * Envia solicitud para actualizar un registro existente de la BDD
-     * @param {m_asignatura} objeto - objeto que contiene los parametros de la clase asignatura
-     * @returns id del registro actualizado
-     * Ya es funcional
-     */
-    static async actualizarAsignaturaEnBackend(objeto) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=actualizarAsignatura&actor=admin`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
-            });
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
-            return null;
-        }
-    }
+    
 
     /**
      * Envia solicitud para deshabilitar un registro de la BDD

@@ -1,7 +1,7 @@
-import { fetchFacultad } from "../servicios/fetchFacultad.js";
-import { fetchDepartamento } from "../servicios/fetchDepartamento.js";
 import { fetchCarrera } from "../servicios/fetchCarrera.js";
 import { fetchAsignatura } from "../servicios/fetchAsignatura.js";
+import { fetchFacultad } from "../servicios/fetchFacultad.js";
+import { fetchDepartamento } from "../servicios/fetchDepartamento.js";
 
 /**
  * CLASE FACULTAD
@@ -86,8 +86,20 @@ export class m_carrera {
         return await fetchCarrera.actualizarCarreraEnBackend(objeto);
     }
 
-    static async eliminarCarrera(objeto) {
-        return await fetchCarrera.eliminarCarreraEnBackend(objeto);
+    static async eliminarCarrera(id) {
+        return await fetchCarrera.eliminarCarreraEnBackend(id);
+    }
+
+    static async obtenerCarrerasAPaginar(pagina) {
+        return await fetchCarrera.obtenerCarrerasAPaginarDelBackend(pagina);
+    }
+
+    static async obtenerTotalPaginasCarrera() {
+        return await fetchCarrera.obtenerTotalPaginasCarreraDelBackend();
+    }
+
+    static async cambioEstadoCarrera(id, estado) {
+        return await fetchCarrera.cambioEstadoCarreraEnBDD(id, estado);
     }
 }
 
@@ -138,5 +150,13 @@ export class m_asignatura {
 
     static async eliminarAsignatura(idAsignatura) {
         return await fetchAsignatura.eliminarAsignaturaEnBackend(idAsignatura);
+    }
+
+    static async obtenerAsignaturasAPaginar(pagina) {
+        return await fetchAsignatura.obtenerAsignaturasAPaginarDelBackend(pagina);
+    }
+
+    static async obtenerTotalPaginasAsignatura() {
+        return await fetchAsignatura.obtenerTotalPaginasAsignaturaDelBackend();
     }
 }

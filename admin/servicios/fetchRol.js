@@ -5,6 +5,10 @@ export class fetchRol
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
+     * YA SON FUNCIONALES
+    */
+
+    /**
      * Envia solicitud para cargar los roles de la BDD
      * @returns array de roles
      * Ya es funcional
@@ -71,7 +75,7 @@ export class fetchRol
      */
     static async eliminarRolEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=rol&accion=eliminarRol&valor=${id}&actor=admin`);
+            let solicitud = await fetch(`${this.url}?ruta=rol&accion=eliminarRol&idRol=${id}&actor=admin`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

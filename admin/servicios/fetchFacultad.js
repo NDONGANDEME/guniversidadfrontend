@@ -1,5 +1,4 @@
 import { Alerta } from "../../public/utilidades/u_alertas.js";
-import { m_facultad } from "../modelo/m_facultad.js";
 
 export class fetchFacultad
 {
@@ -65,6 +64,9 @@ export class fetchFacultad
         }
     }
 
+
+
+    // Falta
     /**
      * Envia solicitud para eliminar un registro de la BDD
      * @param {Integer} id 
@@ -73,48 +75,12 @@ export class fetchFacultad
     static async eliminarFacultadEnBackend(id) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=facultad&accion=eliminarFacultad&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
         } catch(error) {
             Alerta.error('Error', `No se ha realizado la solicitud. [linea 99. fetchFacultad]. ${error}`);
-            return false;
-        }
-    }
-
-    /**
-     * Envia solicitud para deshabilitar un registro de la BDD
-     * @param {Integer} id 
-     * @returns booleano
-     */
-    static async deshabilitarFacultadEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=deshabilitarFacultad&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
-            return false;
-        }
-    }
-
-    /**
-     * Envia solicitud para habilitar un registro de la BDD
-     * @param {Integer} id 
-     * @returns booleano
-     */
-    static async habilitarFacultadEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=habilitarFacultad&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
             return false;
         }
     }

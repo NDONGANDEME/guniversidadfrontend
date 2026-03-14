@@ -68,7 +68,7 @@
                             <h5 class="h4 mb-3 text-gray-800"> Roles </h5>
 
                             <!--generar dinamicamente-->
-                            <div class="p-2 rounded-3 border-warning border-start border-3 d-flex justify-content-between">
+                            <!--<div class="p-2 rounded-3 border-warning border-start border-3 d-flex justify-content-between">
                                 <span class="h5 fw-light"> Admin </span>
 
                                 <span class="text-end">
@@ -79,7 +79,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </span>
-                            </div>
+                            </div>-->
                         </div>
 
                         <!--parte de los permisos asignados-->
@@ -90,9 +90,9 @@
 
                             <div class="container">
                                 <div class="row pt-3">
-                                    <div class="mb-3 col-3">
+                                    <!--<div class="mb-3 col-3">
                                         <span> <i class="fas fa-check"></i> Full</span>
-                                    </div>
+                                    </div>-->
                                     <!--generar dinamicamente-->
                                 </div>
                             </div>
@@ -125,63 +125,52 @@
                             <h5 class="h4 mb-3 text-gray-800"> Asignar permisos a este rol </h5>
 
                             <div class="container">
-                                <div class="row">
-                                    <!--si se clickea full todos los demas checkbox deben desabilitarse-->
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="plenoControl" id="full">
-                                        <label class="form-check-label" for="full"> Pleno control </label>
+                                <div class="mt-1 form-check">
+                                    <input class="form-check-input" type="checkbox" value="plenoControl" id="full">
+                                    <label class="form-check-label" for="full"> Pleno control </label>
+                                </div>
+
+                                <!--parte que aparece si es que el checkBox full no esta activo-->
+                                <div class="row mt-4">
+                                    <div class="col-6">
+                                        <div class="">
+                                            <label for="tablasPermiso" class="form-label">Tablas</label>
+                                            <select class="form-select" id="tablasPermiso" required>
+                                                <option value="Ninguno">Seleccione...</option>
+                                                <option value="Asignaturas">Asignaturas</option>
+                                                <!--cargarDinamicamente-->
+                                            </select>
+                                            <label id="tablasPermiso" class="errorMensaje"></label>
+                                        </div>
+
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-4 form-check">
+                                                    <input class="form-check-input" type="checkbox" value="plenoControl" id="insertar">
+                                                    <label class="form-check-label" for="insertar"> Crear </label>
+                                                </div>
+                                                <div class="col-4 form-check">
+                                                    <input class="form-check-input" type="checkbox" value="plenoControl" id="actualizar">
+                                                    <label class="form-check-label" for="actualizar"> Editar </label>
+                                                </div>
+                                                <div class="col-4 form-check">
+                                                    <input class="form-check-input" type="checkbox" value="plenoControl" id="eliminar">
+                                                    <label class="form-check-label" for="eliminar"> Eliminar </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-end mt-3">
+                                            <button class="btn btn-sm btn-primary asignar"> Asignar Permiso </button>
+                                        </div>
                                     </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="crearUsuarioCheck" id="insertarUsuario">
-                                        <label class="form-check-label" for="insertarUsuario"> Crear usuarios </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="editarUsuarioCheck" id="actualizarUsuario">
-                                        <label class="form-check-label" for="actualizarUsuario"> Editar usuarios </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="eliminarUsuarioCheck" id="eliminarUsuario">
-                                        <label class="form-check-label" for="eliminarUsuario"> Eliminar usuarios </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="insertarNotasCheck" id="insertarNota">
-                                        <label class="form-check-label" for="insertarNota"> Insertar notas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="editarNotasCheck" id="actualizarNota">
-                                        <label class="form-check-label" for="actualizarNota"> Editar notas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="eliminarNotasCheck" id="eliminarNota">
-                                        <label class="form-check-label" for="eliminarNota"> Eliminar notas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="insertarNotasCheck" id="insertarAsignatura">
-                                        <label class="form-check-label" for="insertarAsignatura"> Crear Asignaturas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="editarNotasCheck" id="actualizarAsignatura">
-                                        <label class="form-check-label" for="actualizarAsignatura"> Editar Asignaturas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="eliminarNotasCheck" id="eliminarAsignatura">
-                                        <label class="form-check-label" for="eliminarAsignatura"> Eliminar Asignaturas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="insertarNotasCheck" id="insertarNoticia">
-                                        <label class="form-check-label" for="insertarNoticia"> Crear Asignaturas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="editarNotasCheck" id="actualizarNoticia">
-                                        <label class="form-check-label" for="actualizarNoticia"> Editar Asignaturas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="eliminarNotasCheck" id="eliminarNoticia">
-                                        <label class="form-check-label" for="eliminarNoticia"> Eliminar Asignaturas </label>
-                                    </div>
-                                    <div class="col-4 mt-1 form-check">
-                                        <input class="form-check-input" type="checkbox" value="verExpedienteAcademicosCheck" id="verExpedienteAcademicosCheck">
-                                        <label class="form-check-label" for="verExpedienteAcademicosCheck"> Ver expedientes académicos </label>
+
+                                    <!--contenedor donde apareceran los permisos asignados al rol-->
+                                    <div class="col-6 border shadow rounded-2 p-2">
+                                        <div class="border-bottom border-warning">
+                                            <h5 class="h6 text-gray-800"> Permisos asignados </h5>
+                                        </div>
+
+                                        <!--añadir dinamicamente-->
                                     </div>
                                 </div>
                             </div>

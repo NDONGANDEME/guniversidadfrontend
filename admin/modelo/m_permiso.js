@@ -6,15 +6,19 @@ import { fetchRolPermiso } from "../servicios/fetchRolPermiso.js";
  * CLASE PERMISO
  */
 export class m_permiso {
-    constructor(idPermiso, nombrePermiso, tabla, accion) {
+    constructor(idPermiso, tabla, accionPermiso) {
         this.idPermiso = idPermiso;
-        this.nombrePermiso = nombrePermiso;
+        this.nombrePermiso = accionPermiso.toLowerCase() + tabla.charAt(0).toUpperCase() + tabla.slice(1).toLowerCase();
         this.tabla = tabla;
-        this.accion = accion;
+        this.accionPermiso = accionPermiso;
     }
 
     static async obtenerPermisos() {
         return await fetchPermiso.obtenerPermisosDelBackend();
+    }
+
+    static async obtenerTablasPermisos() {
+        return await fetchPermiso.obtenerTablasPermisosDelBackend();
     }
 
     static async insertarPermiso(objeto) {
@@ -39,19 +43,19 @@ export class m_rol {
         this.nombreRol = nombreRol;
     }
 
-    static async obtenerPermisos() {
+    static async obtenerRoles() {
         return await fetchRol.obtenerRolesDelBackend();
     }
 
-    static async insertarPermiso(objeto) {
+    static async insertarRol(objeto) {
         return await fetchRol.insertarRolEnBackend(objeto);
     }
 
-    static async actualizarPermiso(objeto) {
+    static async actualizarRol(objeto) {
         return await fetchRol.actualizarRolEnBackend(objeto);
     }
 
-    static async eliminarPermiso(id) {
+    static async eliminarRol(id) {
         return await fetchRol.eliminarRolEnBackend(id);
     }
 }
@@ -66,19 +70,19 @@ export class m_rolPermiso {
         this.idPermiso = idPermiso;
     }
 
-    static async obtenerPermisos() {
+    static async obtenerRolPermisos() {
         return await fetchRolPermiso.obtenerRolPermisosDelBackend();
     }
 
-    static async insertarPermiso(objeto) {
+    static async insertarRolPermiso(objeto) {
         return await fetchRolPermiso.insertarRolPermisoEnBackend(objeto);
     }
 
-    static async actualizarPermiso(objeto) {
+    static async actualizarRolPermiso(objeto) {
         return await fetchRolPermiso.actualizarRolPermisoEnBackend(objeto);
     }
 
-    static async eliminarPermiso(id) {
+    static async eliminarRolPermiso(id) {
         return await fetchRolPermiso.eliminarRolPermisoEnBackend(id);
     }
 }
