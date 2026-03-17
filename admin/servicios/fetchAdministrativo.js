@@ -11,7 +11,7 @@ export class fetchAdministrativo
     static async obtenerAdministrativosDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=obtenerAdministrativos&actor=admin`);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -27,7 +27,6 @@ export class fetchAdministrativo
      * @returns id del nuevo registro insertado
      */
     static async insertarAdministrativoEnBackend(objeto) {
-        console.log(objeto)
         try {
             // Detectar si es FormData
             const esFormData = objeto instanceof FormData;
@@ -43,7 +42,7 @@ export class fetchAdministrativo
             }
             
             let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=insertarAdministrativo&actor=admin`, options);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -75,7 +74,7 @@ export class fetchAdministrativo
             
             // El ID va en el body, no en la URL
             let solicitud = await fetch(`${this.url}?ruta=administrativo&accion=actualizarAdministrativo&actor=admin`, options);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

@@ -63,7 +63,7 @@ export class u_noticia_admin {
     }
 
     // ========== MANEJO DE ARCHIVOS ==========
-    static archivosSeleccionados = [];
+    /*static archivosSeleccionados = [];
     static archivosAEnviarBackend = [];
 
     static configurarSubidaArchivos() {
@@ -108,10 +108,7 @@ export class u_noticia_admin {
 
         // Validar formato
         const formatosPermitidos = ['image/png', 'image/jpeg', 'image/jpg'];
-        
-        console.log(archivos)
-        
-        
+
         for (let archivo of archivos) {
             if (!formatosPermitidos.includes(archivo.type)) {
                 alert(`Formato no permitido: ${archivo.name}. Solo PNG, JPG, JPEG`);
@@ -200,6 +197,169 @@ export class u_noticia_admin {
 
     static obtenerArchivosParaEnviar() {
         return this.archivosAEnviarBackend.map(item => item.archivo);
+    }*/
+
+    // ========== MANEJO DE ARCHIVOS ==========
+    static archivosSeleccionados = []; // Array de objetos con info y preview
+    static archivosParaEnviar = []; // Array directo de File objects
+
+    static configurarSubidaArchivos() {
+        // Al hacer clic en el área de drop, abrir selector
+        $('#fileDropArea').on('click', function() {
+            $('#campoArchivoFoto').click();
+        });
+
+        // Eventos de arrastrar y soltar
+        $('#fileDropArea').on('dragover', function(e) {
+            e.preventDefault();
+            $(this).addClass('drag-over border-success');
+        });
+
+        $('#fileDropArea').on('dragleave', function(e) {
+            e.preventDefault();
+            $(this).removeClass('drag-over border-success');
+        });
+
+        $('#fileDropArea').on('drop', function(e) {
+            e.preventDefault();
+            $(this).removeClass('drag-over border-success');
+            
+            const archivos = e.originalEvent.dataTransfer.files;
+            u_noticia_admin.procesarArchivos(archivos);
+            
+            // También actualizar el input file
+            const dataTransfer = new DataTransfer();
+            for (let archivo of archivos) {
+                dataTransfer.items.add(archivo);
+            }
+            $('#campoArchivoFoto')[0].files = dataTransfer.files;
+        });
+
+        // Cuando se seleccionan archivos con el input
+        $('#campoArchivoFoto').on('change', function(e) {
+            const archivos = e.target.files;
+            u_noticia_admin.procesarArchivos(archivos);
+        });
+
+        // Botón limpiar archivos
+        $('#btnLimpiarArchivos').on('click', function() {
+            u_noticia_admin.limpiarArchivos();
+        });
+    }
+
+    static procesarArchivos(archivos) {
+        if (!archivos || archivos.length === 0) return;
+
+        // Validar formato
+        const formatosPermitidos = ['image/png', 'image/jpeg', 'image/jpg'];
+        
+        Array.from(archivos).forEach(archivo => {
+            if (!formatosPermitidos.includes(archivo.type)) {
+                Alerta.notificarAdvertencia(`Formato no permitido: ${archivo.name}. Solo PNG, JPG, JPEG`, 2000);
+                return;
+            }
+            
+            // Verificar si ya existe (para no duplicar)
+            const yaExiste = this.archivosSeleccionados.some(a => a.nombre === archivo.name && a.tamaño === archivo.size);
+            if (yaExiste) return;
+            
+            // Crear preview
+            const preview = URL.createObjectURL(archivo);
+            
+            // Agregar a la lista de seleccionados (para mostrar)
+            this.archivosSeleccionados.push({
+                archivo: archivo,
+                nombre: archivo.name,
+                tipo: archivo.type,
+                tamaño: archivo.size,
+                preview: preview
+            });
+
+            // Agregar a la lista para enviar (solo el File object)
+            this.archivosParaEnviar.push(archivo);
+        });
+
+        this.actualizarPrevisualizacion();
+    }
+
+    static actualizarPrevisualizacion() {
+        const contador = $('#contadorArchivos');
+        const previewContainer = $('#previewArchivos');
+        
+        contador.text(`${this.archivosSeleccionados.length} archivos seleccionados`);
+        
+        if (this.archivosSeleccionados.length === 0) {
+            previewContainer.html('<p class="text-muted">No hay archivos seleccionados</p>');
+            return;
+        }
+
+        let html = '<div class="row">';
+        
+        this.archivosSeleccionados.forEach((archivo, index) => {
+            html += `
+                <div class="col-md-3 col-sm-4 col-6 mb-3" data-index="${index}">
+                    <div class="position-relative">
+                        <img src="${archivo.preview}" class="img-fluid rounded" style="height: 100px; width: 100%; object-fit: cover;">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 btn-eliminar-archivo" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <small class="d-block text-truncate mt-1">${archivo.nombre}</small>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        previewContainer.html(html);
+
+        // Agregar eventos a los botones de eliminar
+        $('.btn-eliminar-archivo').on('click', function() {
+            const index = $(this).data('index');
+            u_noticia_admin.eliminarArchivo(index);
+        });
+    }
+
+    static eliminarArchivo(index) {
+        // Liberar la URL del objeto
+        if (this.archivosSeleccionados[index] && this.archivosSeleccionados[index].preview) {
+            URL.revokeObjectURL(this.archivosSeleccionados[index].preview);
+        }
+        
+        // Eliminar de la lista de seleccionados
+        const archivoEliminado = this.archivosSeleccionados[index];
+        this.archivosSeleccionados.splice(index, 1);
+        
+        // Eliminar de la lista para enviar (buscando por nombre y tamaño)
+        if (archivoEliminado) {
+            const indiceParaEnviar = this.archivosParaEnviar.findIndex(a => 
+                a.name === archivoEliminado.nombre && 
+                a.size === archivoEliminado.tamaño
+            );
+            if (indiceParaEnviar !== -1) {
+                this.archivosParaEnviar.splice(indiceParaEnviar, 1);
+            }
+        }
+        
+        // Actualizar el input file (opcional, pero complejo)
+        this.actualizarPrevisualizacion();
+    }
+
+    static limpiarArchivos() {
+        // Liberar todas las URLs
+        this.archivosSeleccionados.forEach(archivo => {
+            if (archivo.preview) {
+                URL.revokeObjectURL(archivo.preview);
+            }
+        });
+        
+        this.archivosSeleccionados = [];
+        this.archivosParaEnviar = [];
+        $('#campoArchivoFoto').val('');
+        this.actualizarPrevisualizacion();
+    }
+
+    static obtenerArchivosParaEnviar() {
+        return this.archivosParaEnviar; // Devuelve array de File objects directamente
     }
 
     // ========== MODO EDICIÓN ==========
@@ -340,14 +500,36 @@ export class u_noticia_admin {
     }
 
     // ========== LIMPIAR MODAL ==========
-    static limpiarModal() {
+    /*static limpiarModal() {
         $('#formNoticia')[0].reset();
         $('#tipoNoticia').val('Ninguno');
         $('#descripcionTipo').text('');
         $('.errorMensaje').text('').hide();
         $('#formNoticia input, #formNoticia textarea, #formNoticia select').removeClass('border-success border-danger');
         this.limpiarArchivos();
+    }*/
+
+    // ========== LIMPIAR MODAL ==========
+    static limpiarModal() {
+        $('#formNoticia')[0].reset();
+        $('#tipoNoticia').val('Ninguno');
+        $('#descripcionTipo').text('');
+        $('.errorMensaje').text('').hide();
+        $('#formNoticia input, #formNoticia textarea, #formNoticia select').removeClass('border-success border-danger');
+        this.limpiarArchivos(); // ← Asegurar limpieza de archivos
     }
+
+    // ========== CARGAR DATOS EN MODAL PARA EDICIÓN ==========
+    /*static cargarDatosEnModal(noticia) {
+        $('#asuntoNoticia').val(noticia.asunto || '');
+        $('#descripcionNoticia').val(noticia.descripcion || '');
+        $('#tipoNoticia').val(noticia.tipo || 'Ninguno');
+        this.mostrarDescripcionTipo(noticia.tipo);
+        
+        // En edición, no cargamos las fotos existentes para simplificar
+        // El usuario puede subir nuevas fotos si lo desea
+        this.limpiarArchivos();
+    }*/
 
     // ========== CARGAR DATOS EN MODAL PARA EDICIÓN ==========
     static cargarDatosEnModal(noticia) {
@@ -358,7 +540,15 @@ export class u_noticia_admin {
         
         // En edición, no cargamos las fotos existentes para simplificar
         // El usuario puede subir nuevas fotos si lo desea
-        this.limpiarArchivos();
+        this.limpiarArchivos(); // ← Asegurarse de limpiar archivos anteriores
+        
+        // Opcional: Mostrar las fotos existentes como referencia
+        if (noticia.fotos && noticia.fotos.length > 0) {
+            const contador = $('#contadorArchivos');
+            contador.text(`${noticia.fotos.length} fotos existentes (se reemplazarán al subir nuevas)`);
+            
+            // No mostramos las miniaturas para no confundir, solo informamos
+        }
     }
 
     // ========== FILTROS ==========

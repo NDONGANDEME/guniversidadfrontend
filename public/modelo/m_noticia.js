@@ -23,27 +23,20 @@ export class m_noticia
         return await fetchNoticia.obtenerNoticiasRecientesDelBackend();
     }
 
-    // obtiene todas las noticias del backend
-    static async obtenerNoticias() {
-        return await fetchNoticia.obtenerNoticiasDelBackend();
+    static async obtenerNoticiasAPaginar(pagina) {
+        return await fetchNoticia.obtenerNoticiasAPaginarEnBackend(pagina);
     }
 
-    // obtiene todas las noticias de tipo comunicado del backend
-    static async obtenerNoticiasPorComunicado() {
-        return await fetchNoticia.obtenerNoticiasPorComunicadoDelBackend(); 
+    static async obtenerNoticiasPorTipoAPaginar(pagina, tipo) {
+        return await fetchNoticia.obtenerNoticiasPorTipoAPaginarEnBackend(pagina, tipo)
     }
 
-    // obtiene todas las noticias de tipo interna del backend
-    static async obtenerNoticiasPorInterna() {
-        return await fetchNoticia.obtenerNoticiasPorInternaDelBackend(); 
+    static async obtenerTotalPaginasNoticia() {
+        return await fetchNoticia.obtenerTotalPaginasNoticiaEnBackend();
     }
 
-    static async obtenerTotalPaginas() {
-        return await fetchNoticia.obtenerTotalPaginasEnBDD();
-    }
-
-    static async obtenerNoticiaPorId(id) {
-        return await fetchNoticia.obtenerNoticiaPorIdEnBDD(id)
+    static async obtenerTotalPaginasNoticiaPorTipo(tipo) {
+        return await fetchNoticia.obtenerTotalPaginasNoticiaPorTipoEnBackend(tipo)
     }
 
     static async insertarNoticia(formData) {

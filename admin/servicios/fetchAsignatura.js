@@ -15,7 +15,10 @@ export class fetchAsignatura
             let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.advertencia('Atencion', respuesta.resultado);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
             return [];
@@ -37,7 +40,10 @@ export class fetchAsignatura
             let respuesta = await solicitud.text(); console.log(respuesta)
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.advertencia('Atencion', respuesta.resultado);
+                return null;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
             return null;
@@ -58,7 +64,10 @@ export class fetchAsignatura
             let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.advertencia('Atencion', respuesta.resultado);
+                return null;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
             return null;
@@ -75,7 +84,10 @@ export class fetchAsignatura
             let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.advertencia('Atencion', respuesta.resultado);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
             return [];
@@ -92,7 +104,10 @@ export class fetchAsignatura
             let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.advertencia('Atencion', respuesta.resultado);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
             return [];

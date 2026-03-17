@@ -175,7 +175,7 @@ export class c_noticia_admin {
                u_noticia_admin.validarTipo(tipo);
     }
 
-    async guardarNoticia() {
+  /*  async guardarNoticia() {
         if (!this.formularioNoticiaEsValido()) {
             Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
             return;
@@ -213,6 +213,71 @@ export class c_noticia_admin {
                 resultado = await m_noticia.actualizarNoticia(formData);
             } else {
                 // Insertar nueva noticia
+                resultado = await m_noticia.insertarNoticia(formData);
+            }
+            
+            if (resultado) {
+                // Limpiar archivos después de guardar
+                u_noticia_admin.limpiarArchivos();
+                
+                await this.cargarNoticias();
+                if (this.modalInstance) {
+                    this.modalInstance.hide();
+                }
+                Alerta.exito('Éxito', this.modoEdicion ? 'Noticia actualizada' : 'Noticia creada');
+            }
+        } catch (error) {
+            console.error('Error al guardar noticia:', error);
+            Alerta.notificarError(`No se pudo guardar la noticia: ${error}`, 1500);
+        }
+    }*/
+
+    async guardarNoticia() {
+        if (!this.formularioNoticiaEsValido()) {
+            Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
+            return;
+        }
+        
+        try {
+            // Crear FormData
+            const formData = new FormData();
+            
+            // Agregar campos del formulario
+            formData.append('asunto', $('#asuntoNoticia').val().trim());
+            formData.append('descripcion', $('#descripcionNoticia').val().trim());
+            formData.append('tipo', $('#tipoNoticia').val());
+            formData.append('fechaPublicacion', new Date().toISOString().split('T')[0]); // Solo fecha YYYY-MM-DD
+            
+            // Si estamos en modo edición, agregar el ID
+            if (this.modoEdicion) {
+                formData.append('idNoticia', this.noticiaActual.idNoticia);
+            }
+            
+            // Agregar archivos al FormData
+            const archivos = u_noticia_admin.obtenerArchivosParaEnviar();
+            console.log('Archivos a enviar:', archivos);
+            
+            archivos.forEach((archivo, index) => {
+                // Usar el mismo nombre de campo que espera el backend
+                formData.append('fotos[]', archivo);
+                console.log(`Añadiendo archivo ${index}:`, archivo.name, archivo.type, archivo.size);
+            });
+
+            // DEBUG: Ver qué se está enviando
+            console.log('Contenido del FormData:');
+            for (let pair of formData.entries()) {
+                if (pair[0] === 'fotos[]') {
+                    console.log(pair[0], ':', pair[1].name, pair[1].type, pair[1].size);
+                } else {
+                    console.log(pair[0], ':', pair[1]);
+                }
+            }
+            
+            let resultado;
+            
+            if (this.modoEdicion) {
+                resultado = await m_noticia.actualizarNoticia(formData);
+            } else {
                 resultado = await m_noticia.insertarNoticia(formData);
             }
             

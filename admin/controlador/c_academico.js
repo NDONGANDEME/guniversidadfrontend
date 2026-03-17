@@ -13,8 +13,8 @@ export class c_academico {
     /**
      * VARIABLES DE ESTADO
      */
-    static departamentos = [];
     static facultades = [];
+    static departamentos = [];
     static comboDepartamentoControl = null;
     static modoEdicion = {
         facultad: null,
@@ -23,7 +23,13 @@ export class c_academico {
         asignatura: null
     };
     
-    // Variables para paginación de asignaturas
+    // Variables para paginación (solo para los que la necesitan)
+    static paginaActualDepartamentos = 1;
+    static totalPaginasDepartamentos = 1;
+    
+    static paginaActualCarreras = 1;
+    static totalPaginasCarreras = 1;
+    
     static paginaActualAsignaturas = 1;
     static totalPaginasAsignaturas = 1;
 
@@ -39,7 +45,7 @@ export class c_academico {
         this.inicializarEventos();
         this.inicializarCombos();
         this.inicializarPestañas();
-        this.inicializarPaginacionAsignaturas();
+        this.inicializarPaginacion();
     }
 
     /**
@@ -47,9 +53,16 @@ export class c_academico {
      */
     static async cargarDatosIniciales() {
         try {
+            // Facultades se cargan completas (sin paginación)
             await this.cargarFacultades();
-            await this.cargarDepartamentos();
-            await this.cargarCarreras();
+            
+            // El resto con paginación
+            await this.cargarTotalPaginasDepartamentos();
+            await this.cargarDepartamentosPaginados(1);
+            
+            await this.cargarTotalPaginasCarreras();
+            await this.cargarCarrerasPaginadas(1);
+            
             await this.cargarTotalPaginasAsignaturas();
             await this.cargarAsignaturasPaginadas(1);
         } catch (error) {
@@ -68,7 +81,15 @@ export class c_academico {
         document.getElementById('btnGuardarCarrera')?.addEventListener('click', () => this.guardarCarrera());
         document.getElementById('btnGuardarAsignatura')?.addEventListener('click', () => this.guardarAsignatura());
 
-        // Botones de paginación
+        // Botones de paginación - Departamentos (estos son para los fetch)
+        document.getElementById('btnAnteriorDepartamentos')?.addEventListener('click', () => this.irAPaginaAnteriorDepartamentos());
+        document.getElementById('btnSiguienteDepartamentos')?.addEventListener('click', () => this.irAPaginaSiguienteDepartamentos());
+
+        // Botones de paginación - Carreras (estos son para los fetch)
+        document.getElementById('btnAnteriorCarreras')?.addEventListener('click', () => this.irAPaginaAnteriorCarreras());
+        document.getElementById('btnSiguienteCarreras')?.addEventListener('click', () => this.irAPaginaSiguienteCarreras());
+
+        // Botones de paginación - Asignaturas (estos son para los fetch)
         document.getElementById('btnAnteriorAsignaturas')?.addEventListener('click', () => this.irAPaginaAnteriorAsignaturas());
         document.getElementById('btnSiguienteAsignaturas')?.addEventListener('click', () => this.irAPaginaSiguienteAsignaturas());
 
@@ -153,11 +174,11 @@ export class c_academico {
         await this.cargarSelectFacultades('facultadesDepartamento');
         await this.cargarSelectFacultades('facultadesAsignatura');
         
-        if (this.departamentos.length > 0) {
+        if (this.departamentos.departamentos?.length > 0) {
             this.comboDepartamentoControl = u_academico.inicializarComboDepartamentos(
                 'comboDepartamentoCarrera',
                 'opcionesDepartamentosCarrera',
-                this.departamentos,
+                this.departamentos.departamentos,
                 (id, nombre) => {
                     console.log('Departamento seleccionado:', id, nombre);
                 }
@@ -176,24 +197,28 @@ export class c_academico {
     }
 
     /**
-     * Inicializa los eventos de paginación de asignaturas
+     * Inicializa los eventos de paginación
      */
-    static inicializarPaginacionAsignaturas() {
-        this.actualizarEstadoBotonesPaginacion();
+    static inicializarPaginacion() {
+        this.actualizarEstadoBotonesPaginacionDepartamentos();
+        this.actualizarEstadoBotonesPaginacionCarreras();
+        this.actualizarEstadoBotonesPaginacionAsignaturas();
     }
 
     /**
-     * CARGA DE DATOS
+     * CARGA DE DATOS - FACULTADES (SIN PAGINACIÓN)
      */
 
     /**
-     * Carga las facultades y las muestra en la tabla
+     * Carga todas las facultades (sin paginación)
      */
     static async cargarFacultades() {
         try {
-            this.facultades = await m_facultad.obtenerFacultades();
+            const response = await m_facultad.obtenerFacultades();
+            this.facultades = response.datos || response || [];
             this.mostrarFacultadesEnTabla();
         } catch (error) {
+            console.error('Error cargando facultades:', error);
             Alerta.error('Error', 'No se pudieron cargar las facultades');
         }
     }
@@ -204,6 +229,11 @@ export class c_academico {
     static mostrarFacultadesEnTabla() {
         const tbody = document.getElementById('tbodyTablaFacultades');
         if (!tbody) return;
+
+        // Destruir DataTable si existe
+        if ($.fn.dataTable.isDataTable('#tablaFacultades')) {
+            $('#tablaFacultades').DataTable().destroy();
+        }
 
         tbody.innerHTML = this.facultades.map(f => `
             <tr>
@@ -225,8 +255,16 @@ export class c_academico {
                 </td>
             </tr>
         `).join('');
-
-        u_utiles.inicializarDataTable('#tablaFacultades');
+        
+        // Inicializar DataTable
+        $('#tablaFacultades').DataTable({
+            language: {
+                url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
+            },
+            pageLength: 10,
+            order: [[0, 'asc']]
+        });
+        
         this.agregarEventosBotonesFacultad();
     }
 
@@ -244,14 +282,81 @@ export class c_academico {
     }
 
     /**
-     * Carga los departamentos y los muestra en la tabla
+     * CARGA DE DATOS - DEPARTAMENTOS (CON PAGINACIÓN EN SERVIDOR)
      */
-    static async cargarDepartamentos() {
+
+    /**
+     * Carga el total de páginas de departamentos
+     */
+    static async cargarTotalPaginasDepartamentos() {
         try {
-            this.departamentos = await m_departamento.obtenerDepartamentos();
-            this.mostrarDepartamentosEnTabla();
+            const response = await m_departamento.obtenerTotalPaginasDepartamento();
+            this.totalPaginasDepartamentos = response.total_paginas || 1;
+            this.actualizarEstadoBotonesPaginacionDepartamentos();
+            this.actualizarIndicadorPaginaDepartamentos();
         } catch (error) {
+            console.error('Error cargando total de páginas de departamentos:', error);
+        }
+    }
+
+    /**
+     * Carga departamentos paginados
+     * @param {number} pagina - Número de página a cargar
+     */
+    static async cargarDepartamentosPaginados(pagina) {
+        try {
+            this.departamentos = await m_departamento.obtenerDepartamentosAPaginar(pagina);
+            this.paginaActualDepartamentos = pagina;
+            this.mostrarDepartamentosEnTabla();
+            this.actualizarEstadoBotonesPaginacionDepartamentos();
+            this.actualizarIndicadorPaginaDepartamentos();
+        } catch (error) {
+            console.error('Error cargando departamentos paginados:', error);
             Alerta.error('Error', 'No se pudieron cargar los departamentos');
+        }
+    }
+
+    /**
+     * Actualiza el estado de los botones de paginación de departamentos
+     */
+    static actualizarEstadoBotonesPaginacionDepartamentos() {
+        const btnAnterior = document.getElementById('btnAnteriorDepartamentos');
+        const btnSiguiente = document.getElementById('btnSiguienteDepartamentos');
+        
+        if (btnAnterior) {
+            btnAnterior.disabled = this.paginaActualDepartamentos <= 1;
+        }
+        
+        if (btnSiguiente) {
+            btnSiguiente.disabled = this.paginaActualDepartamentos >= this.totalPaginasDepartamentos;
+        }
+    }
+
+    /**
+     * Actualiza el indicador de página actual de departamentos
+     */
+    static actualizarIndicadorPaginaDepartamentos() {
+        const indicador = document.getElementById('paginaActualDepartamentos');
+        if (indicador) {
+            indicador.textContent = `Página ${this.paginaActualDepartamentos} de ${this.totalPaginasDepartamentos}`;
+        }
+    }
+
+    /**
+     * Navega a la página anterior de departamentos
+     */
+    static async irAPaginaAnteriorDepartamentos() {
+        if (this.paginaActualDepartamentos > 1) {
+            await this.cargarDepartamentosPaginados(this.paginaActualDepartamentos - 1);
+        }
+    }
+
+    /**
+     * Navega a la página siguiente de departamentos
+     */
+    static async irAPaginaSiguienteDepartamentos() {
+        if (this.paginaActualDepartamentos < this.totalPaginasDepartamentos) {
+            await this.cargarDepartamentosPaginados(this.paginaActualDepartamentos + 1);
         }
     }
 
@@ -262,8 +367,13 @@ export class c_academico {
         const tbody = document.getElementById('tbodyTablaDepartamentos');
         if (!tbody) return;
 
-        tbody.innerHTML = this.departamentos.map(d => {
-            const facultad = this.facultades.find(f => f.idFacultad === d.idFacultad);
+        // Destruir DataTable si existe
+        if ($.fn.dataTable.isDataTable('#tablaDepartamentos')) {
+            $('#tablaDepartamentos').DataTable().destroy();
+        }
+
+        tbody.innerHTML = this.departamentos.departamentos?.map(d => {
+            const facultad = this.facultades.find(f => f.idFacultad == d.idFacultad);
             return `
                 <tr>
                     <td class="align-middle">${d.nombreDepartamento}</td>
@@ -280,9 +390,19 @@ export class c_academico {
                     </td>
                 </tr>
             `;
-        }).join('');
+        }).join('') || '<tr><td colspan="3" class="text-center">No hay departamentos</td></tr>';
 
-        u_utiles.inicializarDataTable('#tablaDepartamentos');
+        // Inicializar DataTable (solo para ordenamiento y búsqueda, la paginación la manejamos nosotros)
+        $('#tablaDepartamentos').DataTable({
+            language: {
+                url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
+            },
+            paging: false, // Desactivamos la paginación de DataTable
+            searching: true, // Mantenemos búsqueda
+            ordering: true, // Mantenemos ordenamiento
+            info: false // Ocultamos información de paginación
+        });
+        
         this.agregarEventosBotonesDepartamento();
     }
 
@@ -300,14 +420,82 @@ export class c_academico {
     }
 
     /**
-     * Carga las carreras y las muestra en la tabla
+     * CARGA DE DATOS - CARRERAS (CON PAGINACIÓN EN SERVIDOR)
      */
-    static async cargarCarreras() {
+
+    /**
+     * Carga el total de páginas de carreras
+     */
+    static async cargarTotalPaginasCarreras() {
         try {
-            const carreras = await m_carrera.obtenerCarreras();
-            this.mostrarCarrerasEnTabla(carreras);
+            const response = await m_carrera.obtenerTotalPaginasCarrera();
+            this.totalPaginasCarreras = response.total_paginas || 1;
+            this.actualizarEstadoBotonesPaginacionCarreras();
+            this.actualizarIndicadorPaginaCarreras();
         } catch (error) {
+            console.error('Error cargando total de páginas de carreras:', error);
+        }
+    }
+
+    /**
+     * Carga carreras paginadas
+     * @param {number} pagina - Número de página a cargar
+     */
+    static async cargarCarrerasPaginadas(pagina) {
+        try {
+            const response = await m_carrera.obtenerCarrerasAPaginar(pagina);
+            const carreras = response.datos || response || [];
+            this.paginaActualCarreras = pagina;
+            this.mostrarCarrerasEnTabla(carreras);
+            this.actualizarEstadoBotonesPaginacionCarreras();
+            this.actualizarIndicadorPaginaCarreras();
+        } catch (error) {
+            console.error('Error cargando carreras paginadas:', error);
             Alerta.error('Error', 'No se pudieron cargar las carreras');
+        }
+    }
+
+    /**
+     * Actualiza el estado de los botones de paginación de carreras
+     */
+    static actualizarEstadoBotonesPaginacionCarreras() {
+        const btnAnterior = document.getElementById('btnAnteriorCarreras');
+        const btnSiguiente = document.getElementById('btnSiguienteCarreras');
+        
+        if (btnAnterior) {
+            btnAnterior.disabled = this.paginaActualCarreras <= 1;
+        }
+        
+        if (btnSiguiente) {
+            btnSiguiente.disabled = this.paginaActualCarreras >= this.totalPaginasCarreras;
+        }
+    }
+
+    /**
+     * Actualiza el indicador de página actual de carreras
+     */
+    static actualizarIndicadorPaginaCarreras() {
+        const indicador = document.getElementById('paginaActualCarreras');
+        if (indicador) {
+            indicador.textContent = `Página ${this.paginaActualCarreras} de ${this.totalPaginasCarreras}`;
+        }
+    }
+
+    /**
+     * Navega a la página anterior de carreras
+     */
+    static async irAPaginaAnteriorCarreras() {
+        if (this.paginaActualCarreras > 1) {
+            await this.cargarCarrerasPaginadas(this.paginaActualCarreras - 1);
+        }
+    }
+
+    /**
+     * Navega a la página siguiente de carreras
+     */
+    static async irAPaginaSiguienteCarreras() {
+        if (this.paginaActualCarreras < this.totalPaginasCarreras) {
+            await this.cargarCarrerasPaginadas(this.paginaActualCarreras + 1);
         }
     }
 
@@ -318,8 +506,13 @@ export class c_academico {
         const tbody = document.getElementById('tbodyTablaCarreras');
         if (!tbody) return;
 
+        // Destruir DataTable si existe
+        if ($.fn.dataTable.isDataTable('#tablaCarreras')) {
+            $('#tablaCarreras').DataTable().destroy();
+        }
+
         tbody.innerHTML = carreras.map(c => {
-            const departamento = this.departamentos.find(d => d.idDepartamento === c.idDepartamento);
+            const departamento = this.departamentos.departamentos?.find(d => d.idDepartamento == c.idDepartamento);
             const estadoActivo = c.estado === 1 || c.estado === 'activo';
             
             return `
@@ -349,9 +542,19 @@ export class c_academico {
                     </td>
                 </tr>
             `;
-        }).join('');
+        }).join('') || '<tr><td colspan="4" class="text-center">No hay carreras</td></tr>';
 
-        u_utiles.inicializarDataTable('#tablaCarreras');
+        // Inicializar DataTable (solo para ordenamiento y búsqueda, la paginación la manejamos nosotros)
+        $('#tablaCarreras').DataTable({
+            language: {
+                url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
+            },
+            paging: false, // Desactivamos la paginación de DataTable
+            searching: true, // Mantenemos búsqueda
+            ordering: true, // Mantenemos ordenamiento
+            info: false // Ocultamos información de paginación
+        });
+        
         this.agregarEventosBotonesCarrera();
     }
 
@@ -390,29 +593,27 @@ export class c_academico {
         if (!confirmacion) return;
 
         try {
-            const carreras = await m_carrera.obtenerCarreras();
-            const carrera = carreras.find(c => c.idCarrera == id);
-            
-            if (!carrera) {
-                Alerta.error('Error', 'No se encontró la carrera');
-                return;
-            }
-
             await m_carrera.cambioEstadoCarrera(id, nuevoEstado);
             Alerta.notificarExito(`Carrera ${accion}da correctamente`);
-            await this.cargarCarreras();
+            await this.cargarCarrerasPaginadas(this.paginaActualCarreras);
         } catch (error) {
             Alerta.error('Error', `No se pudo ${accion} la carrera`);
         }
     }
 
     /**
+     * CARGA DE DATOS - ASIGNATURAS (CON PAGINACIÓN EN SERVIDOR)
+     */
+
+    /**
      * Carga el total de páginas de asignaturas
      */
     static async cargarTotalPaginasAsignaturas() {
         try {
-            this.totalPaginasAsignaturas = await m_asignatura.obtenerTotalPaginasAsignatura();
-            this.actualizarEstadoBotonesPaginacion();
+            const response = await m_asignatura.obtenerTotalPaginasAsignatura();
+            this.totalPaginasAsignaturas = response.total_paginas || 1;
+            this.actualizarEstadoBotonesPaginacionAsignaturas();
+            this.actualizarIndicadorPaginaAsignaturas();
         } catch (error) {
             console.error('Error cargando total de páginas:', error);
         }
@@ -425,11 +626,11 @@ export class c_academico {
     static async cargarAsignaturasPaginadas(pagina) {
         try {
             const response = await m_asignatura.obtenerAsignaturasAPaginar(pagina);
-            const asignaturas = response.datos || response;
-            this.mostrarAsignaturasEnTabla(asignaturas);
+            const asignaturas = response.datos || response || [];
             this.paginaActualAsignaturas = pagina;
-            this.actualizarEstadoBotonesPaginacion();
-            this.actualizarIndicadorPagina();
+            this.mostrarAsignaturasEnTabla(asignaturas);
+            this.actualizarEstadoBotonesPaginacionAsignaturas();
+            this.actualizarIndicadorPaginaAsignaturas();
         } catch (error) {
             console.error('Error cargando asignaturas paginadas:', error);
             Alerta.error('Error', 'No se pudieron cargar las asignaturas');
@@ -437,9 +638,9 @@ export class c_academico {
     }
 
     /**
-     * Actualiza el estado de los botones de paginación
+     * Actualiza el estado de los botones de paginación de asignaturas
      */
-    static actualizarEstadoBotonesPaginacion() {
+    static actualizarEstadoBotonesPaginacionAsignaturas() {
         const btnAnterior = document.getElementById('btnAnteriorAsignaturas');
         const btnSiguiente = document.getElementById('btnSiguienteAsignaturas');
         
@@ -453,9 +654,9 @@ export class c_academico {
     }
 
     /**
-     * Actualiza el indicador de página actual
+     * Actualiza el indicador de página actual de asignaturas
      */
-    static actualizarIndicadorPagina() {
+    static actualizarIndicadorPaginaAsignaturas() {
         const indicador = document.getElementById('paginaActualAsignaturas');
         if (indicador) {
             indicador.textContent = `Página ${this.paginaActualAsignaturas} de ${this.totalPaginasAsignaturas}`;
@@ -481,21 +682,19 @@ export class c_academico {
     }
 
     /**
-     * Carga las asignaturas y las muestra en la tabla (versión original, ahora usa paginada)
-     */
-    static async cargarAsignaturas() {
-        await this.cargarAsignaturasPaginadas(this.paginaActualAsignaturas);
-    }
-
-    /**
      * Muestra las asignaturas en la tabla
      */
     static mostrarAsignaturasEnTabla(asignaturas) {
         const tbody = document.getElementById('tbodyTablaAsignaturas');
         if (!tbody) return;
 
+        // Destruir DataTable si existe
+        if ($.fn.dataTable.isDataTable('#tablaAsignaturas')) {
+            $('#tablaAsignaturas').DataTable().destroy();
+        }
+
         tbody.innerHTML = asignaturas.map(a => {
-            const facultad = this.facultades.find(f => f.idFacultad === a.idFacultad);
+            const facultad = this.facultades.find(f => f.idFacultad == a.idFacultad);
             return `
                 <tr>
                     <td class="align-middle">${a.codigoAsignatura || 'N/A'}</td>
@@ -514,11 +713,18 @@ export class c_academico {
                     </td>
                 </tr>
             `;
-        }).join('');
+        }).join('') || '<tr><td colspan="5" class="text-center">No hay asignaturas</td></tr>';
 
-        if ($.fn.dataTable.isDataTable('#tablaAsignaturas')) {
-            $('#tablaAsignaturas').DataTable().destroy();
-        }
+        // Inicializar DataTable (solo para ordenamiento y búsqueda, la paginación la manejamos nosotros)
+        $('#tablaAsignaturas').DataTable({
+            language: {
+                url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
+            },
+            paging: false, // Desactivamos la paginación de DataTable
+            searching: true, // Mantenemos búsqueda
+            ordering: true, // Mantenemos ordenamiento
+            info: false // Ocultamos información de paginación
+        });
         
         this.agregarEventosBotonesAsignatura();
     }
@@ -550,7 +756,8 @@ export class c_academico {
 
         try {
             if (this.facultades.length === 0) {
-                this.facultades = await m_facultad.obtenerFacultades();
+                const response = await m_facultad.obtenerFacultades();
+                this.facultades = response.datos || response || [];
             }
 
             const valorActual = select.value;
@@ -603,7 +810,7 @@ export class c_academico {
     static async obtenerSiguienteNumeroAsignatura() {
         try {
             const response = await m_asignatura.obtenerAsignaturasAPaginar(1, 1000);
-            const asignaturas = response.datos || response;
+            const asignaturas = response.datos || response || [];
             
             if (!asignaturas || asignaturas.length === 0) return 1;
             
@@ -677,7 +884,7 @@ export class c_academico {
             }
 
             this.limpiarFormularioFacultad();
-            await this.cargarFacultades();
+            await this.cargarFacultades(); // Recargar todas las facultades
         } catch (error) {
             Alerta.error('Error', 'No se pudo guardar la facultad');
         }
@@ -723,7 +930,11 @@ export class c_academico {
             }
 
             this.limpiarFormularioDepartamento();
-            await this.cargarDepartamentos();
+            
+            // Recargar facultades y departamentos
+            await this.cargarFacultades();
+            await this.cargarTotalPaginasDepartamentos();
+            await this.cargarDepartamentosPaginados(this.paginaActualDepartamentos);
         } catch (error) {
             Alerta.error('Error', 'No se pudo guardar el departamento');
         }
@@ -755,14 +966,11 @@ export class c_academico {
 
         try {
             if (this.modoEdicion.carrera) {
-                const carreras = await m_carrera.obtenerCarreras();
-                const carreraActual = carreras.find(c => c.idCarrera == this.modoEdicion.carrera);
-                
                 await m_carrera.actualizaCarrera({
                     idCarrera: this.modoEdicion.carrera,
                     nombreCarrera: nombre,
                     idDepartamento: idDepartamento,
-                    estado: carreraActual ? carreraActual.estado : 'activo'
+                    estado: 'activo'
                 });
                 Alerta.notificarExito('Carrera actualizada correctamente');
                 this.modoEdicion.carrera = null;
@@ -776,7 +984,13 @@ export class c_academico {
             }
 
             this.limpiarFormularioCarrera();
-            await this.cargarCarreras();
+            
+            // Recargar departamentos y carreras
+            await this.cargarFacultades();
+            await this.cargarTotalPaginasDepartamentos();
+            await this.cargarDepartamentosPaginados(this.paginaActualDepartamentos);
+            await this.cargarTotalPaginasCarreras();
+            await this.cargarCarrerasPaginadas(this.paginaActualCarreras);
         } catch (error) {
             Alerta.error('Error', 'No se pudo guardar la carrera');
         }
@@ -817,8 +1031,9 @@ export class c_academico {
             }
 
             if (this.modoEdicion.asignatura) {
-                const asignaturaActual = (await m_asignatura.obtenerAsignaturas())
-                    .find(a => a.idAsignatura == this.modoEdicion.asignatura);
+                const response = await m_asignatura.obtenerAsignaturasAPaginar(1, 1000);
+                const asignaturas = response.datos || response || [];
+                const asignaturaActual = asignaturas.find(a => a.idAsignatura == this.modoEdicion.asignatura);
 
                 await m_asignatura.actualizarAsignatura({
                     idAsignatura: this.modoEdicion.asignatura,
@@ -888,7 +1103,7 @@ export class c_academico {
      * @param {string} id - ID del departamento
      */
     static async editarDepartamento(id) {
-        const departamento = this.departamentos.find(d => d.idDepartamento == id);
+        const departamento = this.departamentos.departamentos?.find(d => d.idDepartamento == id);
         if (!departamento) return;
 
         document.getElementById('nombreDepartamento').value = departamento.nombreDepartamento;
@@ -908,11 +1123,14 @@ export class c_academico {
      * @param {string} id - ID de la carrera
      */
     static async editarCarrera(id) {
-        const carreras = await m_carrera.obtenerCarreras();
+        const response = await m_carrera.obtenerCarrerasAPaginar(1, 1000);
+        const carreras = response.datos || response || [];
         const carrera = carreras.find(c => c.idCarrera == id);
         if (!carrera) return;
 
-        const departamento = this.departamentos.find(d => d.idDepartamento == carrera.idDepartamento);
+        const deptResponse = await m_departamento.obtenerDepartamentosAPaginar(1);
+        this.departamentos = deptResponse;
+        const departamento = this.departamentos.departamentos?.find(d => d.idDepartamento == carrera.idDepartamento);
 
         document.getElementById('nombreCarrera').value = carrera.nombreCarrera;
         
@@ -933,12 +1151,14 @@ export class c_academico {
      * @param {string} id - ID de la asignatura
      */
     static async editarAsignatura(id) {
-        const asignaturas = await m_asignatura.obtenerAsignaturas();
+        const response = await m_asignatura.obtenerAsignaturasAPaginar(1, 1000);
+        const asignaturas = response.datos || response || [];
         const asignatura = asignaturas.find(a => a.idAsignatura == id); 
         if (!asignatura) return;
 
         if (this.facultades.length === 0) {
-            this.facultades = await m_facultad.obtenerFacultades();
+            const facResponse = await m_facultad.obtenerFacultades();
+            this.facultades = facResponse.datos || facResponse || [];
         }
 
         const selectFacultad = document.getElementById('facultadesAsignatura');
@@ -991,6 +1211,7 @@ export class c_academico {
         try {
             await m_facultad.eliminarFacultad(id);
             Alerta.notificarExito('Facultad eliminada correctamente');
+            
             await this.cargarFacultades();
         } catch (error) {
             Alerta.error('Error', 'No se pudo eliminar la facultad');
@@ -1012,7 +1233,14 @@ export class c_academico {
         try {
             await m_departamento.eliminarDepartamento(id);
             Alerta.notificarExito('Departamento eliminado correctamente');
-            await this.cargarDepartamentos();
+            
+            await this.cargarTotalPaginasDepartamentos();
+            
+            if (this.paginaActualDepartamentos > this.totalPaginasDepartamentos) {
+                this.paginaActualDepartamentos = this.totalPaginasDepartamentos;
+            }
+            
+            await this.cargarDepartamentosPaginados(this.paginaActualDepartamentos);
         } catch (error) {
             Alerta.error('Error', 'No se pudo eliminar el departamento');
         }
@@ -1033,7 +1261,14 @@ export class c_academico {
         try {
             await m_carrera.eliminarCarrera(id);
             Alerta.notificarExito('Carrera eliminada correctamente');
-            await this.cargarCarreras();
+            
+            await this.cargarTotalPaginasCarreras();
+            
+            if (this.paginaActualCarreras > this.totalPaginasCarreras) {
+                this.paginaActualCarreras = this.totalPaginasCarreras;
+            }
+            
+            await this.cargarCarrerasPaginadas(this.paginaActualCarreras);
         } catch (error) {
             Alerta.error('Error', 'No se pudo eliminar la carrera');
         }

@@ -1,3 +1,4 @@
+
 import { fetchAdministrativo } from "../../admin/servicios/fetchAdministrativo.js";
 import { fetchUsuario } from "../servicios/fetchUsuario.js";
 
@@ -32,16 +33,25 @@ export class m_usuario {
         return await fetchUsuario.eliminarUsuarioEnBDD(id);
     }
 
-    static async obtenerTotalPaginasUsuario(id) {
-        return await fetchUsuario.obtenerTotalPaginasUsuarioDelBackend(id);
+    static async obtenerTotalPaginasUsuario() {
+        return await fetchUsuario.obtenerTotalPaginasUsuarioDelBackend();
     }
 
     static async obtenerUsuariosAPaginar(id) {
         return await fetchUsuario.obtenerUsuariosAPaginarDelBackend(id);
     }
 
-    static async cambioEstadoUsuario(id, estado) {
-        return await fetchUsuario.cambioEstadoUsuarioEnBDD(id, estado);
+    static async deshabilitarUsuario(id) {
+        return await fetchUsuario.deshabilitarUsuarioEnBackend(id);
+    }
+
+    static async habilitarUsuario(id) {
+        return await fetchUsuario.habilitarUsuarioEnBackend(id);
+    }
+
+    // Alias más fácil de usar
+    static async buscarYFiltrarUsuarios(filtros) {
+        return await fetchUsuario.buscarYFiltrarUsuariosEnBackend(filtros);
     }
 }
 

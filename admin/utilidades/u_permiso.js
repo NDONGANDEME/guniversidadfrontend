@@ -1,7 +1,3 @@
-// ============================================
-// UTILIDADES PARA EL MÓDULO DE PERMISOS
-// ============================================
-
 export class u_permiso
 {
     /**
@@ -10,8 +6,7 @@ export class u_permiso
      * @param {Function} callbackEditar - Función para editar rol
      * @param {Function} callbackEliminar - Función para eliminar rol
      */
-    static renderizarRoles(roles, callbackEditar, callbackEliminar)
-    {
+    static renderizarRoles(roles, callbackEditar, callbackEliminar) {
         const contRoles = document.querySelector('#contRoles');
         if (!contRoles) return;
 
@@ -69,8 +64,7 @@ export class u_permiso
      * Renderiza los permisos asignados a un rol
      * @param {Array} permisos - Lista de permisos
      */
-    static renderizarPermisosAsignados(permisos)
-    {
+    static renderizarPermisosAsignados(permisos) {
         const contPermisos = document.querySelector('#contPermisosAsignados .container .row');
         if (!contPermisos) return;
 
@@ -100,8 +94,7 @@ export class u_permiso
      * Renderiza los permisos asignados temporalmente en el modal
      * @param {Array} permisosTemporales - Lista de permisos temporales
      */
-    static renderizarPermisosTemporales(permisosTemporales)
-    {
+    static renderizarPermisosTemporales(permisosTemporales) {
         const contenedor = document.querySelector('#modalNuevoRol .col-6.border.shadow.rounded-2.p-2');
         if (!contenedor) return;
 
@@ -156,8 +149,7 @@ export class u_permiso
      * Llena el select de tablas con las opciones del backend
      * @param {Array} tablas - Lista de tablas
      */
-    static llenarSelectTablas(tablas)
-    {
+    static llenarSelectTablas(tablas) {
         const select = document.querySelector('#tablasPermiso');
         if (!select) return;
 
@@ -180,8 +172,7 @@ export class u_permiso
      * @param {Array} acciones - Lista de acciones seleccionadas
      * @returns {Array} - Lista de objetos permiso (sin id)
      */
-    static crearPermisosDesdeSeleccion(tabla, acciones)
-    {
+    static crearPermisosDesdeSeleccion(tabla, acciones) {
         if (!tabla || tabla === 'Ninguno' || !acciones || acciones.length === 0) {
             return [];
         }
@@ -206,8 +197,7 @@ export class u_permiso
      * @param {Array} tablas - Lista de todas las tablas
      * @returns {Array} - Lista de objetos permiso full
      */
-    static prepararPermisosFullControl()
-    {
+    static prepararPermisosFullControl() {
         return [{
             tabla: 'Todas',
             accionPermiso: 'full',
@@ -218,8 +208,7 @@ export class u_permiso
     /**
      * Limpia el formulario de asignación de permisos
      */
-    static limpiarFormularioAsignacion()
-    {
+    static limpiarFormularioAsignacion() {
         $('#tablasPermiso').val('Ninguno');
         $('#insertar, #actualizar, #eliminar').prop('checked', false);
     }
@@ -228,8 +217,7 @@ export class u_permiso
      * Maneja el checkbox de "Pleno control"
      * @param {boolean} checked - Estado del checkbox
      */
-    static toggleFullControl(checked)
-    {
+    static toggleFullControl(checked) {
         if (checked) {
             $('.row.mt-4').hide(); // Oculta el contenedor de asignación individual
         } else {
@@ -240,8 +228,7 @@ export class u_permiso
     /**
      * Crea badge para mostrar tipo de permiso
      */
-    static crearBadgePermiso(tipo)
-    {
+    static crearBadgePermiso(tipo) {
         const colores = {
             'full': 'bg-warning text-dark',
             'insertar': 'bg-success',

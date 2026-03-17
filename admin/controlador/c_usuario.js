@@ -1,10 +1,10 @@
 import { sesiones } from "../../public/core/sesiones.js";
-//import { m_administrativo } from "../modelo/m_usuario.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { u_usuario } from "../utilidades/u_usuario.js";
 import { m_facultad } from "../modelo/m_academico.js";
-import { m_usuario } from "../../public/modelo/m_usuario.js";
+import { m_administrativo, m_usuario } from "../../public/modelo/m_usuario.js";
+import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
 
 export class c_usuario {
     constructor() {
@@ -12,18 +12,12 @@ export class c_usuario {
         this.usuarios = [];
         this.usuarioActual = null;
         this.modoEdicion = false;
+        this.administrativos = null;
         
-        // Paginación (21 por página como solicitaste)
+        // Paginación (21 por página)
         this.paginaActual = 1;
         this.totalPaginas = 1;
         this.usuariosPorPagina = 21;
-        
-        // Filtros
-        this.filtros = {
-            rol: '',
-            estado: '',
-            busqueda: ''
-        };
         
         // Modal
         this.modalInstance = null;
@@ -33,9 +27,8 @@ export class c_usuario {
     }
 
     // ========== INICIALIZACIÓN ==========
-    async inicializar() {
+ /*   async inicializar() {
         try {
-            //sesiones.verificarExistenciaSesion();
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
             await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
             u_utiles.botonesNavegacionAdministrador();
@@ -46,21 +39,111 @@ export class c_usuario {
                 this.modalInstance = new bootstrap.Modal(modalElement);
             }
             
-            // Cargar facultades para los selectores
+            // Cargar datos iniciales
             await this.cargarFacultades();
             await u_usuario.cargarRolesEnSelect();
             
+            
             // Cargar usuarios
             await this.cargarUsuarios();
+
+            // Total de paginas
+            this.totalPaginas = await m_usuario.obtenerTotalPaginasUsuario();
             
             this.configurarEventos();
             this.configurarValidaciones();
             this.configurarSubidaArchivos();
             this.configurarCambioVista();
+            this.inicializarPaginacion();
             
         } catch (error) {
             console.error('Error al inicializar:', error);
             Alerta.error('Error', 'No se pudo inicializar el módulo');
+        }
+    }*/
+
+    async inicializar() {
+        try {
+            await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
+            await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
+            u_utiles.botonesNavegacionAdministrador();
+            
+            // Inicializar modal de Bootstrap
+            const modalElement = document.getElementById('modalNuevoUsuario');
+            if (modalElement) {
+                this.modalInstance = new bootstrap.Modal(modalElement);
+            }
+            
+            // Cargar datos iniciales
+            await this.cargarFacultades();
+            await u_usuario.cargarRolesEnSelect();
+            
+            // Cargar usuarios
+            await this.cargarUsuarios();
+
+            // Total de paginas
+            this.totalPaginas = await m_usuario.obtenerTotalPaginasUsuario();
+            
+            this.configurarEventos();
+            this.configurarValidaciones();
+            this.configurarSubidaArchivos();
+            this.configurarCambioVista();
+            this.inicializarPaginacion();
+            this.configurarFiltrosBusqueda(); // NUEVO: configurar filtros
+            
+        } catch (error) {
+            console.error('Error al inicializar:', error);
+            Alerta.error('Error', 'No se pudo inicializar el módulo');
+        }
+    }
+
+    /**
+     * Inicializa los eventos de paginación
+     */
+    inicializarPaginacion() {
+        document.getElementById('btnAnteriorUsuarios')?.addEventListener('click', () => this.irAPaginaAnterior());
+        document.getElementById('btnSiguienteUsuarios')?.addEventListener('click', () => this.irAPaginaSiguiente());
+        this.actualizarEstadoBotonesPaginacion();
+    }
+
+    /**
+     * Actualiza el estado de los botones de paginación
+     */
+    /*actualizarEstadoBotonesPaginacion() {
+        const btnAnterior = document.getElementById('btnAnteriorUsuarios');
+        const btnSiguiente = document.getElementById('btnSiguienteUsuarios');
+        
+        if (btnAnterior) btnAnterior.disabled = this.paginaActual <= 1;
+        if (btnSiguiente) btnSiguiente.disabled = this.paginaActual >= this.totalPaginas.total_paginas;
+    }*/
+
+    /**
+     * Actualiza el indicador de página actual
+     */
+    /*actualizarIndicadorPagina() {
+        const indicador = document.getElementById('paginaActualUsuarios');
+        if (indicador) {
+            indicador.textContent = `Página ${this.paginaActual} de ${this.totalPaginas.total_paginas}`;
+        }
+    }*/
+
+    /**
+     * Navega a la página anterior
+     */
+    async irAPaginaAnterior() {
+        if (this.paginaActual > 1) {
+            this.paginaActual--;
+            await this.cargarUsuarios();
+        }
+    }
+
+    /**
+     * Navega a la página siguiente
+     */
+    async irAPaginaSiguiente() {
+        if (this.paginaActual < this.totalPaginas.total_paginas) {
+            this.paginaActual++;
+            await this.cargarUsuarios();
         }
     }
 
@@ -75,31 +158,114 @@ export class c_usuario {
         }
     }
 
-    async cargarUsuarios() {
+   /* async cargarUsuarios() {
         try {
-            // Cargar usuarios desde el backend (21 por página)
-            const datosBackend = await m_usuario.obtenerUsuarios(this.paginaActual, this.usuariosPorPagina, this.filtros);
+            // Mostrar indicador de carga
+            $('#contenedorUsuarios').html(`
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando usuarios...</p>
+                </div>
+            `);
+
+            // Cargar usuarios desde el backend con paginación
+            this.administrativos = await m_administrativo.obtenerAdministrativos();
+            const datosBackend = await m_usuario.obtenerUsuariosAPaginar(this.paginaActual, this.usuariosPorPagina);
             
             if (!datosBackend || !datosBackend.usuarios) {
                 this.usuarios = [];
                 this.totalPaginas = 1;
                 this.actualizarVista();
+                this.actualizarEstadoBotonesPaginacion();
+                this.actualizarIndicadorPagina();
                 return;
             }
 
             // Convertir a objetos usuario
-            this.usuarios = await u_usuario.convertirAUsuarios(datosBackend.usuarios);
-            
-            // Total de páginas desde el backend
-            this.totalPaginas = datosBackend.totalPaginas || 1;
+            this.usuarios = await u_usuario.convertirAUsuarios(datosBackend.usuarios, this.administrativos);
+            this.totalPaginas = await m_usuario.obtenerTotalPaginasUsuario() || 1;
             
             this.actualizarVista();
+            this.actualizarEstadoBotonesPaginacion();
+            this.actualizarIndicadorPagina();
 
         } catch (error) {
             console.error('Error al cargar usuarios:', error);
             Alerta.error('Error', 'Fallo al cargar usuarios');
             this.usuarios = [];
             this.actualizarVista();
+            this.actualizarEstadoBotonesPaginacion();
+            this.actualizarIndicadorPagina();
+        }
+    }*/
+
+    async cargarUsuarios() {
+        try {
+            // Mostrar indicador de carga
+            $('#contenedorUsuarios').html(`
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando usuarios...</p>
+                </div>
+            `);
+
+            // Cargar usuarios desde el backend con paginación
+            this.administrativos = await m_administrativo.obtenerAdministrativos();
+            const datosBackend = await m_usuario.obtenerUsuariosAPaginar(this.paginaActual, this.usuariosPorPagina);
+            
+            if (!datosBackend || !datosBackend.usuarios) {
+                this.usuarios = [];
+                this.totalPaginas = { total_paginas: 1 };
+                this.actualizarVista();
+                this.actualizarEstadoBotonesPaginacion();
+                this.actualizarIndicadorPagina();
+                return;
+            }
+
+            // Convertir a objetos usuario
+            this.usuarios = await u_usuario.convertirAUsuarios(datosBackend.usuarios, this.administrativos);
+            
+            // Obtener total de páginas
+            const totalPaginasObj = await m_usuario.obtenerTotalPaginasUsuario();
+            this.totalPaginas = totalPaginasObj || { total_paginas: 1 };
+            
+            this.actualizarVista();
+            this.actualizarEstadoBotonesPaginacion();
+            this.actualizarIndicadorPagina();
+
+        } catch (error) {
+            console.error('Error al cargar usuarios:', error);
+            Alerta.error('Error', 'Fallo al cargar usuarios');
+            this.usuarios = [];
+            this.totalPaginas = { total_paginas: 1 };
+            this.actualizarVista();
+            this.actualizarEstadoBotonesPaginacion();
+            this.actualizarIndicadorPagina();
+        }
+    }
+
+    // CORREGIR actualizarEstadoBotonesPaginacion
+    actualizarEstadoBotonesPaginacion() {
+        const btnAnterior = document.getElementById('btnAnteriorUsuarios');
+        const btnSiguiente = document.getElementById('btnSiguienteUsuarios');
+        
+        // Asegurar que totalPaginas tenga la estructura correcta
+        const totalPaginas = this.totalPaginas?.total_paginas || 1;
+        
+        if (btnAnterior) btnAnterior.disabled = this.paginaActual <= 1;
+        if (btnSiguiente) btnSiguiente.disabled = this.paginaActual >= totalPaginas;
+    }
+
+    // CORREGIR actualizarIndicadorPagina
+    actualizarIndicadorPagina() {
+        const indicador = document.getElementById('paginaActualUsuarios');
+        if (indicador) {
+            const totalPaginas = this.totalPaginas?.total_paginas || 1;
+            indicador.textContent = `Página ${this.paginaActual} de ${totalPaginas}`;
         }
     }
 
@@ -108,9 +274,14 @@ export class c_usuario {
         u_usuario.configurarValidaciones();
         
         // Mostrar/ocultar panel de datos personales según el rol
-        $('#rolUsuario').on('change', (e) => {
+        $('#rolUsuario').on('change', async (e) => {
             const rol = e.target.value;
-            u_usuario.mostrarOcultarPanelDatosPersonales(rol);
+            await u_usuario.mostrarOcultarPanelDatosPersonales(rol);
+        });
+
+        // Validación del campo nombreOCorreo con generación automática
+        $('#nombreOCorreoUsuario').on('blur', () => {
+            u_usuario.generarCamposDesdeNombreOCorreo();
         });
     }
 
@@ -119,7 +290,7 @@ export class c_usuario {
         u_usuario.configurarSubidaArchivos();
     }
 
-    // ========== CAMBIO DE VISTA (TARJETAS/LISTA) ==========
+    // ========== CAMBIO DE VISTA ==========
     configurarCambioVista() {
         $('#vistaTarjetas').on('click', () => {
             $('#vistaTarjetas').addClass('active');
@@ -154,38 +325,22 @@ export class c_usuario {
             this.editarUsuario($(e.currentTarget).data('id'));
         });
 
-        // Eliminar/Deshabilitar usuario
-        $(document).on('click', '.eliminar-usuario', (e) => {
+        // Cambiar estado (habilitar/deshabilitar)
+        $(document).on('click', '.toggle-estado-usuario', (e) => {
             e.stopPropagation();
             this.cambiarEstadoUsuario($(e.currentTarget).data('id'));
         });
 
-        // Ver detalles de usuario
+        // Eliminar permanentemente
+        $(document).on('click', '.eliminar-usuario', (e) => {
+            e.stopPropagation();
+            this.eliminarUsuario($(e.currentTarget).data('id'));
+        });
+
+        // Ver detalles
         $(document).on('click', '.ver-detalles-usuario', (e) => {
             e.stopPropagation();
             this.verDetallesUsuario($(e.currentTarget).data('id'));
-        });
-
-        // Filtros y búsqueda
-        $('#filtroRol, #filtroEstado').on('change', (e) => {
-            this.filtros[e.target.id === 'filtroRol' ? 'rol' : 'estado'] = e.target.value;
-            this.paginaActual = 1;
-            this.cargarUsuarios();
-        });
-
-        $('#buscadorUsuario').on('keyup', u_utiles.debounce(() => {
-            this.filtros.busqueda = $('#buscadorUsuario').val();
-            this.paginaActual = 1;
-            this.cargarUsuarios();
-        }, 500));
-
-        $('#btnLimpiarFiltros').on('click', () => {
-            $('#filtroRol').val('');
-            $('#filtroEstado').val('');
-            $('#buscadorUsuario').val('');
-            this.filtros = { rol: '', estado: '', busqueda: '' };
-            this.paginaActual = 1;
-            this.cargarUsuarios();
         });
 
         // Volver al panel principal
@@ -193,33 +348,48 @@ export class c_usuario {
             window.location.href = '/guniversidadfrontend/admin/index.html';
         });
 
-        // Cuando se cierra el modal, limpiar
+        // Al cerrar modal, limpiar
         $('#modalNuevoUsuario').on('hidden.bs.modal', () => {
-            if (!this.modoEdicion) {
-                u_usuario.limpiarModal();
-            }
+            if (!this.modoEdicion) u_usuario.limpiarModal();
         });
 
         // Generar contraseña aleatoria
         $('#generarContraseña').on('change', function() {
             if ($(this).is(':checked')) {
                 const contraseña = u_usuario.generarContraseñaAleatoria();
-                // Aquí podrías mostrar la contraseña generada o guardarla en un campo oculto
-                console.log('Contraseña generada:', contraseña);
-                Alerta.notificarInfo('Contraseña generada: ' + contraseña);
+                Alerta.notificarInfo(`Contraseña generada: ${contraseña}`, 10000);
             }
         });
     }
 
-    // ========== FUNCIONES PARA USUARIOS ==========
+    // ========== VER DETALLES ==========
+    /*async verDetallesUsuario(id) {
+        const usuario = this.usuarios.find(u => u.idUsuario == id);
+        const administrativo = this.administrativos.find(a => a.idUsuario == id);
 
-    // ========== VER DETALLES DE USUARIO ==========
+        if (!usuario) return;
+        if (!administrativo) return;
+        
+        try {
+            const detallesHtml = u_usuario.crearDetallesUsuarioHTML(usuario, administrativo); 
+            $('#modalVerUsuario .modal-body').html(detallesHtml);
+            $('#modalVerUsuario').modal('show');
+        } catch (error) {
+            console.error('Error al ver detalles:', error);
+            Alerta.error('Error', 'No se pudieron cargar los detalles');
+        }
+    }*/
+
+        // ========== VER DETALLES ==========
     async verDetallesUsuario(id) {
         const usuario = this.usuarios.find(u => u.idUsuario == id);
+        // Buscar administrativo por idUsuario, no por coincidencia directa
+        const administrativo = this.administrativos?.find(a => a.idUsuario == id);
+
         if (!usuario) return;
         
         try {
-            const detallesHtml = u_usuario.crearDetallesUsuarioHTML(usuario);
+            const detallesHtml = u_usuario.crearDetallesUsuarioHTML(usuario, administrativo); 
             $('#modalVerUsuario .modal-body').html(detallesHtml);
             $('#modalVerUsuario').modal('show');
         } catch (error) {
@@ -228,16 +398,16 @@ export class c_usuario {
         }
     }
     
-    formularioUsuarioEsValido() {
+    // ========== VALIDACIÓN DE FORMULARIO ==========
+    async formularioUsuarioEsValido() {
         const nombreOCorreo = $('#nombreOCorreoUsuario').val().trim();
         const rol = $('#rolUsuario').val();
+        let bool = await u_usuario.requiereDatosPersonales(rol)
         
-        // Validaciones básicas
         if (!u_usuario.validarNombreOCorreo(nombreOCorreo)) return false;
         if (!u_usuario.validarRol(rol)) return false;
         
-        // Si el rol requiere datos personales (no es Ninguno, Estudiante ni Profesor)
-        if (u_usuario.requiereDatosPersonales(rol)) {
+        if (bool) {
             const nombre = $('#nombreUsuario').val().trim();
             const apellidos = $('#apellidosUsuario').val().trim();
             const correo = $('#correoUsuario').val().trim();
@@ -254,133 +424,344 @@ export class c_usuario {
         return true;
     }
 
-    async guardarUsuario() {
-        if (!this.formularioUsuarioEsValido()) {
+    // ========== GUARDAR USUARIO ==========
+  /*  async guardarUsuario() {
+        let validar = await this.formularioUsuarioEsValido();
+        if (!validar) {
             Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
             return;
         }
         
         try {
-            // ===== 1. DATOS DE USUARIO (tabla usuario) =====
-            const formDataUsuario = new FormData();
+            const nombreOCorreo = $('#nombreOCorreoUsuario').val().trim();
+            const rol = $('#rolUsuario').val();
             
-            formDataUsuario.append('nombreUsuario', $('#nombreOCorreoUsuario').val().trim());
-            formDataUsuario.append('rol', $('#rolUsuario').val());
+            // Determinar si es correo o nombre y generar el campo correspondiente
+            let nombreUsuario = nombreOCorreo;
+            let correoUsuario = null;
             
-            // Contraseña
-            if ($('#generarContraseña').is(':checked')) {
-                const contraseñaGenerada = u_usuario.generarContraseñaAleatoria();
-                formDataUsuario.append('contrasena', contraseñaGenerada);
-                Alerta.informacion('Info', 'Contraseña generada automáticamente');
+            if (u_verificaciones.validarCorreo(nombreOCorreo)) {
+                nombreUsuario = u_usuario.generarNombreUsuario(nombreOCorreo);
+                correoUsuario = nombreOCorreo;
             } else {
-                formDataUsuario.append('contrasena', 'contraseña123');
-            }
-            
-            // Foto
-            const foto = u_usuario.obtenerFotoParaEnviar();
-            if (foto) {
-                formDataUsuario.append('foto', foto);
+                correoUsuario = u_usuario.generarCorreoUsuario(nombreOCorreo);
             }
             
             let idUsuario;
-            let resultadoUsuario;
+            const formData = new FormData();
+            const foto = u_usuario.obtenerFotoParaEnviar();
+            
+            formData.append('nombreUsuario', nombreUsuario);
+            formData.append('correo', correoUsuario);
+            formData.append('contrasena', $('#generarContraseña').is(':checked') ? u_usuario.generarContraseñaAleatoria() : 'contraseña123');
+            formData.append('rol', rol);
+            formData.append('estado', 'activo');
+            
+            if (foto && foto instanceof File) {
+                formData.append('foto', foto);
+            }
             
             if (this.modoEdicion) {
-                formDataUsuario.append('idUsuario', this.usuarioActual.idUsuario);
-                resultadoUsuario = await m_usuario.actualizarUsuario(formDataUsuario);
+                // ACTUALIZAR USUARIO
+                formData.append('idUsuario', this.usuarioActual.idUsuario);
+                await m_usuario.actualizarUsuario(formData);
                 idUsuario = this.usuarioActual.idUsuario;
             } else {
-                resultadoUsuario = await m_usuario.insertarUsuario(formDataUsuario);
-                idUsuario = resultadoUsuario.idUsuario; // El backend debe devolver el ID insertado
+                // INSERTAR USUARIO
+                const resultado = await m_usuario.insertarUsuario(formData);
+                idUsuario = resultado.idUsuario;
             }
             
-            if (!resultadoUsuario) {
-                throw new Error('Error al guardar el usuario');
-            }
-            
-            // ===== 2. DATOS PERSONALES (tabla administrativo) =====
-            const rol = $('#rolUsuario').val();
-            if (u_usuario.requiereDatosPersonales(rol)) {
-                const formDataAdmin = new FormData();
+            // Si el rol requiere datos personales, guardar en administrativo
+            let bool = await u_usuario.requiereDatosPersonales(rol)
+            if (bool) {
+                const adminData = {
+                    idUsuario: idUsuario,
+                    nombreAdministrativo: $('#nombreUsuario').val().trim(),
+                    apellidosAdministrativo: $('#apellidosUsuario').val().trim(),
+                    correo: $('#correoUsuario').val().trim(),
+                    telefono: $('#telefonoUsuario').val().trim(),
+                    idFacultad: $('#facultadesUsuario').val() || 1
+                };
                 
-                formDataAdmin.append('idUsuario', idUsuario);
-                formDataAdmin.append('nombre', $('#nombreUsuario').val().trim());
-                formDataAdmin.append('apellidos', $('#apellidosUsuario').val().trim());
-                formDataAdmin.append('correo', $('#correoUsuario').val().trim());
-                formDataAdmin.append('telefono', $('#telefonoUsuario').val().trim());
-                formDataAdmin.append('idFacultad', $('#facultadesUsuario').val());
-                
-                // Si estamos en edición y ya tiene datos administrativos
-                if (this.modoEdicion && this.usuarioActual.datosAdministrativos) {
-                    formDataAdmin.append('idAdministrativo', this.usuarioActual.datosAdministrativos.idAdministrativo);
-                    await m_administrativo.actualizarAdministrativo(formDataAdmin);
+                if (this.modoEdicion && this.administrativos) {
+                    if (this.usuarioActual.idUsuario == this.administrativos.idAdministrativos) {
+                        adminData.idAdministrativo = this.administrativos.idAdministrativos;
+                        await m_administrativo.actualizarAdministrativo(adminData);
+                    }
                 } else {
-                    await m_administrativo.insertarAdministrativo(formDataAdmin);
+                    await m_administrativo.insertarAdministrativo(adminData);
                 }
             }
             
-            // ===== 3. FINALIZAR =====
+            // Limpiar y recargar
             u_usuario.limpiarArchivos();
             await this.cargarUsuarios();
             
-            if (this.modalInstance) {
-                this.modalInstance.hide();
-            }
+            if (this.modalInstance) this.modalInstance.hide();
             
-            Alerta.exito('Éxito', this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado');
+            Alerta.notificarExito(this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado', 1500);
             
         } catch (error) {
             console.error('Error al guardar usuario:', error);
-            Alerta.notificarError(`No se pudo guardar el usuario: ${error}`, 1500);
+            Alerta.notificarError(`No se pudo guardar el usuario: ${error.message}`, 1500);
+        }
+    }*/
+
+    // ========== GUARDAR USUARIO ==========
+    async guardarUsuario() {
+        let validar = await this.formularioUsuarioEsValido();
+        if (!validar) {
+            Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
+            return;
+        }
+        
+        try {
+            const nombreOCorreo = $('#nombreOCorreoUsuario').val().trim();
+            const rol = $('#rolUsuario').val();
+            
+            // Determinar si es correo o nombre y generar el campo correspondiente
+            let nombreUsuario = nombreOCorreo;
+            let correoUsuario = null;
+            
+            if (u_verificaciones.validarCorreo(nombreOCorreo)) {
+                nombreUsuario = u_usuario.generarNombreUsuario(nombreOCorreo);
+                correoUsuario = nombreOCorreo;
+            } else {
+                correoUsuario = u_usuario.generarCorreoUsuario(nombreOCorreo);
+            }
+            
+            let idUsuario;
+            const formData = new FormData();
+            const foto = u_usuario.obtenerFotoParaEnviar();
+            
+            formData.append('nombreUsuario', nombreUsuario);
+            formData.append('correo', correoUsuario);
+            formData.append('contrasena', $('#generarContraseña').is(':checked') ? u_usuario.generarContraseñaAleatoria() : 'contraseña123');
+            formData.append('rol', rol);
+            formData.append('estado', 'activo');
+            
+            if (foto && foto instanceof File) {
+                formData.append('foto', foto);
+            }
+            
+            if (this.modoEdicion) {
+                // ACTUALIZAR USUARIO
+                formData.append('idUsuario', this.usuarioActual.idUsuario);
+                await m_usuario.actualizarUsuario(formData);
+                idUsuario = this.usuarioActual.idUsuario;
+            } else {
+                // INSERTAR USUARIO
+                const resultado = await m_usuario.insertarUsuario(formData);
+                idUsuario = resultado.idUsuario;
+            }
+            
+            // Si el rol requiere datos personales, guardar en administrativo
+            let bool = await u_usuario.requiereDatosPersonales(rol);
+            if (bool) {
+                // Crear FormData para administrativo
+                const adminFormData = new FormData();
+                adminFormData.append('idUsuario', idUsuario);
+                adminFormData.append('nombreAdministrativo', $('#nombreUsuario').val().trim());
+                adminFormData.append('apellidosAdministrativo', $('#apellidosUsuario').val().trim());
+                adminFormData.append('correo', $('#correoUsuario').val().trim());
+                adminFormData.append('telefono', $('#telefonoUsuario').val().trim());
+                adminFormData.append('idFacultad', $('#facultadesUsuario').val() || 1);
+                
+                // BUSCAR SI EL USUARIO YA TIENE UN REGISTRO ADMINISTRATIVO
+                const administrativoExistente = this.administrativos?.find(a => a.idUsuario == idUsuario);
+                
+                if (this.modoEdicion && administrativoExistente) {
+                    // ACTUALIZAR: añadir el id del administrativo existente al FormData
+                    adminFormData.append('idAdministrativo', administrativoExistente.idAdministrativos);
+                    await m_administrativo.actualizarAdministrativo(adminFormData);
+                } else {
+                    // INSERTAR NUEVO
+                    await m_administrativo.insertarAdministrativo(adminFormData);
+                }
+            }
+            
+            // Limpiar y recargar
+            u_usuario.limpiarArchivos();
+            await this.cargarUsuarios();
+            
+            if (this.modalInstance) this.modalInstance.hide();
+            
+            Alerta.notificarExito(this.modoEdicion ? 'Usuario actualizado' : 'Usuario creado', 1500);
+            
+        } catch (error) {
+            console.error('Error al guardar usuario:', error);
+            Alerta.notificarError(`No se pudo guardar el usuario: ${error.message}`, 1500);
         }
     }
 
+    // ========== EDITAR USUARIO ==========
+    /*async editarUsuario(id) {
+        const usuario = this.usuarios.find(u => u.idUsuario == id);
+        const administrativo = this.administrativos.find(a => a.idUsuario == id);
+
+        if (!usuario) return;
+        if (!administrativo) return;
+        
+        this.modoEdicion = true;
+        this.usuarioActual = usuario;
+        
+        // Cargar datos en el modal
+        u_usuario.cargarDatosEnModal(usuario, administrativo);
+        u_usuario.configurarModoEdicion(true);
+        await u_usuario.mostrarOcultarPanelDatosPersonales(usuario.rol);
+        
+        // Abrir el modal
+        if (this.modalInstance) this.modalInstance.show();
+    }*/
+
     async editarUsuario(id) {
         const usuario = this.usuarios.find(u => u.idUsuario == id);
+        // Buscar administrativo por idUsuario (puede ser null si no existe)
+        const administrativo = this.administrativos?.find(a => a.idUsuario == id);
+
         if (!usuario) return;
         
         this.modoEdicion = true;
         this.usuarioActual = usuario;
         
         // Cargar datos en el modal
-        u_usuario.cargarDatosEnModal(usuario);
+        await u_usuario.cargarDatosEnModal(usuario, administrativo); // ← Añadir await
         u_usuario.configurarModoEdicion(true);
         
-        // Mostrar panel de datos personales si corresponde
-        u_usuario.mostrarOcultarPanelDatosPersonales(usuario.rol);
+        // Usar idRol en lugar de rol
+        await u_usuario.mostrarOcultarPanelDatosPersonales(usuario.idRol);
         
         // Abrir el modal
-        if (this.modalInstance) {
-            this.modalInstance.show();
-        }
+        if (this.modalInstance) this.modalInstance.show();
     }
 
+    // ========== CAMBIAR ESTADO ==========
     async cambiarEstadoUsuario(id) {
         const usuario = this.usuarios.find(u => u.idUsuario == id);
         if (!usuario) return;
         
-        const accion = usuario.estado === 'Activo' ? 'deshabilitar' : 'habilitar';
-        const confirmacion = await Alerta.confirmar('Confirmar', `¿${accion === 'deshabilitar' ? 'Deshabilitar' : 'Habilitar'} al usuario "${usuario.nombreUsuario}"?`);
+        const esActivo = usuario.estado == 'activo';
+        const confirmacion = await Alerta.confirmar(
+            'Confirmar', 
+            `¿${esActivo ? 'Deshabilitar' : 'Habilitar'} al usuario "${usuario.nombreUsuario}"?`
+        );
         
         if (!confirmacion) return;
         
         try {
-            let resultado;
-            
-            if (usuario.estado === 'Activo') {
-                resultado = await m_usuario.deshabilitarUsuario(id);
-            } else {
-                resultado = await m_usuario.habilitarUsuario(id);
-            }
+            const resultado = esActivo 
+                ? await m_usuario.deshabilitarUsuario(id)
+                : await m_usuario.habilitarUsuario(id);
             
             if (resultado) {
                 await this.cargarUsuarios();
-                Alerta.exito('Éxito', `Usuario ${accion === 'deshabilitar' ? 'deshabilitado' : 'habilitado'}`);
+                Alerta.notificarExito(`Usuario ${esActivo ? 'deshabilitado' : 'habilitado'} correctamente`, 1000);
             }
         } catch (error) {
-            console.error('Error al cambiar estado del usuario:', error);
-            Alerta.error('Error', 'No se pudo cambiar el estado del usuario');
+            console.error('Error al cambiar estado:', error);
+            Alerta.error('Error', `No se pudo ${esActivo ? 'deshabilitar' : 'habilitar'} el usuario`);
         }
+    }
+
+    // ========== ELIMINAR USUARIO ==========
+    async eliminarUsuario(id) {
+        const usuario = this.usuarios.find(u => u.idUsuario == id);
+        if (!usuario) return;
+        
+        const confirmacion = await Alerta.confirmar(
+            'Eliminar usuario',
+            `¿Está seguro de eliminar permanentemente al usuario "${usuario.nombreUsuario}"? Esta acción no se puede deshacer.`
+        );
+        
+        if (!confirmacion) return;
+        
+        try {
+            const resultado = await m_usuario.eliminarUsuario(id);
+            
+            if (resultado) {
+                await this.cargarUsuarios();
+                Alerta.notificarExito('Usuario eliminado permanentemente', 1500);
+            }
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+            Alerta.error('Error', 'No se pudo eliminar el usuario');
+        }
+    }
+
+    // ========== FILTROS Y BÚSQUEDA ==========
+    configurarFiltrosBusqueda() {
+        // Búsqueda en tiempo real (con debounce para no saturar el servidor)
+        let timeoutId;
+        $('#buscadorUsuario').on('input', () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => this.aplicarFiltros(), 500); // Esperar 500ms después de dejar de escribir
+        });
+        
+        // Filtros por cambio en selects
+        $('#filtroRol, #filtroEstado').on('change', () => this.aplicarFiltros());
+        
+        // Botón limpiar filtros
+        $('#btnLimpiarFiltros').on('click', () => this.limpiarFiltros());
+    }
+
+    /**
+     * Aplica los filtros y búsqueda
+     */
+    async aplicarFiltros() {
+        try {
+            const termino = $('#buscadorUsuario').val().trim();
+            const rol = $('#filtroRol').val();
+            const estado = $('#filtroEstado').val();
+            
+            // Mostrar indicador de carga
+            $('#contenedorUsuarios').html(`
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Filtrando...</span>
+                    </div>
+                    <p class="mt-2">Filtrando usuarios...</p>
+                </div>
+            `);
+            
+            // Si no hay filtros, cargar usuarios normales con paginación
+            if (!termino && !rol && !estado) {
+                this.paginaActual = 1;
+                await this.cargarUsuarios();
+                return;
+            }
+            
+            // Aplicar filtros combinados
+            const filtros = { termino, rol, estado };
+            const resultados = await m_usuario.buscarYFiltrarUsuarios(filtros);
+            
+            // Convertir a objetos usuario
+            this.usuarios = await u_usuario.convertirAUsuarios(resultados, this.administrativos);
+            
+            // Ocultar paginación cuando hay filtros
+            $('#btnAnteriorUsuarios, #btnSiguienteUsuarios, #paginaActualUsuarios').parent().parent().hide();
+            
+            this.actualizarVista();
+            
+        } catch (error) {
+            console.error('Error al aplicar filtros:', error);
+            Alerta.error('Error', 'Error al filtrar usuarios');
+        }
+    }
+
+    /**
+     * Limpia todos los filtros y recarga
+     */
+    async limpiarFiltros() {
+        $('#buscadorUsuario').val('');
+        $('#filtroRol').val('');
+        $('#filtroEstado').val('');
+        
+        // Mostrar paginación de nuevo
+        $('#btnAnteriorUsuarios, #btnSiguienteUsuarios, #paginaActualUsuarios').parent().parent().show();
+        
+        this.paginaActual = 1;
+        await this.cargarUsuarios();
     }
 
     // ========== ACTUALIZAR VISTA ==========
@@ -392,25 +773,6 @@ export class c_usuario {
         } else {
             u_usuario.renderizarLista(this.usuarios);
         }
-        
-        // Renderizar paginación
-        u_usuario.renderizarPaginacion(
-            this.paginaActual,
-            this.totalPaginas,
-            (nuevaPagina) => this.cambiarPagina(nuevaPagina)
-        );
-    }
-
-    // ========== CAMBIAR PÁGINA ==========
-    cambiarPagina(nuevaPagina) {
-        if (nuevaPagina < 1 || nuevaPagina > this.totalPaginas || nuevaPagina === this.paginaActual) return;
-        
-        this.paginaActual = nuevaPagina;
-        this.cargarUsuarios(); // Recargar desde backend con la nueva página
-        
-        // Hacer scroll hacia arriba suavemente
-        const contenedor = document.getElementById('contenedorUsuarios');
-        if (contenedor) contenedor.scrollIntoView({ behavior: 'smooth' });
     }
 }
 

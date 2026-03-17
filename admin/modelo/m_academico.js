@@ -50,6 +50,14 @@ export class m_departamento {
         return await fetchDepartamento.obtenerDepartamentosPorFacultadDelBackend(idFacultad);
     }
 
+    static async obtenerDepartamentosAPaginar(pagina) {
+        return await fetchDepartamento.obtenerDepartamentosAPaginarDelBackend(pagina);
+    }
+
+    static async obtenerTotalPaginasDepartamento() {
+        return await fetchDepartamento.obtenerTotalPaginasDepartamentoDelBackend();
+    }
+
     static async insertarDepartamento(objeto) {
         return await fetchDepartamento.insertarDepartamentoEnBackend(objeto);
     }
@@ -136,6 +144,14 @@ export class m_asignatura {
         return await fetchAsignatura.obtenerAsignaturasPendientesYBloqueadasDelBackend(numeroSemestre);
     }
 
+    static async obtenerAsignaturasAPaginar(pagina) {
+        return await fetchAsignatura.obtenerAsignaturasAPaginarDelBackend(pagina);
+    }
+
+    static async obtenerTotalPaginasAsignatura() {
+        return await fetchAsignatura.obtenerTotalPaginasAsignaturaDelBackend();
+    }
+
     static async insertarAsignatura(objeto) {
         return await fetchAsignatura.insertarAsignaturaEnBackend(objeto);
     }
@@ -150,13 +166,5 @@ export class m_asignatura {
 
     static async eliminarAsignatura(idAsignatura) {
         return await fetchAsignatura.eliminarAsignaturaEnBackend(idAsignatura);
-    }
-
-    static async obtenerAsignaturasAPaginar(pagina) {
-        return await fetchAsignatura.obtenerAsignaturasAPaginarDelBackend(pagina);
-    }
-
-    static async obtenerTotalPaginasAsignatura() {
-        return await fetchAsignatura.obtenerTotalPaginasAsignaturaDelBackend();
     }
 }

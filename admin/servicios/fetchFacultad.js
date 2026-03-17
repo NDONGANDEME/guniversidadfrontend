@@ -14,7 +14,7 @@ export class fetchFacultad
             let solicitud = await fetch(`${this.url}?ruta=facultad&accion=obtenerFacultades&actor=admin`);
             let respuesta = await solicitud.json();
 
-            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            if(respuesta.estado == 'exito') return respuesta.resultado;
             else return [];
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFacultad]. ${error}`, 3000);
@@ -64,9 +64,6 @@ export class fetchFacultad
         }
     }
 
-
-
-    // Falta
     /**
      * Envia solicitud para eliminar un registro de la BDD
      * @param {Integer} id 
@@ -74,13 +71,13 @@ export class fetchFacultad
      */
     static async eliminarFacultadEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=eliminarFacultad&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let solicitud = await fetch(`${this.url}?ruta=facultad&accion=eliminarFacultad&idFacultad=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return false;
         } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [linea 99. fetchFacultad]. ${error}`);
+            Alerta.error('Error', `No se ha realizado la solicitud. [fetchFacultad]. ${error}`);
             return false;
         }
     }

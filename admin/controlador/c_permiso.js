@@ -19,9 +19,7 @@ export class c_permiso
     // ============================================
     // MÉTODOS PRINCIPALES
     // ============================================
-
-    async inicializar()
-    {
+    async inicializar() {
         try {
             // Cargar datos iniciales
             await this.cargarRoles();
@@ -36,8 +34,7 @@ export class c_permiso
         }
     }
 
-    async cargarRoles()
-    {
+    async cargarRoles() {
         try {
             this.roles = await m_rol.obtenerRoles();
             u_permiso.renderizarRoles(
@@ -51,8 +48,7 @@ export class c_permiso
         }
     }
 
-    async cargarTablas()
-    {
+    async cargarTablas() {
         try {
             this.tablas = await m_permiso.obtenerTablasPermisos();
             u_permiso.llenarSelectTablas(this.tablas);
@@ -62,31 +58,22 @@ export class c_permiso
         }
     }
 
-    async cargarPermisosPorRol(idRol)
-    {
+    async cargarPermisosPorRol(idRol) {
         try {
             // Obtener todos los rol-permiso
-            const rolPermisos = await m_rolPermiso.obtenerRolPermisos(); 
-            console.log(rolPermisos)
+            const rolPermisos = await m_rolPermiso.obtenerRolPermisos();
             
             // Filtrar por idRol
-            const permisosDelRol = rolPermisos.filter(rp => rp.idRol == idRol); 
-            console.log(permisosDelRol)
+            const permisosDelRol = rolPermisos.filter(rp => rp.idRol == idRol);
             
             // Obtener detalles de los permisos
-            const todosPermisos = await m_permiso.obtenerPermisos(); 
-            console.log(todosPermisos)
+            const todosPermisos = await m_permiso.obtenerPermisos();
             
             const permisosDetalle = permisosDelRol.map(rp => {
-                console.log(rp);
                 return todosPermisos.find(p => {
-                    console.log(p.idPermiso);
-                    return p.idPermiso == rp.idPermiso; // <-- RETURN AGREGADO
+                    return p.idPermiso == rp.idPermiso;
                 });
             }).filter(p => p); // Filtrar undefined
-
-            console.log(todosPermisos)
-            console.log(permisosDetalle)
             
             u_permiso.renderizarPermisosAsignados(permisosDetalle);
             
@@ -102,8 +89,7 @@ export class c_permiso
     // MÉTODOS CRUD
     // ============================================
 
-    async guardarRol()
-    {
+    async guardarRol() {
         try {
             const nombreRol = $('#nombreRol').val().trim();
             
@@ -181,8 +167,7 @@ export class c_permiso
      * Elimina todos los permisos asignados a un rol
      * @param {number} idRol - ID del rol
      */
-    async eliminarPermisosRol(idRol)
-    {
+    async eliminarPermisosRol(idRol) {
         try {
             // Obtener todos los rol-permiso
             const rolPermisos = await m_rolPermiso.obtenerRolPermisos();
@@ -205,8 +190,7 @@ export class c_permiso
      * @param {number} idRol - ID del rol
      * @param {Array} permisos - Lista de permisos a guardar
      */
-    async guardarPermisosYAsignar(idRol, permisos)
-    {
+    async guardarPermisosYAsignar(idRol, permisos) {
         try {
             // Obtener todos los permisos existentes
             const todosPermisos = await m_permiso.obtenerPermisos();
@@ -256,8 +240,7 @@ export class c_permiso
         }
     }
 
-    async editarRol(id, nombre)
-    {
+    async editarRol(id, nombre) {
         this.modoEdicion = true;
         this.rolSeleccionado = id;
         
@@ -280,8 +263,7 @@ export class c_permiso
         $('#modalNuevoRol').modal('show');
     }
 
-    async eliminarRol(id)
-    {
+    async eliminarRol(id) {
         try {
             const confirmar = await Alerta.pregunta(
                 '¿Eliminar rol?',
@@ -317,8 +299,7 @@ export class c_permiso
     // MÉTODOS DE ASIGNACIÓN DE PERMISOS
     // ============================================
 
-    asignarPermiso()
-    {
+    asignarPermiso() {
         const tabla = $('#tablasPermiso').val();
         
         if (tabla === 'Ninguno') {
@@ -354,8 +335,7 @@ export class c_permiso
         u_permiso.limpiarFormularioAsignacion();
     }
 
-    quitarPermiso(index)
-    {
+    quitarPermiso(index) {
         this.permisosTemporales.splice(index, 1);
         u_permiso.renderizarPermisosTemporales(this.permisosTemporales);
     }
@@ -364,8 +344,7 @@ export class c_permiso
     // CONFIGURACIÓN DE EVENTOS
     // ============================================
 
-    configurarEventos()
-    {
+    configurarEventos() {
         // Botón nuevo rol
         $('#btnNuevoRol').click(() => {
             this.modoEdicion = false;
@@ -438,8 +417,7 @@ export class c_permiso
         });
     }
 
-    async seleccionarRol(id)
-    {
+    async seleccionarRol(id) {
         try {
             // Resaltar el rol seleccionado
             $('#contRoles > div').removeClass('bg-warning bg-opacity-25');
@@ -453,8 +431,7 @@ export class c_permiso
         }
     }
 
-    limpiarModal()
-    {
+    limpiarModal() {
         this.modoEdicion = false;
         this.rolSeleccionado = null;
         this.permisosTemporales = [];

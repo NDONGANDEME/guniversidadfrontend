@@ -70,9 +70,7 @@
                         <div class="col-md-3">
                             <select class="form-select" id="filtroRol">
                                 <option value="">Todos los roles</option>
-                                <option value="Administrador">Administrador</option>
-                                <option value="Coordinador">Coordinador</option>
-                                <option value="Usuario">Usuario</option>
+                                <!--añadir dinamicamente-->
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -89,25 +87,27 @@
                         </div>
                     </div>
 
-                    <!-- Contenedor de usuarios (tarjetas) -->
+                    <!-- Contenedor de usuarios -->
                     <div id="contenedorUsuarios" class="row g-4">
-                        <!-- Las tarjetas se cargarán dinámicamente -->
+                        <!-- Aquí se renderizarán los usuarios -->
                     </div>
 
                     <!-- Paginación -->
-                    <nav aria-label="Page navigation" class="mt-4">
-                        <ul class="pagination justify-content-center" id="paginacion">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Siguiente</a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <div class="mt-4 d-flex justify-content-center align-items-center">
+                        <div class="btn-group" role="group">
+                            <button type="button" id="btnAnteriorUsuarios" class="btn btn-outline-warning" disabled>
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </button>
+                            <button type="button" id="btnSiguienteUsuarios" class="btn btn-outline-warning" disabled>
+                                Siguiente <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center mt-2">
+                        <div id="paginaActualUsuarios" class="text-muted">
+                            Página 1 de 1
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -241,6 +241,8 @@
             </div>
         </div>
     </div>
+
+    <div class="mb-5"></div>
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>

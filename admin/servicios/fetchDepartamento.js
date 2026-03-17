@@ -55,7 +55,7 @@ export class fetchDepartamento
             let solicitud = await fetch(`${this.url}?ruta=departamento&accion=actualizarDepartamento&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;
@@ -93,6 +93,40 @@ export class fetchDepartamento
         try {
             let solicitud = await fetch(`${this.url}?ruta=departamento&action=obtenerDepartamentosPorFacultad&actor=admin&valor=${idFacultad}`);
             let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchDepartamento]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar el total de paginas a paginar
+     * @returns entero
+     */
+    static async obtenerTotalPaginasDepartamentoDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=obtenerTotalPaginasDepartamento&actor=admin`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else return [];
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchDepartamento]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar los departamentos a paginar
+     * @returns array de Carreras
+     */
+    static async obtenerDepartamentosAPaginarDelBackend(pagina) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=obtenerDepartamentosAPaginar&actor=admin&pagina=${pagina}`);
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];

@@ -23,68 +23,13 @@ export class fetchNoticia
     }
 
     /**
-     * Enviar solicitud para cargar las noticas de tipo comunicado
-     * @returns array de noticias de tipo comunicado
-     * Ya es funcional
-     */
-    static async obtenerNoticiasPorComunicadoDelBackend() {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorTipo&actor=global`, {
-                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({tipo: 'comunicado', limite: 21 })
-            });
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return [];
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
-            return [];
-        }
-    }
-
-    /**
-     * Enviar solicitud para cargar las noticas de tipo interna
-     * @returns array de noticias de tipo interna
-     */
-    static async obtenerNoticiasPorInternaDelBackend() {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorInterna&actor=global`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return [];
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
-            return [];
-        }
-    }
-
-    /**
-     * Enviar solicitud para cargar todas las noticias
-     * @returns array de noticias
-     * Ya es funcional
-     */
-    static async obtenerNoticiasDelBackend() {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticias&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
-
-            if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
-            return [];
-        }
-    }
-
-    /**
      * Enviar solicitud para actualizar una noticia existente en la BDD
      * @param {FormData} formData - Objeto FormData con los datos de la noticia y archivos
      * @returns resultado de la operación
      */
     static async actualizarNoticiaEnBDD(formData) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=admin&debug=1`, {
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=actualizarNoticia&actor=admin`, {
                 method: 'POST',
                 body: formData
             });
@@ -110,7 +55,7 @@ export class fetchNoticia
      */
     static async insertarNoticiaEnBDD(formData) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=admin&debug=1`, {
+            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=insertarNoticia&actor=admin`, {
                 method: 'POST',
                 body: formData
             });
@@ -144,16 +89,32 @@ export class fetchNoticia
     }
 
     /**
-     * Envia solicitud para obtener el numero de paginas a paginar
+     * Envia solicitud para obtener el total de paginas
      * @returns integer (entero)
-     * Ya es funcional
      */
-    static async obtenerTotalPaginasEnBDD() {
+    static async obtenerTotalPaginasNoticiaEnBackend() { 
         try  {
-            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerTotalPaginas&actor=global`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerTotalPaginasNoticia&actor=global`);
             let respuesta = await solicitud.json();
 
-            if(respuesta.estado == 'exito') return respuesta.resultado.total_paginas;
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return 0;
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
+            return 0;
+        }
+    }
+
+    /**
+     * Envia solicitud para obtener el numero de paginas a paginar
+     * @returns integer (entero)
+     */
+    static async obtenerTotalPaginasNoticiaPorTipoEnBackend(tipo) {
+        try  {
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerTotalPaginasNoticiaPorTipo&pagina=${tipo}&actor=global`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
             else return 0;
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
@@ -163,9 +124,44 @@ export class fetchNoticia
 
     /**
      * Envia solicitud para cargar una noticia conociendo el id
+     * @param {Integer} pagina
+     * @returns array de noticias
+     */
+    static async obtenerNoticiasAPaginarEnBackend(pagina) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasAPaginar&id=${pagina}&actor=global`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return null;
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
+            return null;
+        }
+    }
+
+    /**
+     * Envia solicitud para cargar una noticia conociendo el id
+     * @param {Integer} pagina
+     * @returns array de noticias
+     */
+    static async obtenerNoticiasPorTipoAPaginarEnBackend(pagina, tipo) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiasPorTipoAPaginar&pagina=${pagina}&tipo=${tipo}&actor=global`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado;
+            else return null;
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchNoticia]. ${error}`, 3000);
+            return null;
+        }
+    }
+
+    /**
+     * Envia solicitud para cargar una noticia conociendo el id
      * @param {Integer} id 
      * @returns la noticia solicitada
-     * Ya es funcional
      */
     static async obtenerNoticiaPorIdEnBDD(id) {
         try {
