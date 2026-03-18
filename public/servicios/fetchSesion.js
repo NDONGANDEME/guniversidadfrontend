@@ -18,7 +18,10 @@ export class fetchSesion
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return[];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error){
             Alerta.notificarError(`No se ha realizado la solicitud [fetchSesion]. ${error}`, 3000);
             return[];
@@ -32,10 +35,13 @@ export class fetchSesion
     static async cerrarSesionEnBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=sesion&accion=cerrarSesion&actor=global`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return[];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error){
             Alerta.notificarError(`No se ha realizado la solicitud [fetchSesion]. ${error}`, 3000);
             return[];

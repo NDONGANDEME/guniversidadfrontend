@@ -443,10 +443,9 @@ export class c_academico {
      */
     static async cargarCarrerasPaginadas(pagina) {
         try {
-            const response = await m_carrera.obtenerCarrerasAPaginar(pagina);
-            const carreras = response.datos || response || [];
+            const carreras = await m_carrera.obtenerCarrerasAPaginar(pagina);
             this.paginaActualCarreras = pagina;
-            this.mostrarCarrerasEnTabla(carreras);
+            this.mostrarCarrerasEnTabla(carreras.carreras);
             this.actualizarEstadoBotonesPaginacionCarreras();
             this.actualizarIndicadorPaginaCarreras();
         } catch (error) {
@@ -513,7 +512,7 @@ export class c_academico {
 
         tbody.innerHTML = carreras.map(c => {
             const departamento = this.departamentos.departamentos?.find(d => d.idDepartamento == c.idDepartamento);
-            const estadoActivo = c.estado === 1 || c.estado === 'activo';
+            const estadoActivo = c.estado === 'activo';
             
             return `
                 <tr>
@@ -593,8 +592,11 @@ export class c_academico {
         if (!confirmacion) return;
 
         try {
-            await m_carrera.cambioEstadoCarrera(id, nuevoEstado);
-            Alerta.notificarExito(`Carrera ${accion}da correctamente`);
+            let cambiado = await m_carrera.cambioEstadoCarrera(id, nuevoEstado);
+
+            if (cambiado==false) return;
+
+            Alerta.notificarExito(cambiado.mensaje, 1500);
             await this.cargarCarrerasPaginadas(this.paginaActualCarreras);
         } catch (error) {
             Alerta.error('Error', `No se pudo ${accion} la carrera`);
@@ -623,11 +625,38 @@ export class c_academico {
      * Carga asignaturas paginadas
      * @param {number} pagina - Número de página a cargar
      */
+    /*static async cargarAsignaturasPaginadas(pagina) {
+        try {
+            const asignaturas = await m_asignatura.obtenerAsignaturasAPaginar(pagina); console.log(asignaturas.asignaturas)
+            this.paginaActualAsignaturas = asignaturas.pagina_actual;
+
+            if (asignaturas.asignaturas==[]) Alerta.notificarInfo('Sin asignaturas guardadas', 1500);
+
+            this.mostrarAsignaturasEnTabla(asignaturas.asignaturas);
+            this.actualizarEstadoBotonesPaginacionAsignaturas();
+            this.actualizarIndicadorPaginaAsignaturas();
+        } catch (error) {
+            console.error('Error cargando asignaturas paginadas:', error);
+            Alerta.error('Error', 'No se pudieron cargar las asignaturas');
+        }
+    }*/
+
+    /**
+     * Carga asignaturas paginadas - VERSIÓN CORREGIDA
+     */
     static async cargarAsignaturasPaginadas(pagina) {
         try {
-            const response = await m_asignatura.obtenerAsignaturasAPaginar(pagina);
-            const asignaturas = response.datos || response || [];
-            this.paginaActualAsignaturas = pagina;
+            const respuesta = await m_asignatura.obtenerAsignaturasAPaginar(pagina);
+            
+            // Extraer datos correctamente
+            const asignaturas = respuesta.asignaturas || [];
+            this.paginaActualAsignaturas = respuesta.pagina_actual || pagina;
+
+            // Verificar si hay datos (CORRECCIÓN: usar .length)
+            if (asignaturas.length === 0) {
+                Alerta.notificarInfo('Sin asignaturas guardadas', 1500);
+            }
+
             this.mostrarAsignaturasEnTabla(asignaturas);
             this.actualizarEstadoBotonesPaginacionAsignaturas();
             this.actualizarIndicadorPaginaAsignaturas();
@@ -684,7 +713,7 @@ export class c_academico {
     /**
      * Muestra las asignaturas en la tabla
      */
-    static mostrarAsignaturasEnTabla(asignaturas) {
+    /*static mostrarAsignaturasEnTabla(asignaturas) {
         const tbody = document.getElementById('tbodyTablaAsignaturas');
         if (!tbody) return;
 
@@ -725,6 +754,66 @@ export class c_academico {
             ordering: true, // Mantenemos ordenamiento
             info: false // Ocultamos información de paginación
         });
+        
+        this.agregarEventosBotonesAsignatura();
+    }*/
+
+    /**
+     * Muestra las asignaturas en la tabla - VERSIÓN CORREGIDA
+     */
+    static mostrarAsignaturasEnTabla(asignaturas) {
+        const tbody = document.getElementById('tbodyTablaAsignaturas');
+        if (!tbody) return;
+
+        // Destruir DataTable si existe
+        if ($.fn.dataTable.isDataTable('#tablaAsignaturas')) {
+            $('#tablaAsignaturas').DataTable().destroy();
+        }
+
+        // Verificar si hay datos correctamente
+        if (!asignaturas || asignaturas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay asignaturas guardadas</td></tr>';
+        } else {
+            tbody.innerHTML = asignaturas.map(a => {
+                const facultad = this.facultades.find(f => f.idFacultad == a.idFacultad);
+                return `
+                    <tr>
+                        <td class="align-middle">${a.codigoAsignatura || 'N/A'}</td>
+                        <td class="align-middle">${a.nombreAsignatura}</td>
+                        <td class="align-middle text-start">${a.descripcion || ''}</td>
+                        <td class="align-middle">${facultad ? facultad.nombreFacultad : 'Ninguna'}</td>
+                        <td class="align-middle">
+                            <div class="d-flex justify-content-center gap-1">
+                                <button class="btn btn-sm btn-outline-info editar-asignatura" data-id="${a.idAsignatura}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger eliminar-asignatura" data-id="${a.idAsignatura}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Pequeño retraso para asegurar que el DOM se actualice
+        setTimeout(() => {
+            try {
+                // Inicializar DataTable
+                $('#tablaAsignaturas').DataTable({
+                    language: {
+                        url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
+                    },
+                    paging: false,
+                    searching: true,
+                    ordering: true,
+                    info: false,
+                });
+            } catch (error) {
+                console.error('Error inicializando DataTable para asignaturas:', error);
+            }
+        }, 50);
         
         this.agregarEventosBotonesAsignatura();
     }
@@ -809,12 +898,11 @@ export class c_academico {
      */
     static async obtenerSiguienteNumeroAsignatura() {
         try {
-            const response = await m_asignatura.obtenerAsignaturasAPaginar(1, 1000);
-            const asignaturas = response.datos || response || [];
+            const asignaturas = await m_asignatura.obtenerAsignaturasAPaginar(pagina);
             
-            if (!asignaturas || asignaturas.length === 0) return 1;
+            if (!asignaturas.asignaturas || asignaturas.asignaturas.length === 0) return 1;
             
-            const numeros = asignaturas
+            const numeros = asignaturas.asignaturas
                 .map(a => {
                     const match = a.codigoAsignatura?.match(/-(\d{4})-/);
                     return match ? parseInt(match[1]) : 0;
@@ -1031,9 +1119,8 @@ export class c_academico {
             }
 
             if (this.modoEdicion.asignatura) {
-                const response = await m_asignatura.obtenerAsignaturasAPaginar(1, 1000);
-                const asignaturas = response.datos || response || [];
-                const asignaturaActual = asignaturas.find(a => a.idAsignatura == this.modoEdicion.asignatura);
+                const asignaturas = await m_asignatura.obtenerAsignaturasAPaginar(1);
+                const asignaturaActual = asignaturas.asignaturas.find(a => a.idAsignatura == this.modoEdicion.asignatura);
 
                 await m_asignatura.actualizarAsignatura({
                     idAsignatura: this.modoEdicion.asignatura,
@@ -1123,9 +1210,8 @@ export class c_academico {
      * @param {string} id - ID de la carrera
      */
     static async editarCarrera(id) {
-        const response = await m_carrera.obtenerCarrerasAPaginar(1, 1000);
-        const carreras = response.datos || response || [];
-        const carrera = carreras.find(c => c.idCarrera == id);
+        const carreras = await m_carrera.obtenerCarrerasAPaginar(1);
+        const carrera = carreras.carreras.find(c => c.idCarrera == id);
         if (!carrera) return;
 
         const deptResponse = await m_departamento.obtenerDepartamentosAPaginar(1);
@@ -1151,9 +1237,8 @@ export class c_academico {
      * @param {string} id - ID de la asignatura
      */
     static async editarAsignatura(id) {
-        const response = await m_asignatura.obtenerAsignaturasAPaginar(1, 1000);
-        const asignaturas = response.datos || response || [];
-        const asignatura = asignaturas.find(a => a.idAsignatura == id); 
+        const asignaturas = await m_asignatura.obtenerAsignaturasAPaginar(1);
+        const asignatura = asignaturas.asignaturas.find(a => a.idAsignatura == id); 
         if (!asignatura) return;
 
         if (this.facultades.length === 0) {
@@ -1231,7 +1316,10 @@ export class c_academico {
         if (!confirmacion) return;
 
         try {
-            await m_departamento.eliminarDepartamento(id);
+            let eliminado = await m_departamento.eliminarDepartamento(id);
+
+            if (eliminado==false) return;
+
             Alerta.notificarExito('Departamento eliminado correctamente');
             
             await this.cargarTotalPaginasDepartamentos();
@@ -1259,7 +1347,10 @@ export class c_academico {
         if (!confirmacion) return;
 
         try {
-            await m_carrera.eliminarCarrera(id);
+            let eliminado = await m_carrera.eliminarCarrera(id);
+
+            if (eliminado==false) return;
+
             Alerta.notificarExito('Carrera eliminada correctamente');
             
             await this.cargarTotalPaginasCarreras();
@@ -1287,7 +1378,10 @@ export class c_academico {
         if (!confirmacion) return;
 
         try {
-            await m_asignatura.eliminarAsignatura(id);
+            let eliminado = await m_asignatura.eliminarAsignatura(id);
+
+            if (eliminado==false) return;
+
             Alerta.notificarExito('Asignatura eliminada correctamente');
             
             await this.cargarTotalPaginasAsignaturas();

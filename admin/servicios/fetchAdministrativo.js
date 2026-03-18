@@ -14,7 +14,10 @@ export class fetchAdministrativo
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAdministrativo]. ${error}`, 3000);
             return [];
@@ -45,7 +48,10 @@ export class fetchAdministrativo
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return null;
+            }
         } catch(error){
             Alerta.notificarError(`No se ha realizado la solicitud. [fetchAdministrativo. insercion]. ${error}`, 3000);
             return null;
@@ -77,7 +83,10 @@ export class fetchAdministrativo
             let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return null;
+            }
         } catch(error){
             Alerta.notificarError(`No se ha realizado la solicitud. [fetchAdministrativo. actualizacion]. ${error}`, 3000);
             return null;

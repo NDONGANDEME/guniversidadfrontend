@@ -15,7 +15,10 @@ export class fetchFacultad
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFacultad]. ${error}`, 3000);
             return [];
@@ -36,7 +39,10 @@ export class fetchFacultad
             let respuesta = await solicitud.json();
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return null;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFacultad]. ${error}`, 3000);
             return null;
@@ -57,7 +63,10 @@ export class fetchFacultad
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return null;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchFacultad]. ${error}`, 3000);
             return null;
@@ -75,7 +84,10 @@ export class fetchFacultad
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return false;
+            }
         } catch(error) {
             Alerta.error('Error', `No se ha realizado la solicitud. [fetchFacultad]. ${error}`);
             return false;

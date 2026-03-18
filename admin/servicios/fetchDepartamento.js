@@ -15,7 +15,10 @@ export class fetchDepartamento
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchDepartamento]. ${error}`, 3000);
             return [];
@@ -29,7 +32,6 @@ export class fetchDepartamento
      * Ya es funcional
      */
     static async insertarDepartamentoEnBackend(objeto) {
-        console.log(objeto)
         try {
             let solicitud = await fetch(`${this.url}?ruta=departamento&accion=insertarDepartamento&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
@@ -37,7 +39,10 @@ export class fetchDepartamento
             let respuesta = await solicitud.json();
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return false;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchDepartamento]. ${error}`, 3000);
             return null;
@@ -55,10 +60,13 @@ export class fetchDepartamento
             let solicitud = await fetch(`${this.url}?ruta=departamento&accion=actualizarDepartamento&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return false;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchDepartamento]. ${error}`, 3000);
             return null;
@@ -74,11 +82,14 @@ export class fetchDepartamento
      */
     static async eliminarDepartamentoEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=eliminarDepartamento&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let solicitud = await fetch(`${this.url}?ruta=departamento&accion=eliminarDepartamento&id=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return false;
+            }
         } catch(error) {
             Alerta.error('Error', `No se ha realizado la solicitud. [fetchDepartamento]. ${error}`);
             return false;
@@ -109,7 +120,7 @@ export class fetchDepartamento
     static async obtenerTotalPaginasDepartamentoDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=departamento&accion=obtenerTotalPaginasDepartamento&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else return [];
@@ -126,10 +137,13 @@ export class fetchDepartamento
     static async obtenerDepartamentosAPaginarDelBackend(pagina) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=departamento&accion=obtenerDepartamentosAPaginar&actor=admin&pagina=${pagina}`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchDepartamento]. ${error}`, 3000);
             return [];

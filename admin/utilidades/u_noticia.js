@@ -5,15 +5,15 @@ export class u_noticia_admin {
     
     // ========== VALIDACIONES ==========
     static validarAsunto(valor) {
-        return valor.length >= 5; // Mínimo 5 caracteres
+        return u_verificaciones.validarTexto(valor)
     }
     
     static validarDescripcion(valor) {
-        return valor.length >= 20; // Mínimo 20 caracteres para la descripción
+        return u_verificaciones.validarDescripcion(valor)
     }
     
     static validarTipo(valor) {
-        return valor && valor !== 'Ninguno';
+        return valor && valor !== 'Ninguno' && valor !== '';
     }
 
     // ========== VALIDACIONES EN TIEMPO REAL ==========
@@ -63,145 +63,8 @@ export class u_noticia_admin {
     }
 
     // ========== MANEJO DE ARCHIVOS ==========
-    /*static archivosSeleccionados = [];
-    static archivosAEnviarBackend = [];
-
-    static configurarSubidaArchivos() {
-        // Al hacer clic en el área de drop, abrir selector
-        $('#fileDropArea').on('click', function() {
-            $('#campoArchivoFoto').click();
-        });
-
-        // Eventos de arrastrar y soltar
-        $('#fileDropArea').on('dragover', function(e) {
-            e.preventDefault();
-            $(this).addClass('drag-over border-success');
-        });
-
-        $('#fileDropArea').on('dragleave', function(e) {
-            e.preventDefault();
-            $(this).removeClass('drag-over border-success');
-        });
-
-        $('#fileDropArea').on('drop', function(e) {
-            e.preventDefault();
-            $(this).removeClass('drag-over border-success');
-            
-            const archivos = e.originalEvent.dataTransfer.files;
-            u_noticia_admin.procesarArchivos(archivos);
-        });
-
-        // Cuando se seleccionan archivos con el input
-        $('#campoArchivoFoto').on('change', function(e) {
-            const archivos = e.target.files;
-            u_noticia_admin.procesarArchivos(archivos);
-        });
-
-        // Botón limpiar archivos
-        $('#btnLimpiarArchivos').on('click', function() {
-            u_noticia_admin.limpiarArchivos();
-        });
-    }
-
-    static procesarArchivos(archivos) {
-        if (!archivos || archivos.length === 0) return;
-
-        // Validar formato
-        const formatosPermitidos = ['image/png', 'image/jpeg', 'image/jpg'];
-
-        for (let archivo of archivos) {
-            if (!formatosPermitidos.includes(archivo.type)) {
-                alert(`Formato no permitido: ${archivo.name}. Solo PNG, JPG, JPEG`);
-                return;
-            }
-            
-            // Agregar a la lista
-            this.archivosSeleccionados.push({
-                archivo: archivo,
-                nombre: archivo.name,
-                tipo: archivo.type,
-                tamaño: archivo.size,
-                preview: URL.createObjectURL(archivo)
-            });
-
-            this.archivosAEnviarBackend.push({archivo: archivo});
-            console.log(this.archivosAEnviarBackend)
-            
-        }
-
-        this.actualizarPrevisualizacion();
-    }
-
-    static actualizarPrevisualizacion() {
-        const contador = $('#contadorArchivos');
-        const previewContainer = $('#previewArchivos');
-        
-        contador.text(`${this.archivosSeleccionados.length} archivos seleccionados`);
-        
-        if (this.archivosSeleccionados.length === 0) {
-            previewContainer.html('<p class="text-muted">No hay archivos seleccionados</p>');
-            return;
-        }
-
-        let html = '<div class="row">';
-        
-        this.archivosSeleccionados.forEach((archivo, index) => {
-            html += `
-                <div class="col-md-3 col-sm-4 col-6 mb-3" data-index="${index}">
-                    <div class="position-relative">
-                        <img src="${archivo.preview}" class="img-fluid rounded" style="height: 100px; width: 100%; object-fit: cover;">
-                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 btn-eliminar-archivo" data-index="${index}">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <small class="d-block text-truncate mt-1">${archivo.nombre}</small>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += '</div>';
-        previewContainer.html(html);
-
-        // Agregar eventos a los botones de eliminar
-        $('.btn-eliminar-archivo').on('click', function() {
-            const index = $(this).data('index');
-            u_noticia_admin.eliminarArchivo(index);
-        });
-    }
-
-    static eliminarArchivo(index) {
-        // Liberar la URL del objeto
-        if (this.archivosSeleccionados[index].preview) {
-            URL.revokeObjectURL(this.archivosSeleccionados[index].preview);
-        }
-        
-        // Eliminar de la lista
-        this.archivosSeleccionados.splice(index, 1);
-        
-        // Actualizar previsualización
-        this.actualizarPrevisualizacion();
-    }
-
-    static limpiarArchivos() {
-        // Liberar todas las URLs
-        this.archivosSeleccionados.forEach(archivo => {
-            if (archivo.preview) {
-                URL.revokeObjectURL(archivo.preview);
-            }
-        });
-        
-        this.archivosSeleccionados = [];
-        $('#campoArchivoFoto').val('');
-        this.actualizarPrevisualizacion();
-    }
-
-    static obtenerArchivosParaEnviar() {
-        return this.archivosAEnviarBackend.map(item => item.archivo);
-    }*/
-
-    // ========== MANEJO DE ARCHIVOS ==========
-    static archivosSeleccionados = []; // Array de objetos con info y preview
-    static archivosParaEnviar = []; // Array directo de File objects
+    static archivosSeleccionados = [];
+    static archivosParaEnviar = [];
 
     static configurarSubidaArchivos() {
         // Al hacer clic en el área de drop, abrir selector
@@ -380,9 +243,6 @@ export class u_noticia_admin {
         
         if (noticia.fotos && noticia.fotos.length > 0) {
             const primeraFoto = noticia.fotos[0];
-            console.log(noticia)
-            console.log(primeraFoto)
-            // Intentar diferentes formas de obtener la URL
             const fotoUrl = primeraFoto.url_completa || (primeraFoto.nombre ? `/guniversidadfrontend/public/img/${primeraFoto.nombre}` : '');
             
             if (fotoUrl) {
@@ -500,16 +360,6 @@ export class u_noticia_admin {
     }
 
     // ========== LIMPIAR MODAL ==========
-    /*static limpiarModal() {
-        $('#formNoticia')[0].reset();
-        $('#tipoNoticia').val('Ninguno');
-        $('#descripcionTipo').text('');
-        $('.errorMensaje').text('').hide();
-        $('#formNoticia input, #formNoticia textarea, #formNoticia select').removeClass('border-success border-danger');
-        this.limpiarArchivos();
-    }*/
-
-    // ========== LIMPIAR MODAL ==========
     static limpiarModal() {
         $('#formNoticia')[0].reset();
         $('#tipoNoticia').val('Ninguno');
@@ -518,18 +368,6 @@ export class u_noticia_admin {
         $('#formNoticia input, #formNoticia textarea, #formNoticia select').removeClass('border-success border-danger');
         this.limpiarArchivos(); // ← Asegurar limpieza de archivos
     }
-
-    // ========== CARGAR DATOS EN MODAL PARA EDICIÓN ==========
-    /*static cargarDatosEnModal(noticia) {
-        $('#asuntoNoticia').val(noticia.asunto || '');
-        $('#descripcionNoticia').val(noticia.descripcion || '');
-        $('#tipoNoticia').val(noticia.tipo || 'Ninguno');
-        this.mostrarDescripcionTipo(noticia.tipo);
-        
-        // En edición, no cargamos las fotos existentes para simplificar
-        // El usuario puede subir nuevas fotos si lo desea
-        this.limpiarArchivos();
-    }*/
 
     // ========== CARGAR DATOS EN MODAL PARA EDICIÓN ==========
     static cargarDatosEnModal(noticia) {
@@ -563,15 +401,6 @@ export class u_noticia_admin {
     static async convertirANoticias(datosBackend) {
         if (!datosBackend || !Array.isArray(datosBackend)) return [];
         
-        // VER qué estructura tienen los datos
-        console.log('Datos completos del backend:', JSON.stringify(datosBackend, null, 2));
-        
-        // Ver la primera noticia para entender la estructura
-        if (datosBackend.length > 0) {
-            console.log('Primera noticia:', datosBackend[0]);
-            console.log('Fotos de primera noticia:', datosBackend[0].fotos);
-        }
-        
         const baseUrl = '/guniversidadfrontend/public/img/';
         
         return datosBackend.map(item => {
@@ -579,8 +408,6 @@ export class u_noticia_admin {
 
             if (item.fotos && Array.isArray(item.fotos)) {
                 fotosProcesadas = item.fotos.map(foto => {
-                    console.log('Procesando foto individual:', foto);
-                    
                     // Si foto es un string (nombre del archivo)
                     if (typeof foto === 'string') {
                         return {

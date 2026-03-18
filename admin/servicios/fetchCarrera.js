@@ -12,10 +12,13 @@ export class fetchCarrera
     static async obtenerCarrerasDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerCarreras&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
             return [];
@@ -33,10 +36,13 @@ export class fetchCarrera
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=insertarCarrera&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return null;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
             return null;
@@ -54,10 +60,13 @@ export class fetchCarrera
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=actualizarCarrera&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return null;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return null;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
             return null;
@@ -71,11 +80,14 @@ export class fetchCarrera
      */
     static async eliminarCarreraEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=eliminarCarrera&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=eliminarCarrera&id=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return false;
+            }
         } catch(error) {
             Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
             return false;
@@ -90,10 +102,13 @@ export class fetchCarrera
     static async cambioEstadoCarreraEnBDD(id, estado) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=cambioEstadoCarrera&id=${id}&nuevoEstado=${estado}&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
+            if(respuesta.estado == 'exito') return respuesta;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return false;
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
             return false;
@@ -107,10 +122,13 @@ export class fetchCarrera
     static async obtenerTotalPaginasCarreraDelBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerTotalPaginasCarrera&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
             return [];
@@ -124,10 +142,13 @@ export class fetchCarrera
     static async obtenerCarrerasAPaginarDelBackend(pagina) {
         try {
             let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerCarrerasAPaginar&actor=admin&pagina=${pagina}`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
             return [];

@@ -128,10 +128,6 @@ export class m_asignatura {
         facultad-numero-asignatura. ejemplo: FI-0001-RED (faciltad de ingenierias, numero 0001, asignatura: redes).
     */
 
-    static async obtenerAsignaturas() {
-        return await fetchAsignatura.obtenerAsignaturasDelBackend();
-    }
-
     static async obtenerAsignaturasPorSemestre(numeroSemestre) {
         return await fetchAsignatura.obtenerAsignaturasPorSemestreDelBackend(numeroSemestre);
     }

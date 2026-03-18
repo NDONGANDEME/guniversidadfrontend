@@ -282,7 +282,7 @@ export class u_usuario
 
     // ========== GENERAR CONTRASEÑA ==========
     static generarContraseñaAleatoria(longitud = 10) {
-        const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+        const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let contraseña = '';
         for (let i = 0; i < longitud; i++) {
             contraseña += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
@@ -586,7 +586,7 @@ export class u_usuario
                     <p><strong>Nombre completo:</strong> ${administrativo.nombreAdministrativo} ${administrativo.apellidosAdministrativo}</p>
                     <p><strong>Correo personal:</strong> ${administrativo.correo || '-'}</p>
                     <p><strong>Teléfono:</strong> ${administrativo.telefono || '-'}</p>
-                    <p><strong>Facultad:</strong> ${administrativo.facultad || 'No asignada'}</p>
+                    <p><strong>Facultad:</strong> ${administrativo.nombreFacultad || 'No asignada'}</p>
                 </div>
             `;
         }

@@ -11,13 +11,14 @@ export class c_noticia_admin {
         this.noticiaActual = null;
         this.modoEdicion = false;
         
-        // Paginación
+        // Paginación (ahora manejada por el backend)
         this.paginaActual = 1;
         this.totalPaginas = 1;
-        this.noticiasPorPagina = 6; // 2 filas de 3 columnas
+        this.registrosPorPagina = 6; // 2 filas de 3 columnas
         
         // Filtros
         this.filtroActual = 'Ninguno';
+        this.cargando = false;
         
         // Modal
         this.modalInstance = null;
@@ -37,7 +38,10 @@ export class c_noticia_admin {
                 this.modalInstance = new bootstrap.Modal(modalElement);
             }
             
-            await this.cargarNoticias();
+            // Cargar primera página
+            await this.cargarTotalPaginas();
+            await this.cargarNoticias(this.paginaActual);
+            
             this.configurarEventos();
             this.configurarValidaciones();
             this.configurarSubidaArchivos();
@@ -49,37 +53,92 @@ export class c_noticia_admin {
     }
 
     // ========== CARGA DE DATOS ==========
-    async cargarNoticias() {
+    
+    /**
+     * Carga el total de páginas desde el backend
+     */
+    async cargarTotalPaginas() {
         try {
-            const datosBackend = await m_noticia.obtenerNoticias();
-            console.log(datosBackend)
-            if (!datosBackend) {
-                this.noticias = [];
-                this.actualizarVista();
-                return;
-            }
-
-            // Convertir a objetos noticia (las fotos vienen incluidas del backend ahora)
-            const todasNoticias = await u_noticia_admin.convertirANoticias(datosBackend);
-            console.log(todasNoticias)
-
-            this.noticias = todasNoticias;
+            let totalPaginas = 1;
             
-            // Calcular total de páginas
-            this.totalPaginas = Math.ceil(this.noticias.length / this.noticiasPorPagina);
-            
-            // Asegurar que la página actual sea válida
-            if (this.paginaActual > this.totalPaginas) {
-                this.paginaActual = this.totalPaginas || 1;
+            if (this.filtroActual === 'Ninguno') {
+                const respuesta = await m_noticia.obtenerTotalPaginasNoticia();
+                totalPaginas = respuesta.total_paginas || 1;
+            } else {
+                const respuesta = await m_noticia.obtenerTotalPaginasNoticiaPorTipo(this.filtroActual);
+                totalPaginas = respuesta.total_paginas || 1;
             }
             
-            this.actualizarVista();
+            this.totalPaginas = totalPaginas;
+            this.actualizarInfoPaginacion();
+            
+        } catch (error) {
+            console.error('Error al cargar total de páginas:', error);
+            this.totalPaginas = 1;
+        }
+    }
 
+    /**
+     * Carga las noticias de una página específica
+     * @param {number} pagina - Número de página a cargar
+     */
+    async cargarNoticias(pagina) {
+        if (this.cargando) return;
+        
+        this.cargando = true;
+        //this.mostrarLoader(true);
+        
+        try {
+            let respuesta;
+            
+            // Llamar al endpoint correspondiente según el filtro
+            if (this.filtroActual === 'Ninguno') {
+                respuesta = await m_noticia.obtenerNoticiasAPaginar(pagina);
+            } else {
+                respuesta = await m_noticia.obtenerNoticiasPorTipoAPaginar(pagina, this.filtroActual);
+            }
+
+            // Extraer las noticias de la respuesta
+            const noticiasData = respuesta.noticias || [];
+            
+            // Convertir a objetos noticia
+            this.noticias = await u_noticia_admin.convertirANoticias(noticiasData);
+            
+            // Actualizar página actual
+            this.paginaActual = respuesta.pagina_actual || pagina;
+            
+            // Renderizar las noticias
+            this.renderizarNoticias();
+            this.actualizarInfoPaginacion();
+            this.actualizarEstadoBotonesPaginacion();
         } catch (error) {
             console.error('Error al cargar noticias:', error);
             Alerta.error('Error', 'Fallo al cargar noticias');
             this.noticias = [];
-            this.actualizarVista();
+            this.renderizarNoticias();
+        } finally {
+            this.cargando = false;
+            this.mostrarLoader(false);
+        }
+    }
+
+    /**
+     * Muestra u oculta el loader de carga
+     * @param {boolean} mostrar - true para mostrar, false para ocultar
+     */
+    mostrarLoader(mostrar) {
+        const contenedor = document.getElementById('contTarjetaNoticia');
+        if (!contenedor) return;
+        
+        if (mostrar) {
+            contenedor.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando noticias...</p>
+                </div>
+            `;
         }
     }
 
@@ -125,11 +184,19 @@ export class c_noticia_admin {
         });
 
         // Filtro por tipo
-        $('#filtroPorTipo').on('change', (e) => {
+        $('#filtroPorTipo').on('change', async (e) => {
             this.filtroActual = e.target.value;
             this.paginaActual = 1; // Volver a primera página al filtrar
-            this.actualizarVista();
+            
+            // Recargar total de páginas con el nuevo filtro
+            await this.cargarTotalPaginas();
+            // Cargar primera página con el filtro
+            await this.cargarNoticias(1);
         });
+
+        // Botones de paginación
+        $('#btnAnteriorNoticias').on('click', () => this.irPaginaAnterior());
+        $('#btnSiguienteNoticias').on('click', () => this.irPaginaSiguiente());
 
         // Cuando se cierra el modal, limpiar
         $('#modalNuevaNoticia').on('hidden.bs.modal', () => {
@@ -139,7 +206,72 @@ export class c_noticia_admin {
         });
     }
 
-    // ========== FUNCIONES PARA NOTICIAS ==========
+    // ========== PAGINACIÓN ==========
+    
+    /**
+     * Navega a la página anterior
+     */
+    async irPaginaAnterior() {
+        if (this.paginaActual > 1 && !this.cargando) {
+            await this.cargarNoticias(this.paginaActual - 1);
+            this.scrollAlInicio();
+        }
+    }
+
+    /**
+     * Navega a la página siguiente
+     */
+    async irPaginaSiguiente() {
+        if (this.paginaActual < this.totalPaginas && !this.cargando) {
+            await this.cargarNoticias(this.paginaActual + 1);
+            this.scrollAlInicio();
+        }
+    }
+
+    /**
+     * Actualiza la información de paginación en la interfaz
+     */
+    actualizarInfoPaginacion() {
+        const infoElement = document.getElementById('infoPaginacion');
+        if (infoElement) {
+            infoElement.textContent = `Página ${this.paginaActual} de ${this.totalPaginas}`;
+        }
+    }
+
+    /**
+     * Actualiza el estado de los botones de paginación
+     */
+    actualizarEstadoBotonesPaginacion() {
+        const btnAnterior = document.getElementById('btnAnteriorNoticias');
+        const btnSiguiente = document.getElementById('btnSiguienteNoticias');
+        
+        if (btnAnterior) {
+            btnAnterior.disabled = this.paginaActual <= 1 || this.cargando;
+        }
+        
+        if (btnSiguiente) {
+            btnSiguiente.disabled = this.paginaActual >= this.totalPaginas || this.cargando;
+        }
+    }
+
+    /**
+     * Hace scroll suave al inicio del contenedor de noticias
+     */
+    scrollAlInicio() {
+        const contenedor = document.getElementById('contTarjetaNoticia');
+        if (contenedor) {
+            contenedor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // ========== RENDERIZADO ==========
+    
+    /**
+     * Renderiza las noticias en la interfaz
+     */
+    renderizarNoticias() {
+        u_noticia_admin.renderizarTarjetas(this.noticias);
+    }
 
     // ========== VER DETALLES DE NOTICIA ==========
     async verDetallesNoticia(id) {
@@ -156,6 +288,7 @@ export class c_noticia_admin {
         }
     }
     
+    // ========== VALIDACIÓN DE FORMULARIO ==========
     formularioNoticiaEsValido() {
         const asunto = $('#asuntoNoticia').val().trim();
         const descripcion = $('#descripcionNoticia').val().trim();
@@ -175,63 +308,7 @@ export class c_noticia_admin {
                u_noticia_admin.validarTipo(tipo);
     }
 
-  /*  async guardarNoticia() {
-        if (!this.formularioNoticiaEsValido()) {
-            Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
-            return;
-        }
-        
-        try {
-            // Crear FormData
-            const formData = new FormData();
-            
-            // Agregar campos del formulario
-            formData.append('asunto', $('#asuntoNoticia').val().trim());
-            formData.append('descripcion', $('#descripcionNoticia').val().trim());
-            formData.append('tipo', $('#tipoNoticia').val());
-            formData.append('fechaPublicacion', new Date().toISOString());
-            
-            // Si estamos en modo edición, agregar el ID
-            if (this.modoEdicion) {
-                formData.append('idNoticia', this.noticiaActual.idNoticia);
-            }
-            
-            // Agregar archivos al FormData
-            const archivos = u_noticia_admin.obtenerArchivosParaEnviar();
-            console.log(archivos)
-            archivos.forEach((archivo, index) => {
-                console.log(archivo)
-                formData.append('fotos[]', archivo);
-            });
-
-            console.log(Object.fromEntries(formData));
-            
-            let resultado;
-            
-            if (this.modoEdicion) {
-                // Actualizar noticia existente
-                resultado = await m_noticia.actualizarNoticia(formData);
-            } else {
-                // Insertar nueva noticia
-                resultado = await m_noticia.insertarNoticia(formData);
-            }
-            
-            if (resultado) {
-                // Limpiar archivos después de guardar
-                u_noticia_admin.limpiarArchivos();
-                
-                await this.cargarNoticias();
-                if (this.modalInstance) {
-                    this.modalInstance.hide();
-                }
-                Alerta.exito('Éxito', this.modoEdicion ? 'Noticia actualizada' : 'Noticia creada');
-            }
-        } catch (error) {
-            console.error('Error al guardar noticia:', error);
-            Alerta.notificarError(`No se pudo guardar la noticia: ${error}`, 1500);
-        }
-    }*/
-
+    // ========== GUARDAR NOTICIA ==========
     async guardarNoticia() {
         if (!this.formularioNoticiaEsValido()) {
             Alerta.notificarAdvertencia('Complete correctamente los campos', 1500);
@@ -255,23 +332,10 @@ export class c_noticia_admin {
             
             // Agregar archivos al FormData
             const archivos = u_noticia_admin.obtenerArchivosParaEnviar();
-            console.log('Archivos a enviar:', archivos);
             
-            archivos.forEach((archivo, index) => {
-                // Usar el mismo nombre de campo que espera el backend
+            archivos.forEach((archivo, _index) => {
                 formData.append('fotos[]', archivo);
-                console.log(`Añadiendo archivo ${index}:`, archivo.name, archivo.type, archivo.size);
             });
-
-            // DEBUG: Ver qué se está enviando
-            console.log('Contenido del FormData:');
-            for (let pair of formData.entries()) {
-                if (pair[0] === 'fotos[]') {
-                    console.log(pair[0], ':', pair[1].name, pair[1].type, pair[1].size);
-                } else {
-                    console.log(pair[0], ':', pair[1]);
-                }
-            }
             
             let resultado;
             
@@ -285,11 +349,15 @@ export class c_noticia_admin {
                 // Limpiar archivos después de guardar
                 u_noticia_admin.limpiarArchivos();
                 
-                await this.cargarNoticias();
+                // Recargar total de páginas y la página actual
+                await this.cargarTotalPaginas();
+                await this.cargarNoticias(this.paginaActual);
+                
                 if (this.modalInstance) {
                     this.modalInstance.hide();
                 }
-                Alerta.exito('Éxito', this.modoEdicion ? 'Noticia actualizada' : 'Noticia creada');
+                
+                Alerta.notificarExito(this.modoEdicion ? 'Noticia actualizada' : 'Noticia creada', 1500);
             }
         } catch (error) {
             console.error('Error al guardar noticia:', error);
@@ -297,6 +365,7 @@ export class c_noticia_admin {
         }
     }
 
+    // ========== EDITAR NOTICIA ==========
     async editarNoticia(id) {
         const noticia = this.noticias.find(n => n.idNoticia == id);
         if (!noticia) return;
@@ -314,6 +383,7 @@ export class c_noticia_admin {
         }
     }
 
+    // ========== ELIMINAR NOTICIA ==========
     async eliminarNoticia(id) {
         const noticia = this.noticias.find(n => n.idNoticia == id);
         if (!noticia) return;
@@ -325,55 +395,24 @@ export class c_noticia_admin {
             const resultado = await m_noticia.eliminarNoticia(id);
             
             if (resultado) {
-                await this.cargarNoticias();
-                Alerta.exito('Éxito', 'Noticia eliminada');
+                // Recargar total de páginas y la página actual
+                await this.cargarTotalPaginas();
+                
+                // Si la página actual se queda sin noticias, ir a la página anterior
+                if (this.paginaActual > this.totalPaginas) {
+                    this.paginaActual = this.totalPaginas;
+                }
+                
+                let eliminado = await this.cargarNoticias(this.paginaActual);
+
+                if (eliminado==false) return;
+
+                Alerta.notificarExito('Noticia eliminada', 1500);
             }
         } catch (error) {
             console.error('Error al eliminar noticia:', error);
             Alerta.error('Error', 'No se pudo eliminar la noticia');
         }
-    }
-
-    // ========== ACTUALIZAR VISTA ==========
-    actualizarVista() {
-        // Aplicar filtro
-        const noticiasFiltradas = u_noticia_admin.aplicarFiltro(this.noticias, this.filtroActual);
-        
-        // Calcular páginas
-        this.totalPaginas = Math.ceil(noticiasFiltradas.length / this.noticiasPorPagina);
-        if (this.totalPaginas === 0) this.totalPaginas = 1;
-        
-        // Ajustar página actual
-        if (this.paginaActual > this.totalPaginas) {
-            this.paginaActual = this.totalPaginas;
-        }
-        
-        // Obtener noticias de la página actual
-        const inicio = (this.paginaActual - 1) * this.noticiasPorPagina;
-        const fin = inicio + this.noticiasPorPagina;
-        const noticiasPagina = noticiasFiltradas.slice(inicio, fin);
-        
-        // Renderizar tarjetas
-        u_noticia_admin.renderizarTarjetas(noticiasPagina);
-        
-        // Renderizar paginación
-        u_noticia_admin.renderizarPaginacion(
-            this.paginaActual,
-            this.totalPaginas,
-            (nuevaPagina) => this.cambiarPagina(nuevaPagina)
-        );
-    }
-
-    // ========== CAMBIAR PÁGINA ==========
-    cambiarPagina(nuevaPagina) {
-        if (nuevaPagina < 1 || nuevaPagina > this.totalPaginas || nuevaPagina === this.paginaActual) return;
-        
-        this.paginaActual = nuevaPagina;
-        this.actualizarVista();
-        
-        // Hacer scroll hacia arriba suavemente
-        const contenedor = document.getElementById('contTarjetaNoticia');
-        if (contenedor) contenedor.scrollIntoView({ behavior: 'smooth' });
     }
 }
 

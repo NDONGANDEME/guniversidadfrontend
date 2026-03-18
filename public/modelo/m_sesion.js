@@ -106,7 +106,7 @@ export class m_sesion
                     rol = usuarioVerificado.rol;
 
                     switch (rol) {
-                        case 'administrador':
+                        case 'Administrador':
                             Alerta.cargarSimple(1500, 'Credenciales correctas. Procesando...', '/guniversidadfrontend/admin/index.html');
                             break;
                         case 'Profesor':

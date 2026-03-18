@@ -5,14 +5,33 @@ export class fetchAsignatura
     static url = '/guniversidadfrontend/public/core/endpoint.php';
 
     /**
-     * Enviar solicitud para cargar las asignaturas de la BDD
+     * Enviar solicitud para cargar el total las asignaturas a paginar
      * @returns array de asignaturas
-     * Ya es funcional
      */
-    static async obtenerAsignaturasDelBackend() {
+    static async obtenerAsignaturasAPaginarDelBackend(pagina) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturas&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasAPaginar&actor=admin&pagina=${pagina}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else {
+                Alerta.advertencia('Atencion', respuesta.resultado);
+                return [];
+            }
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
+     * Enviar solicitud para cargar el total de las asignaturas a paginar
+     * @returns entero
+     */
+    static async obtenerTotalPaginasAsignaturaDelBackend() {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerTotalPaginasAsignatura&actor=admin`);
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
             else {
@@ -37,7 +56,7 @@ export class fetchAsignatura
             let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=insertarAsignatura&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json();
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else {
@@ -61,7 +80,7 @@ export class fetchAsignatura
             let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=actualizarAsignatura&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else {
@@ -73,59 +92,6 @@ export class fetchAsignatura
             return null;
         }
     }
-
-    /**
-     * Enviar solicitud para cargar el total de las asignaturas a paginar
-     * @returns entero
-     */
-    static async obtenerTotalPaginasAsignaturaDelBackend() {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerTotalPaginasAsignatura&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
-
-            if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else {
-                Alerta.advertencia('Atencion', respuesta.resultado);
-                return [];
-            }
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
-            return [];
-        }
-    }
-
-    /**
-     * Enviar solicitud para cargar el total las asignaturas a paginar
-     * @returns array de asignaturas
-     */
-    static async obtenerAsignaturasAPaginarDelBackend(pagina) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasAPaginar&actor=admin&pagina=${pagina}`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
-
-            if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else {
-                Alerta.advertencia('Atencion', respuesta.resultado);
-                return [];
-            }
-        } catch(error) {
-            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
-            return [];
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -144,8 +110,6 @@ export class fetchAsignatura
             return [];
         }
     }
-
-    
 
     /**
      * Enviar solicitud para cargar las asignaturas de la BDD
@@ -174,7 +138,10 @@ export class fetchAsignatura
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
             return [];
@@ -192,14 +159,15 @@ export class fetchAsignatura
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
-            else return [];
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
         } catch(error) {
             Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchAsignatura]. ${error}`, 3000);
             return [];
         }
     }
-
-    
 
     /**
      * Envia solicitud para eliminar un registro de la BDD
@@ -208,51 +176,16 @@ export class fetchAsignatura
      */
     static async eliminarAsignaturaEnBackend(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=eliminarAsignatura&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json(); console.log(respuesta)
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=eliminarAsignatura&id=${id}&actor=admin`);
+            let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return false;
+            }
         } catch(error) {
             Alerta.error('Error', `No se ha realizado la solicitud. [fetchCarrera]. ${error}`);
-            return false;
-        }
-    }
-
-    
-
-    /**
-     * Envia solicitud para deshabilitar un registro de la BDD
-     * @param {Integer} id 
-     * @returns booleano
-     */
-    static async deshabilitarAsignaturaEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=deshabilitarAsignatura&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchAsignatura]. ${error}`);
-            return false;
-        }
-    }
-
-    /**
-     * Envia solicitud para habilitar un registro de la BDD
-     * @param {Integer} id 
-     * @returns booleano
-     */
-    static async habilitarAsignaturaEnBackend(id) {
-        try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=habilitarAsignatura&valor=${id}&actor=admin`);
-            let respuesta = await solicitud.json();
-
-            if(respuesta.estado == 'exito') return respuesta.resultado;
-            else return false;
-        } catch(error) {
-            Alerta.error('Error', `No se ha realizado la solicitud. [fetchAsignatura]. ${error}`);
             return false;
         }
     }
