@@ -83,7 +83,7 @@ export class c_noticia {
         if (!contenedorCarousel) return;
 
         try {
-            const datosCarousel = await m_noticia.obtenerNoticiasRecientes(); 
+            const datosCarousel = await m_noticia.obtenerNoticiasRecientes(); console.log(datosCarousel)
             
             if (!datosCarousel || datosCarousel.length === 0) {
                 contenedorCarousel.innerHTML = '<div class="text-center text-white py-5"><h3>No hay noticias</h3></div>';
@@ -107,7 +107,8 @@ export class c_noticia {
     async cargarListaNoticias() {
         try {
             // Obtener todas las noticias de tipo comunicado
-            const datosBackend = await m_noticia.obtenerNoticiasPorComunicado();
+            const datosBackend = await m_noticia.obtenerNoticiasPorTipoAPaginar(this.paginaActual, 'Comunicado');
+            console.log(datosBackend)
             
             if (!datosBackend || datosBackend.length === 0) {
                 u_noticias.mostrarSinNoticias();
@@ -118,7 +119,7 @@ export class c_noticia {
             const todasNoticias = await u_noticias.convertirANoticias(datosBackend);
 
             // TODO: Ajusta esto según tu backend real
-            this.totalPaginas = await m_noticia.obtenerTotalPaginas() || Math.ceil(todasNoticias.length / 9);
+            this.totalPaginas = await m_noticia.obtenerTotalPaginasNoticiaPorTipo('Comunicado') || Math.ceil(todasNoticias.length / 9);
 
             // Filtrar noticias de la página actual
             const noticiasPorPagina = 9; // 3 filas de 3 columnas

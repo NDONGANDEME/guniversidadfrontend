@@ -211,6 +211,26 @@ export class u_utiles
             u_utiles.redirigirA(document.querySelector('#btnNuevoProfesor'), `${url}/formularioProfesor.html`);
         }
 
+        if (document.querySelector('#gestionNoticias')) {
+            u_utiles.redirigirA(document.querySelector('#gestionNoticias'), `${url}/noticia.html`);
+        }
+
+        if (document.querySelector('#gestionPlanesEstudios')) {
+            u_utiles.redirigirA(document.querySelector('#gestionPlanesEstudios'), `${url}/planEstudio.html`);
+        }
+
+        if (document.querySelector('#gestionEstudiantes')) {
+            u_utiles.redirigirA(document.querySelector('#gestionEstudiantes'), `${url}/estudiante.html`);
+        }
+
+        if (document.querySelector('#gestionProfesores')) {
+            u_utiles.redirigirA(document.querySelector('#gestionProfesores'), `${url}/profesor.html`);
+        }
+
+        if (document.querySelector('#gestionHorarios')) {
+            u_utiles.redirigirA(document.querySelector('#gestionHorarios'), `${url}/horario.html`);
+        }
+
         if ($('.cerrarSesion')) $(document).ready( () =>  $('.cerrarSesion').click( () => m_sesion.cerrarSesion() ) );
     }
 

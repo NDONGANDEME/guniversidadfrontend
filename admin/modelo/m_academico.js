@@ -86,6 +86,10 @@ export class m_carrera {
         return await fetchCarrera.obtenerCarrerasDelBackend();
     }
 
+    static async obtenerCarreraPorFacultad(idFacultad) {
+        return await fetchCarrera.obtenerCarreraPorFacultadDelBackend(idFacultad);
+    }
+
     static async insertaCarrera(objeto) {
         return await fetchCarrera.insertarCarreraEnBackend(objeto);
     }

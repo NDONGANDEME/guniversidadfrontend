@@ -34,7 +34,7 @@ export class fetchNoticia
      */
     static async obtenerNoticiaPorIdEnBDD(id) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerNoticiaPorId&id=${id}&actor=global`);
+            let solicitud = await fetch(`${this.url}?ruta=noticias&accion=obtenerNoticiaPorId&id=${id}&actor=global`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -57,7 +57,7 @@ export class fetchNoticia
     static async obtenerTotalPaginasNoticiaEnBackend() { 
         try  {
             let solicitud = await fetch(`${this.url}?ruta=noticia&accion=obtenerTotalPaginasNoticia&actor=admin`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else {
@@ -112,8 +112,9 @@ export class fetchNoticia
     }
 
     /**
-     * Envia solicitud para cargar una noticia conociendo el id
-     * @param {Integer} pagina
+     * Enviar solicitud para cargar un lote de noticias de un cierto tipo para una pagina especifica
+     * @param {integer} pagina 
+     * @param {string} tipo 
      * @returns array de noticias
      */
     static async obtenerNoticiasPorTipoAPaginarEnBackend(pagina, tipo) {

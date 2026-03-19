@@ -8,7 +8,7 @@ export class c_index {
 
     inicializar() {
         // Verificamos que existe sesion
-        // sesiones.verificarExistenciaSesion();
+        sesiones.verificarExistenciaSesion();
         
         // Cargar componentes importados
         this.cargarComponentes();

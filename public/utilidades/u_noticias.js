@@ -13,31 +13,13 @@ export class u_noticias {
      * @returns {string} La URL completa de la imagen.
      */
     static obtenerUrlFoto(foto) {
+        console.log(foto)
         if (!foto) return null;
-
-        // Si ya es un string, asumimos que es el nombre o la URL relativa
-        if (typeof foto === 'string') {
-            // Si ya contiene 'http' o comienza con '/', es una URL completa o absoluta
-            if (foto.startsWith('http') || foto.startsWith('/')) {
-                return foto;
-            }
-            // Si no, es solo el nombre, construimos la URL
-            return BASE_IMG_URL + foto;
-        }
 
         // Si es un objeto, intentamos obtener la URL de diferentes maneras
         if (typeof foto === 'object' && foto !== null) {
-            // Prioridad 1: Si ya tiene una url_completa calculada (del admin)
-            if (foto.url_completa) {
-                return foto.url_completa;
-            }
-            // Prioridad 2: Si tiene una propiedad 'url'
             if (foto.url) {
-                return foto.url.startsWith('http') || foto.url.startsWith('/') ? foto.url : BASE_IMG_URL + foto.url;
-            }
-            // Prioridad 3: Si tiene una propiedad 'nombre'
-            if (foto.nombre) {
-                return BASE_IMG_URL + foto.nombre;
+                return BASE_IMG_URL + foto.url;
             }
         }
 
@@ -83,20 +65,19 @@ export class u_noticias {
             if (item.fotos && Array.isArray(item.fotos)) {
                 fotosProcesadas = item.fotos.map(foto => {
                     // Procesar cada foto para obtener su URL completa
-                    const urlCompleta = this.obtenerUrlFoto(foto);
+                    const urlCompleta = BASE_IMG_URL + foto.url;
                     
                     // Devolver un objeto estandarizado para la foto
                     if (typeof foto === 'object' && foto !== null) {
                         return {
                             ...foto,
-                            url: urlCompleta, // Aseguramos que tenga una propiedad 'url' con la ruta completa
+                            url: foto.url, // Aseguramos que tenga una propiedad 'url' con la ruta completa
                             url_completa: urlCompleta
                         };
                     } else {
                         // Si era un string, devolvemos un objeto
                         return {
-                            nombre: foto,
-                            url: urlCompleta,
+                            nombre: foto.url,
                             url_completa: urlCompleta
                         };
                     }
@@ -104,7 +85,7 @@ export class u_noticias {
             }
             
             return {
-                idNoticia: item.idNoticia || item.id,
+                idNoticia: item.idNoticia,
                 asunto: item.asunto,
                 descripcion: item.descripcion,
                 tipo: item.tipo || 'Comunicado',

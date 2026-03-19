@@ -104,45 +104,68 @@
                                 <h5 class="h4 my-4 text-gray-800"> Elaboración del Plan </h5>
 
                                 <div class="container">
-                                    <div class="row">
-                                        <!-- Panel izquierdo: Biblioteca de asignaturas -->
-                                        <div class="col-md-4 d-flex">
-                                            <div class="card flex-fill">
-                                                <div class="card-header bg-warning">
-                                                    <h6 class="mb-0">
-                                                        <i class="fas fa-book"></i> Biblioteca de Asignaturas
-                                                    </h6>
-                                                </div>
-                                                <div class="card-body" id="biblioteca-asignaturas">
-                                                    <div class="mb-3">
-                                                        <input type="text" class="form-control" placeholder="Buscar asignaturas..." id="searchAsignatura"/>
-                                                    </div>
-
-                                                    <!-- Lista de asignaturas -->
-                                                    <div class="list-group" id="listaAsignaturas">
-                                                        <!-- Las asignaturas se cargarán dinámicamente desde c_planEstudio.js -->
-                                                    </div>
+                                    <div class="w-100 mb-1">
+                                        <div class="row justify-content-end">
+                                            <div class="col-2 filter-group">
+                                                <div class="combo-input-wrapper">
+                                                    <input type="text" id="comboCursoSemestre" class="form-control" placeholder="Ej: primero" required>
+                                                    <div class="dropdown-options" id="opcionesCursoSemestre"></div>
+                                                    <label id="errorCursoSemestre" class="errorMensaje"></label>
                                                 </div>
                                             </div>
+                                            <div class="col-2">
+                                                <input type="number" class="form-control" id="numeroSemestre" min="1" placeholder="Ej: 1" required>
+                                                <label id="errorNumeroSemestre" class="errorMensaje"></label>
+                                            </div>
+                                            <div class="col-2 w-25 text-end">
+                                                <button class="btn btn-success w-100" id="btnGuardarSemestre"> 
+                                                    <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
+                                                </button>
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        <!-- Panel derecho: Semestres con scroll horizontal -->
-                                        <div class="col-md-8 d-flex">
-                                            <div class="card flex-fill">
-                                                <div class="card-header bg-warning d-flex justify-content-between align-items-center">
-                                                    <h6 class="mb-0">
-                                                        <i class="fas fa-calendar"></i> Estructura por Semestres
-                                                    </h6>
-                                                    <button class="btn btn-sm btn-dark" id="btnAgregarSemestre" data-bs-toggle="modal" data-bs-target="#modalNuevoSemestre">
-                                                        <i class="fas fa-plus"></i> Agregar Semestre
-                                                    </button>
-                                                </div>
-                                                <div class="card-body">
-                                                    <!-- Contenedor con scroll horizontal -->
-                                                    <div id="semestres-scroll">
-                                                        <div id="semestres-container">
-                                                            <!-- Los semestres se generarán dinámicamente desde c_planEstudio.js -->
-                                                        </div>
+                                    <!--contendor de semestres-->
+                                    <div class="d-flex">
+                                        <div class="card flex-fill">
+                                            <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0">
+                                                    <i class="fas fa-calendar"></i> Estructura por Semestres
+                                                </h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <!-- Contenedor con scroll horizontal -->
+                                                <div id="semestres-scroll">
+                                                    <div id="semestres-container">
+                                                        <!-- Los semestres se generarán dinámicamente desde c_planEstudio.js -->
+                                                        <!--<div class="card semestre-horizontal">
+                                                            <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                                                                <h6 class="mb-0"> Semestre 1 </h6>
+                                                                <div>
+                                                                    <button class="btn btn-sm btn-outline-info" id="btnEditarSemestre" title="Editar semestre">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-danger" id="btnEliminarSemestre" title="Eliminar semestre">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <-- Contenedor con scroll horizontal --
+                                                                <div id="semestre-asignaturas-scroll">
+                                                                    <div id="semestre-asignaturas-container">
+                                                                        <-- Los semestres se generarán dinámicamente desde c_planEstudio.js --
+                                                                        
+                                                                        <div class="text-end">
+                                                                            <button class="btn btn-outline-warning rounded-circle" id="btnNuevaAsignatura" title="Nueva asignatura"
+                                                                                data-bs-toggle="modal" data-bs-target="#modalNuevaAsignatura"> 
+                                                                                    <span class="icon"> <i class="fas fa-plus"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -223,32 +246,63 @@
     </div>
 
     <!--Modal para crear los semestre-->
-    <div class="modal fade mt-5" id="modalNuevoSemestre" tabindex="-1" aria-hidden="true">
+    <div class="modal fade mt-5" id="modalNuevaAsignatura" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title"> <i class="fas fa-circle-plus"></i> Nuevo Semestre</h5>
+                    <h5 class="modal-title"> <i class="fas fa-circle-plus"></i> <span class="modalNuevaAsignatura"> Nuevo Semestre </span> </h5>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-6 filter-group">
+                        <div class="col-9 filter-group">
                             <div class="combo-input-wrapper">
-                                <label for="comboCursoSemestre" class="form-label">Curso</label>
-                                <input type="text" id="comboCursoSemestre" class="form-control" placeholder="Ej: primero" required>
-                                <div class="dropdown-options" id="opcionesCursoSemestre"></div>
-                                <label id="errorCursoSemestre" class="errorMensaje"></label>
+                                <label for="comboAsignaturasSemestre" class="form-label">Asignaturas</label>
+                                <input type="text" id="comboAsignaturasSemestre" class="form-control" placeholder="Ej: Redes II" required>
+                                <div class="dropdown-options" id="opcionesAsignaturasSemestre"></div>
+                                <label id="errorAsignaturasSemestre" class="errorMensaje"></label>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <label for="numeroSemestre" class="form-label">Numero de semestre</label>
-                            <input type="number" class="form-control" id="numeroSemestre" min="1" placeholder="Ej: 1" required>
-                            <label id="errorNumeroSemestre" class="errorMensaje"></label>
+                        <div class="col-3">
+                            <label for="creditosSemestre" class="form-label">Créditos</label>
+                            <input type="number" class="form-control" id="creditosSemestre" min="1" placeholder="Ej: 1" required>
+                            <label id="errorCreditosSemestre" class="errorMensaje"></label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="">
+                            <label for="modalidadSemestre" class="form-label">Modalidad</label>
+                            <select class="form-select" id="modalidadSemestre">
+                                <option value="">Seleccione...</option>
+                                <option value="Obligatoria">Obligatoria</option>
+                                <option value="Opcional">Opcional</option>
+                                <option value="Especializada">Especializada</option>
+                            </select>
+                            <label id="errorModalidadSemestre" class="errorMensaje"></label>
+                        </div>
+
+                        <!--Parte de prerrequisitos-->
+                        <div class="contPrerrequisitos">
+                            <div class="row">
+                                <div class="filter-group">
+                                    <div class="combo-input-wrapper">
+                                        <label for="comboPrerrequisitosSemestre" class="form-label">Prerrequisitos</label>
+                                        <input type="text" id="comboPrerrequisitosSemestre" class="form-control" placeholder="Ej: Redes I">
+                                        <div class="dropdown-options" id="opcionesPrerrequisitosSemestre"></div>
+                                        <label id="errorPrerrequisitosSemestre" class="errorMensaje"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-outline-warning" id="btnAñadirPrerrequisito"> 
+                                    <span class="icon"> <i class="fas fa-plus"></i> <span>Añadir prerrequisito</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-sm btn-success" id="btnGuardarSemeste">Guardar Semeste</button>
+                    <button type="button" class="btn btn-sm btn-success" id="btnGuardarAsignatura">Guardar Asignatura</button>
                 </div>
             </div>
         </div>

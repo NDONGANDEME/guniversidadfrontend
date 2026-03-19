@@ -11,14 +11,12 @@ export class c_noticia_admin {
         this.noticiaActual = null;
         this.modoEdicion = false;
         
-        // Paginación (ahora manejada por el backend)
+        // Paginación
         this.paginaActual = 1;
         this.totalPaginas = 1;
-        this.registrosPorPagina = 6; // 2 filas de 3 columnas
         
         // Filtros
         this.filtroActual = 'Ninguno';
-        this.cargando = false;
         
         // Modal
         this.modalInstance = null;
@@ -27,7 +25,7 @@ export class c_noticia_admin {
     // ========== INICIALIZACIÓN ==========
     async inicializar() {
         try {
-            //sesiones.verificarExistenciaSesion();
+            sesiones.verificarExistenciaSesion();
             await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
             await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
             u_utiles.botonesNavegacionAdministrador();
@@ -63,14 +61,15 @@ export class c_noticia_admin {
             
             if (this.filtroActual === 'Ninguno') {
                 const respuesta = await m_noticia.obtenerTotalPaginasNoticia();
-                totalPaginas = respuesta.total_paginas || 1;
+                totalPaginas = respuesta || 1;
             } else {
                 const respuesta = await m_noticia.obtenerTotalPaginasNoticiaPorTipo(this.filtroActual);
-                totalPaginas = respuesta.total_paginas || 1;
+                totalPaginas = respuesta || 1;
             }
             
             this.totalPaginas = totalPaginas;
             this.actualizarInfoPaginacion();
+            this.actualizarEstadoBotonesPaginacion();
             
         } catch (error) {
             console.error('Error al cargar total de páginas:', error);
@@ -82,32 +81,27 @@ export class c_noticia_admin {
      * Carga las noticias de una página específica
      * @param {number} pagina - Número de página a cargar
      */
+    static respuesta = null;
+
     async cargarNoticias(pagina) {
         if (this.cargando) return;
         
-        this.cargando = true;
-        //this.mostrarLoader(true);
-        
         try {
-            let respuesta;
-            
-            // Llamar al endpoint correspondiente según el filtro
             if (this.filtroActual === 'Ninguno') {
-                respuesta = await m_noticia.obtenerNoticiasAPaginar(pagina);
+                this.respuesta = await m_noticia.obtenerNoticiasAPaginar(pagina);
+                console.log(this.respuesta)
             } else {
-                respuesta = await m_noticia.obtenerNoticiasPorTipoAPaginar(pagina, this.filtroActual);
+                this.respuesta = await m_noticia.obtenerNoticiasPorTipoAPaginar(pagina, this.filtroActual);
             }
 
-            // Extraer las noticias de la respuesta
-            const noticiasData = respuesta.noticias || [];
+            console.log(this.respuesta.pagina_actual)
+
+            const noticiasData = this.respuesta.noticias || [];
             
-            // Convertir a objetos noticia
             this.noticias = await u_noticia_admin.convertirANoticias(noticiasData);
             
-            // Actualizar página actual
-            this.paginaActual = respuesta.pagina_actual || pagina;
+            this.paginaActual = this.respuesta.pagina_actual || pagina;
             
-            // Renderizar las noticias
             this.renderizarNoticias();
             this.actualizarInfoPaginacion();
             this.actualizarEstadoBotonesPaginacion();
@@ -116,29 +110,6 @@ export class c_noticia_admin {
             Alerta.error('Error', 'Fallo al cargar noticias');
             this.noticias = [];
             this.renderizarNoticias();
-        } finally {
-            this.cargando = false;
-            this.mostrarLoader(false);
-        }
-    }
-
-    /**
-     * Muestra u oculta el loader de carga
-     * @param {boolean} mostrar - true para mostrar, false para ocultar
-     */
-    mostrarLoader(mostrar) {
-        const contenedor = document.getElementById('contTarjetaNoticia');
-        if (!contenedor) return;
-        
-        if (mostrar) {
-            contenedor.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <div class="spinner-border text-warning" role="status">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
-                    <p class="mt-2">Cargando noticias...</p>
-                </div>
-            `;
         }
     }
 
@@ -186,17 +157,15 @@ export class c_noticia_admin {
         // Filtro por tipo
         $('#filtroPorTipo').on('change', async (e) => {
             this.filtroActual = e.target.value;
-            this.paginaActual = 1; // Volver a primera página al filtrar
+            this.paginaActual = 1;
             
-            // Recargar total de páginas con el nuevo filtro
             await this.cargarTotalPaginas();
-            // Cargar primera página con el filtro
             await this.cargarNoticias(1);
         });
 
         // Botones de paginación
-        $('#btnAnteriorNoticias').on('click', () => this.irPaginaAnterior());
-        $('#btnSiguienteNoticias').on('click', () => this.irPaginaSiguiente());
+        $('#btnAnteriorNoticia').on('click', () => this.irPaginaAnterior());
+        $('#btnSiguienteNoticia').on('click', () => this.irPaginaSiguiente());
 
         // Cuando se cierra el modal, limpiar
         $('#modalNuevaNoticia').on('hidden.bs.modal', () => {
@@ -208,67 +177,46 @@ export class c_noticia_admin {
 
     // ========== PAGINACIÓN ==========
     
-    /**
-     * Navega a la página anterior
-     */
+    // Navega a la página anterior
     async irPaginaAnterior() {
-        if (this.paginaActual > 1 && !this.cargando) {
+        if (this.paginaActual > 1) {
             await this.cargarNoticias(this.paginaActual - 1);
-            this.scrollAlInicio();
         }
     }
 
-    /**
-     * Navega a la página siguiente
-     */
+    // Navega a la página siguiente
     async irPaginaSiguiente() {
-        if (this.paginaActual < this.totalPaginas && !this.cargando) {
+        if (this.paginaActual < this.totalPaginas) {
             await this.cargarNoticias(this.paginaActual + 1);
-            this.scrollAlInicio();
         }
     }
 
-    /**
-     * Actualiza la información de paginación en la interfaz
-     */
+    // Actualiza la información de paginación en la interfaz
     actualizarInfoPaginacion() {
-        const infoElement = document.getElementById('infoPaginacion');
-        if (infoElement) {
-            infoElement.textContent = `Página ${this.paginaActual} de ${this.totalPaginas}`;
+        const indicador = document.getElementById('paginaActualNoticia');
+        if (indicador) {
+            indicador.textContent = `Página ${this.paginaActual} de ${this.totalPaginas}`;
         }
+        this.actualizarEstadoBotonesPaginacion();
     }
 
-    /**
-     * Actualiza el estado de los botones de paginación
-     */
+    // Actualiza el estado de los botones de paginación
     actualizarEstadoBotonesPaginacion() {
-        const btnAnterior = document.getElementById('btnAnteriorNoticias');
-        const btnSiguiente = document.getElementById('btnSiguienteNoticias');
+        const btnAnterior = document.getElementById('btnAnteriorNoticia');
+        const btnSiguiente = document.getElementById('btnSiguienteNoticia');
         
         if (btnAnterior) {
-            btnAnterior.disabled = this.paginaActual <= 1 || this.cargando;
+            btnAnterior.disabled = this.paginaActual <= 1;
         }
         
         if (btnSiguiente) {
-            btnSiguiente.disabled = this.paginaActual >= this.totalPaginas || this.cargando;
-        }
-    }
-
-    /**
-     * Hace scroll suave al inicio del contenedor de noticias
-     */
-    scrollAlInicio() {
-        const contenedor = document.getElementById('contTarjetaNoticia');
-        if (contenedor) {
-            contenedor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            btnSiguiente.disabled = this.paginaActual >= this.totalPaginas;
         }
     }
 
     // ========== RENDERIZADO ==========
     
-    /**
-     * Renderiza las noticias en la interfaz
-     */
+    // Renderiza las noticias en la interfaz
     renderizarNoticias() {
         u_noticia_admin.renderizarTarjetas(this.noticias);
     }

@@ -35,7 +35,7 @@ export class fetchSesion
     static async cerrarSesionEnBackend() {
         try {
             let solicitud = await fetch(`${this.url}?ruta=sesion&accion=cerrarSesion&actor=global`);
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else {

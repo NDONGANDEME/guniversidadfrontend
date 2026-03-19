@@ -136,6 +136,26 @@ export class fetchCarrera
     }
 
     /**
+     * Enviar solicitud para cargar el total de las carreras a paginar
+     * @returns entero
+     */
+    static async obtenerCarreraPorFacultadDelBackend(idFacultad) {
+        try {
+            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerCarreraPorFacultad&actor=admin&id=${idFacultad}`);
+            let respuesta = await solicitud.json();
+
+            if(respuesta.estado == 'exito') return respuesta.resultado; 
+            else {
+                Alerta.notificarInfo(respuesta.mensaje, 3000);
+                return [];
+            }
+        } catch(error) {
+            Alerta.notificarError(`Error: No se ha realizado la solicitud. [fetchCarrera]. ${error}`, 3000);
+            return [];
+        }
+    }
+
+    /**
      * Enviar solicitud para cargar las carreras a paginar
      * @returns array de Carreras
      */

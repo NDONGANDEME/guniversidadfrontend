@@ -3,6 +3,7 @@ import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { m_permiso, m_rol, m_rolPermiso } from "../modelo/m_permiso.js";
 import { u_permiso } from "../utilidades/u_permiso.js";
+import { sesiones } from "../../public/core/sesiones.js";
 
 export class c_permiso
 {
@@ -452,6 +453,7 @@ export class c_permiso
 $(document).ready(async function() {
     try {
         // Cargar componentes comunes
+        sesiones.verificarExistenciaSesion();
         await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
         await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
         u_utiles.botonesNavegacionAdministrador();

@@ -303,62 +303,6 @@ export class u_noticia_admin {
         });
     }
 
-    // ========== PAGINACIÓN ==========
-    static renderizarPaginacion(paginaActual, totalPaginas, callback, contenedorId = '#contPaginacion') {
-        const contenedor = $(contenedorId);
-        
-        if (totalPaginas <= 1) {
-            contenedor.empty();
-            return;
-        }
-
-        let html = '<ul class="pagination justify-content-center">';
-
-        // Botón anterior
-        html += this.crearBotonPaginacion('«', paginaActual - 1, paginaActual === 1);
-
-        // Botones de números
-        for (let i = 1; i <= totalPaginas; i++) {
-            if (i === 1 || i === totalPaginas || (i >= paginaActual - 2 && i <= paginaActual + 2)) {
-                html += this.crearBotonPaginacion(i, i, false, i === paginaActual);
-            } else if (i === paginaActual - 3 || i === paginaActual + 3) {
-                html += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            }
-        }
-
-        // Botón siguiente
-        html += this.crearBotonPaginacion('»', paginaActual + 1, paginaActual === totalPaginas);
-
-        html += '</ul>';
-        
-        contenedor.html(html);
-
-        // Agregar eventos
-        contenedor.find('.page-link').on('click', function(e) {
-            e.preventDefault();
-            if ($(this).closest('.disabled').length) return;
-            
-            const nuevaPagina = parseInt($(this).data('pagina'));
-            if (!isNaN(nuevaPagina) && callback) {
-                callback(nuevaPagina);
-            }
-        });
-    }
-
-    static crearBotonPaginacion(texto, pagina, deshabilitado = false, activo = false) {
-        let clases = 'page-item';
-        if (deshabilitado) clases += ' disabled';
-        if (activo) clases += ' active';
-
-        return `
-            <li class="${clases}">
-                <a class="page-link" href="#" data-pagina="${pagina}" ${deshabilitado ? 'tabindex="-1"' : ''}>
-                    ${texto}
-                </a>
-            </li>
-        `;
-    }
-
     // ========== LIMPIAR MODAL ==========
     static limpiarModal() {
         $('#formNoticia')[0].reset();

@@ -23,6 +23,10 @@ export class m_noticia
         return await fetchNoticia.obtenerNoticiasRecientesDelBackend();
     }
 
+    static async obtenerNoticiaPorId(id) {
+        return await fetchNoticia.obtenerNoticiaPorIdEnBDD(id);
+    }
+
     static async obtenerNoticiasAPaginar(pagina) {
         return await fetchNoticia.obtenerNoticiasAPaginarEnBackend(pagina);
     }

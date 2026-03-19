@@ -17,8 +17,12 @@ export class m_planEstudio {
         this.vigente = vigente;
     }
 
-    static async obtenerPlanesEstudios() {
-        return await fetchPlanEstudio.obtenerPlanesEstudiosDelBackend();
+    static async obtenerPlanesEstudiosPorFacultad(idFacultad) {
+        return await fetchPlanEstudio.obtenerPlanesEstudiosPorFacultadDelBackend(idFacultad);
+    }
+
+    static async obtenerPlanesEstudiosAPaginar(pagina, idFacultad) {
+        return await fetchPlanEstudio.obtenerPlanesEstudiosAPaginarPorFacultadDelBackend(pagina, idFacultad);
     }
 
     static async insertarPlanEstudio(objeto) {
@@ -29,12 +33,8 @@ export class m_planEstudio {
         return await fetchPlanEstudio.actualizarPlanEstudioEnBDD(objeto);
     }
 
-    static async deshabilitarPlanEstudio(id) {
-        return await fetchPlanEstudio.deshabilitarPlanEstudioEnBDD(id);
-    }
-
-    static async habilitarPlanEstudio(id) {
-        return await fetchPlanEstudio.habilitarPlanEstudioEnBDD(id);
+    static async eliminarPlanEstudio(id) {
+        return await fetchPlanEstudio.eliminarPlanEstudioEnBDD(id);
     }
 }
 

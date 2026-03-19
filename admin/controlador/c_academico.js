@@ -7,6 +7,7 @@ import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { u_academico } from "../utilidades/u_academico.js";
 import { m_asignatura, m_carrera, m_departamento, m_facultad } from "../modelo/m_academico.js";
+import { sesiones } from "../../public/core/sesiones.js";
 
 export class c_academico {
     
@@ -620,26 +621,6 @@ export class c_academico {
             console.error('Error cargando total de páginas:', error);
         }
     }
-
-    /**
-     * Carga asignaturas paginadas
-     * @param {number} pagina - Número de página a cargar
-     */
-    /*static async cargarAsignaturasPaginadas(pagina) {
-        try {
-            const asignaturas = await m_asignatura.obtenerAsignaturasAPaginar(pagina); console.log(asignaturas.asignaturas)
-            this.paginaActualAsignaturas = asignaturas.pagina_actual;
-
-            if (asignaturas.asignaturas==[]) Alerta.notificarInfo('Sin asignaturas guardadas', 1500);
-
-            this.mostrarAsignaturasEnTabla(asignaturas.asignaturas);
-            this.actualizarEstadoBotonesPaginacionAsignaturas();
-            this.actualizarIndicadorPaginaAsignaturas();
-        } catch (error) {
-            console.error('Error cargando asignaturas paginadas:', error);
-            Alerta.error('Error', 'No se pudieron cargar las asignaturas');
-        }
-    }*/
 
     /**
      * Carga asignaturas paginadas - VERSIÓN CORREGIDA
@@ -1476,6 +1457,7 @@ export class c_academico {
 
 // ========== INICIALIZAR ==========
 $(document).ready(async function() {
+    sesiones.verificarExistenciaSesion();
     await u_utiles.cargarArchivosImportadosHTML('modalCerrarSesion', '.importandoModalCierreSesion');
     await u_utiles.cargarArchivosImportadosHTML('topBar', '.importandoTopBar');
     u_utiles.botonesNavegacionAdministrador();

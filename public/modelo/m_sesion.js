@@ -37,7 +37,9 @@ export class m_sesion
                 m_sesion.guardarSesion('usuarioActivo', { nombreOCorreo: null, contraseña: null });
             }
 
-            await fetchSesion.cerrarSesionEnBackend();
+            let cerrado = await fetchSesion.cerrarSesionEnBackend();
+
+            if (cerrado.length == 0) return;
             
             Alerta.cargarSimple(1500, 'Cerrando sesión. Redirigiendo, espere por favor...', '/guniversidadfrontend/index.html');
         } catch (error) {

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Panel del Administrador - Noticias</title>
+    <title> Panel del Secretario - Noticias</title>
     <link rel="icon" href="../../../public/img/escudo_AAUCA.jpg">
     <link rel="stylesheet" href="../../../public/nomodules/fontawesome/node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/boostrap/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/startbootstrap-sb-admin-2/css/sb-admin-2.min.css">
     <link rel="stylesheet" href="../../../public/nomodules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/secretario.css">
     <link rel="stylesheet" href="../../../public/template/css/globalModulos.css">
 </head>
 <body id="page-top">
@@ -25,7 +25,7 @@
                         <div class="h4 me-2">
                             <i class="fas fa-user-tie"></i>
                         </div>
-                        <div class="fw-bold h4" id="administrador"> Administrador </div>
+                        <div class="fw-bold h4" id="secretarioAcademico"> Secrtetario Académico </div>
                     </div>
 
                     <!-- Topbar Navbar -->
@@ -40,7 +40,7 @@
                             <i class="fas fa-users-cog me-2 text-warning"></i> Noticias
                         </h1>
                         <div class="d-flex gap-3">
-                            <button class="btn btn-warning nueva" data-bs-toggle="modal" data-bs-target="#modalNuevaNoticia" id="btnNuevaNoticia">
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalNuevaNoticia" id="btnNuevaNoticia">
                                 <i class="fas fa-plus-circle me-2"></i> Nueva Noticia
                             </button>
                             <button class="btn btn-warning" id="btnVolverPanelPrincipal">
@@ -57,7 +57,6 @@
                                     <option value="Ninguno">Filtrar por Tipo</option>
                                     <option value="Comunicado">Comunicado</option>
                                     <option value="Interna">Interna</option>
-                                    <option value="Departamento">Departamento</option>
                                 </select>
                             </div>
                         </div>
@@ -72,15 +71,29 @@
                                 <div class="row" id="tarjetasNoticiasRow"> <!-- Las tarjetas se añadirán aquí dinámicamente --> </div>
                             </div>
 
-                            <!-- Controles de paginación - Departamentos -->
-                            <div id="#contPaginacion" class="d-flex justify-content-between align-items-center mt-3">
-                                <button class="btn btn-outline-warning" id="btnAnteriorNoticia" disabled>
-                                    <i class="fas fa-chevron-left"></i> Anterior
-                                </button>
-                                <span id="paginaActualNoticia">Página 1 de 1</span>
-                                <button class="btn btn-outline-warning" id="btnSiguienteNoticia" disabled>
-                                    Siguiente <i class="fas fa-chevron-right"></i>
-                                </button>
+                            <!-- Contenedor de paginación -->
+                            <div id="contPaginacion" class="container mt-4 d-flex justify-content-center">
+                                <!-- La paginación se añadirá aquí dinámicamente -->
+                            </div>
+                                
+                            <!-- Detalles de las noticias -->
+                            <div id="contDetallesNoticias" class="container"> <!--añadir dinamicamente--> </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div id="modalNoticias" class="modal fade" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="tituloNoticiaDetalle"><!--añadir dinamicamente--></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <p id="contenidoNoticiadetalle"> <!--añadir dinamicamente--> </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -207,8 +220,6 @@
             </div>
         </div>
     </div>
-
-    <div class="mb-4"></div>
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>
