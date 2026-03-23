@@ -42,8 +42,8 @@ export class m_estudiante {
         return await fetchEstudiante.obtenerEstudiantesPorAsignaturaDelBackend(idAsignatura);
     }
 
-    static async obtenerEstudiantesPorFacultad(idFacultad) {
-        return await fetchEstudiante.obtenerEstudiantesPorFacultadDelBackend(idFacultad);
+    static async obtenerEstudiantesAPaginarPorFacultad(idFacultad, pagina) {
+        return await fetchEstudiante.obtenerEstudiantesAPaginarPorFacultadDelBackend(idFacultad, pagina);
     }
 
     static async obtenerDatosEspecificosEstudiantes() {

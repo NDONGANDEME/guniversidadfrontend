@@ -87,7 +87,7 @@ export class m_carrera {
     }
 
     static async obtenerCarreraPorFacultad(idFacultad) {
-        return await fetchCarrera.obtenerCarreraPorFacultadDelBackend(idFacultad);
+        return await fetchCarrera.obtenerCarrerasPorFacultadDelBackend(idFacultad);
     }
 
     static async insertaCarrera(objeto) {
@@ -132,16 +132,13 @@ export class m_asignatura {
         facultad-numero-asignatura. ejemplo: FI-0001-RED (faciltad de ingenierias, numero 0001, asignatura: redes).
     */
 
-    static async obtenerAsignaturasPorSemestre(numeroSemestre) {
-        return await fetchAsignatura.obtenerAsignaturasPorSemestreDelBackend(numeroSemestre);
+    // ================================================= PARA LA PARTE DEL ADMIN =====================================================
+    static async insertarAsignatura(objeto) {
+        return await fetchAsignatura.insertarAsignaturaEnBackend(objeto);
     }
 
-    static async obtenerAsignaturasPorPlanEstudio(idEstudiante) {
-        return await fetchAsignatura.obtenerAsignaturasPorPlanEstudioDelBackend(idEstudiante);
-    }
-
-    static async obtenerAsignaturasPendientesYBloqueadas(numeroSemestre) {
-        return await fetchAsignatura.obtenerAsignaturasPendientesYBloqueadasDelBackend(numeroSemestre);
+    static async actualizarAsignatura(objeto) {
+        return await fetchAsignatura.actualizarAsignaturaEnBackend(objeto);
     }
 
     static async obtenerAsignaturasAPaginar(pagina) {
@@ -152,12 +149,17 @@ export class m_asignatura {
         return await fetchAsignatura.obtenerTotalPaginasAsignaturaDelBackend();
     }
 
-    static async insertarAsignatura(objeto) {
-        return await fetchAsignatura.insertarAsignaturaEnBackend(objeto);
+    // ================================================= PARA LA PARTE DEL SECRETARIO =====================================================
+    static async obtenerAsignaturasPorSemestre(numeroSemestre, idEstudiante) {
+        return await fetchAsignatura.obtenerAsignaturasPorSemestreDelBackend(numeroSemestre, idEstudiante);
     }
 
-    static async actualizarAsignatura(objeto) {
-        return await fetchAsignatura.actualizarAsignaturaEnBackend(objeto);
+    static async obtenerAsignaturasPorPlanEstudio(idEstudiante) {
+        return await fetchAsignatura.obtenerAsignaturasPorPlanEstudioDelBackend(idEstudiante);
+    }
+
+    static async obtenerAsignaturasPendientesYBloqueadas(numeroSemestre, idEstudiante) {
+        return await fetchAsignatura.obtenerAsignaturasPendientesYBloqueadasDelBackend(numeroSemestre, idEstudiante);
     }
 
     static async obtenerAsignaturasPorFacultad(idFacultad) {

@@ -43,9 +43,9 @@ export class fetchEstudiante
      * Envia solicitud para listar los estudiante de la BDD
      * @returns array de estudiante
      */
-    static async obtenerEstudiantesPorFacultadDelBackend(idFacultad) {
+    static async obtenerEstudiantesAPaginarPorFacultadDelBackend(idFacultad, pagina) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerEstudiantesPorFacultad&actor=secretario&idFacultad=${idFacultad}`);
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerEstudiantesAPaginarPorFacultad&actor=secretario&id=${idFacultad}&pagina=${pagina}`);
             let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;

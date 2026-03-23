@@ -76,19 +76,21 @@
                     </div>
 
                     <!-- Paginación -->
-                    <nav aria-label="Page navigation" class="mt-4">
-                        <ul class="pagination justify-content-center" id="paginacion">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Anterior</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link">1</a></li>
-                            <li class="page-item"><a class="page-link">2</a></li>
-                            <li class="page-item"><a class="page-link">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link">Siguiente</a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <div class="mt-4 d-flex justify-content-center align-items-center">
+                        <div class="btn-group" role="group">
+                            <button type="button" id="btnAnteriorEstudiantes" class="btn btn-outline-warning" disabled>
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </button>
+                            <button type="button" id="btnSiguienteEstudiantes" class="btn btn-outline-warning" disabled>
+                                Siguiente <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center mt-2">
+                        <div id="paginaActualEstudiantes" class="text-muted">
+                            Página 1 de 1
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

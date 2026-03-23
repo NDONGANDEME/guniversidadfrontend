@@ -93,14 +93,14 @@ export class fetchAsignatura
         }
     }
 
-
+    // ================================================= PARA LA PARTE DEL SECRETARIO =====================================================
     /**
      * Enviar solicitud para cargar las asignaturas de la BDD
      * @returns array de asignaturas
      */
-    static async obtenerAsignaturasPorSemestreDelBackend(numeroSemestre) {
+    static async obtenerAsignaturasPorSemestreDelBackend(numeroSemestre, idEstudiante) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPorSemestre&actor=admin&valor=${numeroSemestre}`);
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPorSemestre&actor=admin&numero=${numeroSemestre}&id=${idEstudiante}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
@@ -132,9 +132,9 @@ export class fetchAsignatura
      * Enviar solicitud para cargar las asignaturas de la BDD
      * @returns array de asignaturas
      */
-    static async obtenerAsignaturasPendientesYBloqueadasDelBackend(numeroSemestre) {
+    static async obtenerAsignaturasPendientesYBloqueadasDelBackend(numeroSemestre, idEstudiante) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPendientesYBloqueadas&actor=admin&valor=${numeroSemestre}`);
+            let solicitud = await fetch(`${this.url}?ruta=asignatura&accion=obtenerAsignaturasPendientesYBloqueadas&actor=admin&numeroSemestre=${numeroSemestre}&id=${idEstudiante}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 

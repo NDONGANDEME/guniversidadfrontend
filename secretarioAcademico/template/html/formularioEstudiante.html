@@ -72,11 +72,16 @@
                                 </button>
                             </div>
 
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-user fa-4x text-muted mb-3"></i>
+                                <h3 class="text-muted">Sin datos personales disponibles</h3>
+                            </div>
+
                             <!-- Los detalles se cargarán dinámicamente -->
                         </div>
 
                         <!--PARTE DE LA CREACION/EDICION-->
-                        <div class="contSeccionDatosPersonales" id="seccionDatosPersonalesEdicion">
+                        <div class="contSeccionDatosPersonales d-none" id="seccionDatosPersonalesEdicion">
                             <form id="formEstudiante">
                                 <!--Datos generales-->
                                 <h5 class="h4 mb-3 text-gray-800"> Datos personales del estudiante </h5>
@@ -262,7 +267,7 @@
                                     </div>
 
                                     <!--Parte de becarios-->
-                                    <div id="contDatosBecario" class="d-">
+                                    <div id="contDatosBecario" class="d-none">
                                         <h5 class="h4 my-4  text-gray-800"> Datos de los becarios </h5>
 
                                         <div class="text-end mt-2">
@@ -343,21 +348,10 @@
                                         </div>
 
                                         <div class="col-9">
-                                            <div class="row mb-1">
-                                                <div class="col-6">
-                                                    <label for="nombreOCorreoUsuario" class="form-label">Nombre de usuario o correo</label>
-                                                    <input type="tel" class="form-control" id="nombreOCorreoUsuario" placeholder="Ej: usuario123" required>
-                                                    <label id="errorNombreOCorreoUsuario" class="errorMensaje"></label>
-                                                </div>
-                                                <div class="col-6">
-                                                    <label for="rolUsuario" class="form-label">Rol</label>
-                                                    <select class="form-select" id="rolUsuario" required>
-                                                        <option value="Ninguno">Seleccione...</option>
-                                                        <option value="Estudiante">Estudiante</option>
-                                                        <option value="Profesor">Profesor</option>
-                                                    </select>
-                                                    <label id="errorRolUsuario" class="errorMensaje"></label>
-                                                </div>
+                                            <div class="mb-2">
+                                                <label for="nombreOCorreoUsuario" class="form-label">Nombre de usuario o correo</label>
+                                                <input type="text" class="form-control" id="nombreOCorreoUsuario" placeholder="Ej: usuario123" required>
+                                                <label id="errorNombreOCorreoUsuario" class="errorMensaje"></label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="generarContraseña" id="generarContraseña">
@@ -391,11 +385,16 @@
                                 </button>
                             </div>
 
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-list-alt fa-4x text-muted mb-3"></i>
+                                <h3 class="text-muted">Sin matriculas disponibles</h3>
+                            </div>
+
                             <!-- Los detalles se cargarán dinámicamente -->
                         </div>
 
                         <!--PARTE DE LA CREACION/EDICION-->
-                        <div class="contSeccionDatosMatricula" id="seccionDatosMatriculaEdicion">
+                        <div class="contSeccionDatosMatricula d-none" id="seccionDatosMatriculaEdicion">
                             <form id="formMatricula">
                                 <!--Datos generales-->
                                 <h5 class="h4 mb-3 text-gray-800"> Datos para la matrícula </h5>
@@ -506,11 +505,16 @@
                                 </button>
                             </div>
 
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-file-text fa-4x text-muted mb-3"></i>
+                                <h3 class="text-muted">Sin datos académicos disponibles</h3>
+                            </div>
+
                             <!-- Los detalles se cargarán dinámicamente -->
                         </div>
 
                         <!--PARTE DE LA CREACION/EDICION-->
-                        <div class="contSeccionDatosAcademicos" id="seccionDatosAcademicosEdicion">
+                        <div class="contSeccionDatosAcademicos d-none" id="seccionDatosAcademicosEdicion">
                             <form id="formAsignacion">
                                 <!--Datos generales-->
                                 <h5 class="h4 mb-3 text-gray-800"> Asignación de asignaturas </h5>
