@@ -147,7 +147,7 @@ export class m_asignatura {
 
     static async obtenerTotalPaginasAsignatura() {
         return await fetchAsignatura.obtenerTotalPaginasAsignaturaDelBackend();
-    }
+    } 
 
     // ================================================= PARA LA PARTE DEL SECRETARIO =====================================================
     static async obtenerAsignaturasPorSemestre(numeroSemestre, idEstudiante) {

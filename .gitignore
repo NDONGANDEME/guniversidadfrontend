@@ -1,6 +1,7 @@
 # Dependencias y builds
 nomodule/
 node_modules/
+nomodules/
 vendor/
 /dist/
 /build/

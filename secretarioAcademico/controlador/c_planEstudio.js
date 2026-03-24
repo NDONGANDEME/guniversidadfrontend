@@ -101,6 +101,7 @@ export class c_planEstudio {
     static async cargarPlanesPaginados(pagina) {
         try {
             const response = await m_planEstudio.obtenerPlanesEstudiosAPaginar(pagina, this.idFacultad);
+            console.log(response)
 
             if (response.length == 0) return;
 
