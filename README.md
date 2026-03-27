@@ -88,7 +88,8 @@ En lugar de pagos económicos, se contempla un esquema de **incentivación insti
 - Certificaciones internas
 - Acceso preferente a recursos tecnológicos
 - Participación en futuras iniciativas estratégicas
-- ### Pilotado unicamente por
+
+  ### Pilotado unicamente por
 - #### Profesor: Diosdado Asumu Ndong Andeme
 - #### Aaron Mariano Minchá Minchá NFONO
 - #### Jose maría Buatiché LOLA
@@ -102,4 +103,7 @@ Actualmente se trabaja en el **Módulo de Gestión de Departamento**, que servir
 ---
 
 ## 📜 Licencia
-Este proyecto es de integra propiedad de sus ***desarrolladores*** y se planea usar como punto piloto la *Universidad Afro Americana de África Central* .
+Este proyecto es de integra propiedad de sus ***desarrolladores*** y se planea usar como punto piloto la *Universidad Afro Americana de África Central* 
+
+**Copyright © — Derechos autorizados solo a los autores**
+.
