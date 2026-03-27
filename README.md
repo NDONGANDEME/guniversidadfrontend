@@ -1,13 +1,13 @@
 
-# 🤣✅ Proyecto de Gestión Académica - AAUCA
+# 🤣🚨🚨 Proyecto de Gestión Académica - AAUCA
 
-## 🏘️🏡 Universidad Afroamericana de África Central (AAUCA)
+## Universidad Afroamericana de África Central (AAUCA)
 
 Este proyecto tiene como finalidad la implementación de un **Sistema Integral de Gestión Académica** para la Universidad Afroamericana de África Central (AAUCA), orientado a mejorar los procesos administrativos, académicos y de seguridad informática en las cuatro facultades que conforman la institución.
 
 ---
 
-## ✅ Objetivos del Proyecto
+## ➕ Objetivos del Proyecto
 - Digitalizar y optimizar procesos administrativos y académicos.
 - Reducir en más del 50% los tiempos de inscripción, gestión de notas y generación de reportes.
 - Garantizar la seguridad de la información mediante cortafuegos, IDS/IPS y monitoreo de red.
@@ -17,7 +17,7 @@ Este proyecto tiene como finalidad la implementación de un **Sistema Integral d
 
 ---
 
-## 🏛 Facultades de AAUCA
+## ✒️ Facultades de AAUCA
 - **Facultad de Ingenierías y Arquitectura** (8 carreras)
 - **Facultad de Ciencias Económicas** (2 carreras)
 - **Facultad de Medicina** (2 carreras)
@@ -25,7 +25,7 @@ Este proyecto tiene como finalidad la implementación de un **Sistema Integral d
 
 ---
 
-## ⚙️ Arquitectura del Sistema
+## 🔍 Arquitectura del Sistema
 El sistema se estructura en módulos, iniciando con el **Módulo de Gestión de Departamento**.
 
 ### Back-end
@@ -46,7 +46,7 @@ El sistema se estructura en módulos, iniciando con el **Módulo de Gestión de 
 
 ---
 
-## 🗂️ Modelo de Datos (Resumen de Entidades)
+## 📂 Modelo de Datos (Resumen de Entidades)
 - **Usuario**: login, password, rol, estado
 - **Profesor**: datos personales, departamento, responsabilidades
 - **Formación**: institución, tipo, título, nivel
@@ -63,10 +63,13 @@ El sistema se estructura en módulos, iniciando con el **Módulo de Gestión de 
 
 ---
 
-## 📅 Cronograma de Implementación
-- **04/11/2025**: Inicio del proyecto
-- **17/12/2025**: Desarrollo del módulo de gestión académica
-- **05/01/2026**: Integración y pruebas iniciales
+## 🗓️ Cronograma de Implementación
+- ***04/11/2025***: Inicio del proyecto
+- ***17/12/2025*** al ***05/03/2026: Desarrollo del módulo de gestión académica
+- ***17/04/2026*** Módulo de gestión de horarios
+- ***18/05/2026*** Inserción de datos
+- ***18/06/2026*** Pruebas funcionales
+- ***05/07/2026***: Entrega parcial
 
 ---
 
@@ -85,14 +88,18 @@ En lugar de pagos económicos, se contempla un esquema de **incentivación insti
 - Certificaciones internas
 - Acceso preferente a recursos tecnológicos
 - Participación en futuras iniciativas estratégicas
+- ### Pilotado unicamente por
+- #### Profesor: Diosdado Asumu Ndong Andeme
+- #### Aaron Mariano Minchá Minchá NFONO
+- #### Jose maría Buatiché LOLA
+- #### Diosdado Topaporiri CONFIANZA
 
 ---
 
-## 📌 Estado Actual
+## 🅰️ Estado Actual
 Actualmente se trabaja en el **Módulo de Gestión de Departamento**, que servirá como base para la expansión hacia otros módulos académicos y administrativos.
 
 ---
 
 ## 📜 Licencia
-Este proyecto es de uso **institucional** para la Universidad Afroamericana de África Central (AAUCA).  
-No se contempla distribución comercial externa.
+Este proyecto es de integra propiedad de sus ***desarrolladores*** y se planea usar como punto piloto la *Universidad Afro Americana de África Central* .
