@@ -33,7 +33,7 @@ export class fetchSemestre
             let solicitud = await fetch(`${this.url}?ruta=semestre&accion=insertarSemestre&actor=admin`, {
                 method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(objeto)
             });
-            let respuesta = await solicitud.json();
+            let respuesta = await solicitud.json(); console.log(respuesta)
             
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

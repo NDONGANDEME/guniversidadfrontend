@@ -120,6 +120,15 @@ export class u_planEstudio {
     }
 
     /**
+     * Valida que se haya seleccionado un prerrequisito
+     * @param {string} idPrerrequisito - ID del prerrequisito seleccionado
+     * @returns {boolean} - true si es válido
+     */
+    static validarPrerrequisitoSeleccionado(idPrerrequisito) {
+        return idPrerrequisito && idPrerrequisito !== null && idPrerrequisito !== "";
+    }
+
+    /**
      * COMBO BOX INTELIGENTE PARA CURSOS
      */
     static inicializarComboCursos(inputId, dropdownId, cursos, onSelect) {
@@ -355,7 +364,7 @@ export class u_planEstudio {
      */
     static agregarCampoPrerrequisito(containerId, asignaturas, idAsignaturaActual, onPrerrequisitoAgregado) {
         const container = document.getElementById(containerId);
-        if (!container) return;
+        if (!container) return null;
 
         const wrapperId = 'prerreq-' + Date.now();
         const inputId = 'comboPrerreq-' + Date.now();
@@ -385,7 +394,7 @@ export class u_planEstudio {
             asignaturas,
             idAsignaturaActual,
             (id, nombre) => {
-                if (onPrerrequisitoAgregado) onPrerrequisitoAgregado(id);
+                if (onPrerrequisitoAgregado) onPrerrequisitoAgregado(id, nombre);
             }
         );
 
@@ -436,15 +445,11 @@ export class u_planEstudio {
 
             if (semestre.asignaturas && semestre.asignaturas.length > 0) {
                 semestre.asignaturas.forEach(asig => {
-                    // Buscar prerrequisitos de esta asignatura
-                    const asignaturaCompleta = asignaturasCompletas.find(a => a.idAsignatura == asig.idAsignatura);
-                    const prerrequisitos = asignaturaCompleta?.prerrequisitos || [];
-
                     semestreInfo.asignaturas.push({
                         nombre: asig.nombreAsignatura,
                         creditos: asig.creditos,
                         modalidad: asig.modalidad,
-                        prerrequisitos: prerrequisitos.map(p => p.nombreAsignaturaRequerida || 'ID: ' + p.idAsignaturaRequerida)
+                        prerrequisitos: asig.prerrequisitos || []
                     });
                 });
             }
@@ -464,6 +469,7 @@ export class u_planEstudio {
         const usuarioActivo = JSON.parse(sessionStorage.getItem('usuarioActivo') || '{}');
         const permisos = usuarioActivo.permisos || [];
 
+        this.tengoPermiso = [];
         permisos.forEach(permiso => {
             if (permiso.tabla == 'Planestudio') this.tengoPermiso.push(permiso.nombrePermiso)
         });
@@ -487,7 +493,5 @@ export class u_planEstudio {
             const btnNuevo = document.getElementById('btnNuevoPlanEstudio');
             if (btnNuevo) btnNuevo.style.display = 'none';
         }
-
-        // Los botones de editar/eliminar en tabla se manejan individualmente al renderizar
     }
 }

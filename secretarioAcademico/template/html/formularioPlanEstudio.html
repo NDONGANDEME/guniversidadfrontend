@@ -51,7 +51,7 @@
 
                     <!--PARTE DE LA VISUALIZACION-->
                     <div class="seccionMostrar d-none" id="seccionVisualizacion">
-                        <!-- Los detalles se cargarán dinámicamente desde c_planEstudio.js -->
+                        <!-- Los detalles se cargarán dinámicamente desde u_formularioPlanEstudio.js -->
                     </div>
 
                     <!--PARTE DE LA EDICIÓN / CREACION-->
@@ -108,16 +108,18 @@
                                         <div class="row justify-content-end">
                                             <div class="col-2 filter-group">
                                                 <div class="combo-input-wrapper">
+                                                    <label for="comboCursoSemestre" class="form-label">Curso</label>
                                                     <input type="text" id="comboCursoSemestre" class="form-control" placeholder="Ej: primero" required>
                                                     <div class="dropdown-options" id="opcionesCursoSemestre"></div>
                                                     <label id="errorCursoSemestre" class="errorMensaje"></label>
                                                 </div>
                                             </div>
                                             <div class="col-2">
+                                                <label for="numeroSemestre" class="form-label">Semestre</label>
                                                 <input type="number" class="form-control" id="numeroSemestre" min="1" placeholder="Ej: 1" required>
                                                 <label id="errorNumeroSemestre" class="errorMensaje"></label>
                                             </div>
-                                            <div class="col-2 w-25 text-end">
+                                            <div class="col-2 w-25 d-flex justify-content-center align-items-center">
                                                 <button class="btn btn-success w-100" id="btnGuardarSemestre"> 
                                                     <span class="icon text-white-50"> <i class="fas fa-save"></i> </span> <span class="text"> Guardar </span>
                                                 </button>
@@ -281,7 +283,7 @@
                         </div>
 
                         <!--Parte de prerrequisitos-->
-                        <div class="contPrerrequisitos">
+                        <div class="contPrerrequisitos" id="contPrerrequisitos">
                             <div class="row">
                                 <div class="filter-group">
                                     <div class="combo-input-wrapper">

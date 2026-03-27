@@ -141,7 +141,7 @@ export class fetchCarrera
      */
     static async obtenerCarrerasPorFacultadDelBackend(idFacultad) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerCarrerasPorFacultad&actor=admin&id=${idFacultad}`);
+            let solicitud = await fetch(`${this.url}?ruta=carrera&accion=obtenerCarrerasPorFacultad&actor=admin&idFacultad=${idFacultad}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 

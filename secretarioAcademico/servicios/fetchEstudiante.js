@@ -45,7 +45,7 @@ export class fetchEstudiante
      */
     static async obtenerEstudiantesAPaginarPorFacultadDelBackend(idFacultad, pagina) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerEstudiantesAPaginarPorFacultad&actor=secretario&id=${idFacultad}&pagina=${pagina}`);
+            let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=obtenerEstudiantesAPaginarPorFacultad&actor=secretario&idFacultad=${idFacultad}&pagina=${pagina}`);
             let respuesta = await solicitud.json(); console.log(respuesta)
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -111,7 +111,6 @@ export class fetchEstudiante
      * @returns id del registro actualizado
      */
     static async actualizarEstudianteEnBDD(objeto) {
-        console.log(objeto)
         try {
             // Detectar si es FormData
             const esFormData = objeto instanceof FormData;
@@ -127,7 +126,7 @@ export class fetchEstudiante
             }
             
             let solicitud = await fetch(`${this.url}?ruta=estudiante&accion=actualizarEstudiante&actor=secretario`, options);
-            let respuesta = await solicitud.text(); console.log(respuesta)
+            let respuesta = await solicitud.json(); 
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
             else return null;

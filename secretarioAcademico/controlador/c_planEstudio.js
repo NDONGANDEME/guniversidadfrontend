@@ -33,7 +33,6 @@ export class c_planEstudio {
 
         await this.cargarDatosIniciales();
         this.inicializarEventos();
-        //this.inicializarPaginacion();
         u_planEstudio.ocultarBotonesSegunPermisos();
     }
 
@@ -101,7 +100,6 @@ export class c_planEstudio {
     static async cargarPlanesPaginados(pagina) {
         try {
             const response = await m_planEstudio.obtenerPlanesEstudiosAPaginar(pagina, this.idFacultad);
-            console.log(response)
 
             if (response.length == 0) return;
 
@@ -176,93 +174,137 @@ export class c_planEstudio {
      * Muestra los planes en la tabla
      */
     static mostrarPlanesEnTabla() {
+        const tabla = document.getElementById('tablaPlanesEstudios');
         const tbody = document.getElementById('tbodyTablaPlanesEstudios');
-        if (!tbody) return;
+        
+        if (!tbody || !tabla) return;
 
-        // Destruir DataTable si existe
-        if ($.fn.dataTable.isDataTable('#tablaPlanesEstudios')) {
-            $('#tablaPlanesEstudios').DataTable().destroy();
-        }
-
-        const puedeEditar = u_planEstudio.verificarPermiso('actualizar');
         const puedeEliminar = u_planEstudio.verificarPermiso('eliminar');
 
-        tbody.innerHTML = this.planesEstudio.map(plan => {
-            const carrera = this.carreras.find(c => c.idCarrera == plan.idCarrera);
-            const nombreCarrera = carrera ? carrera.nombreCarrera : 'N/A';
-
-            return `
-                <tr class="fila-clickeable" data-id="${plan.idPlanEstudio}">
-                    <td class="align-middle">${plan.nombre}</td>
-                    <td class="align-middle">${plan.fechaElaboracion}</td>
-                    <td class="align-middle">${plan.periodoPlanEstudio}</td>
-                    <td class="align-middle">${nombreCarrera}</td>
-                    <td class="align-middle">
-                        <span class="badge ${plan.vigente === 'Sí' ? 'bg-success' : 'bg-danger'}">
-                            ${plan.vigente}
-                        </span>
-                    </td>
-                    <td class="align-middle">
-                        <div class="d-flex justify-content-center gap-1">
-                            ${puedeEditar ? 
-                                `<button class="btn btn-sm btn-outline-info editar-plan" data-id="${plan.idPlanEstudio}" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>` : ''}
-                            ${puedeEliminar ? 
-                                `<button class="btn btn-sm btn-outline-danger eliminar-plan" data-id="${plan.idPlanEstudio}" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>` : ''}
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join('') || '<tr><td colspan="6" class="text-center">No hay planes de estudio</td></tr>';
-
-        // Inicializar DataTable (solo para búsqueda y ordenamiento)
-        $('#tablaPlanesEstudios').DataTable({
-            language: {
-                url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
-            },
-            paging: false,
-            searching: true,
-            ordering: true,
-            info: false
-        });
-
-        this.agregarEventosTabla();
-    }
-
-    /**
-     * Agrega eventos a la tabla
-     */
-    static agregarEventosTabla() {
-        // Evento para filas clickeables (visualización)
-        document.querySelectorAll('.fila-clickeable').forEach(fila => {
-            fila.addEventListener('click', (e) => {
-                // Evitar si se hizo clic en un botón
-                if (e.target.closest('button')) return;
+        // Limpiar el tbody completamente
+        tbody.innerHTML = '';
+        
+        // Agregar filas una por una
+        if (this.planesEstudio && this.planesEstudio.length > 0) {
+            this.planesEstudio.forEach(plan => {
+                const fila = document.createElement('tr');
+                fila.className = 'fila-clickeable';
+                fila.setAttribute('data-id', plan.idPlanEstudio);
                 
-                const id = fila.dataset.id;
-                window.location.href = `/guniversidadfrontend/secretarioAcademico/template/html/formularioPlanEstudio.html?modo=visualizar&id=${id}`;
+                // Nombre
+                const celdaNombre = document.createElement('td');
+                celdaNombre.className = 'align-middle';
+                celdaNombre.textContent = plan.nombre || '';
+                fila.appendChild(celdaNombre);
+                
+                // Fecha
+                const celdaFecha = document.createElement('td');
+                celdaFecha.className = 'align-middle';
+                celdaFecha.textContent = plan.fechaElaboracion || '';
+                fila.appendChild(celdaFecha);
+                
+                // Período
+                const celdaPeriodo = document.createElement('td');
+                celdaPeriodo.className = 'align-middle';
+                celdaPeriodo.textContent = plan.periodoPlanEstudio || '';
+                fila.appendChild(celdaPeriodo);
+                
+                // Carrera
+                const celdaCarrera = document.createElement('td');
+                celdaCarrera.className = 'align-middle';
+                celdaCarrera.textContent = plan.nombreCarrera;
+                fila.appendChild(celdaCarrera);
+                
+                // Vigente
+                const celdaVigente = document.createElement('td');
+                celdaVigente.className = 'align-middle';
+                const badge = document.createElement('span');
+                badge.className = `badge ${plan.vigente === 'Sí' ? 'bg-success' : 'bg-danger'}`;
+                badge.textContent = plan.vigente || 'No';
+                celdaVigente.appendChild(badge);
+                fila.appendChild(celdaVigente);
+                
+                // Acciones (solo visualizar y eliminar)
+                const celdaAcciones = document.createElement('td');
+                celdaAcciones.className = 'align-middle';
+                const divBotones = document.createElement('div');
+                divBotones.className = 'd-flex justify-content-center gap-1';
+                
+                // Botón Visualizar
+                const btnVisualizar = document.createElement('button');
+                btnVisualizar.className = 'btn btn-sm btn-outline-info visualizar-plan';
+                btnVisualizar.setAttribute('data-id', plan.idPlanEstudio);
+                btnVisualizar.title = 'Visualizar';
+                btnVisualizar.innerHTML = '<i class="fas fa-eye"></i>';
+                btnVisualizar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    window.location.href = `/guniversidadfrontend/secretarioAcademico/template/html/formularioPlanEstudio.html?modo=visualizar&id=${plan.idPlanEstudio}`;
+                });
+                divBotones.appendChild(btnVisualizar);
+                
+                // Botón Eliminar
+                if (puedeEliminar) {
+                    const btnEliminar = document.createElement('button');
+                    btnEliminar.className = 'btn btn-sm btn-outline-danger eliminar-plan';
+                    btnEliminar.setAttribute('data-id', plan.idPlanEstudio);
+                    btnEliminar.title = 'Eliminar';
+                    btnEliminar.innerHTML = '<i class="fas fa-trash"></i>';
+                    btnEliminar.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.eliminarPlan(plan.idPlanEstudio);
+                    });
+                    divBotones.appendChild(btnEliminar);
+                }
+                
+                celdaAcciones.appendChild(divBotones);
+                fila.appendChild(celdaAcciones);
+                
+                // Evento de clic en la fila (visualizar)
+                fila.addEventListener('click', (e) => {
+                    if (e.target.closest('button')) return;
+                    window.location.href = `/guniversidadfrontend/secretarioAcademico/template/html/formularioPlanEstudio.html?modo=visualizar&id=${plan.idPlanEstudio}`;
+                });
+                
+                tbody.appendChild(fila);
             });
-        });
+        } else {
+            const filaVacia = document.createElement('tr');
+            const celdaVacia = document.createElement('td');
+            celdaVacia.colSpan = 6;
+            celdaVacia.className = 'text-center';
+            celdaVacia.textContent = 'No hay planes de estudio';
+            filaVacia.appendChild(celdaVacia);
+            tbody.appendChild(filaVacia);
+        }
 
-        // Eventos para botones de editar
-        document.querySelectorAll('.editar-plan').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = btn.dataset.id;
-                window.location.href = `/guniversidadfrontend/secretarioAcademico/template/html/formularioPlanEstudio.html?modo=editar&id=${id}`;
-            });
-        });
+        // Destruir DataTable existente de manera segura
+        if ($.fn.DataTable.isDataTable('#tablaPlanesEstudios')) {
+            const table = $('#tablaPlanesEstudios').DataTable();
+            table.destroy();
+            $('#tablaPlanesEstudios').removeClass('dataTable');
+        }
 
-        // Eventos para botones de eliminar
-        document.querySelectorAll('.eliminar-plan').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.eliminarPlan(btn.dataset.id);
-            });
-        });
+        // Esperar a que el DOM se actualice antes de reinicializar
+        setTimeout(() => {
+            try {
+                $('#tablaPlanesEstudios').DataTable({
+                    language: {
+                        url: '/guniversidadfrontend/public/nomodules/dataTable/dataTable_es-ES.json'
+                    },
+                    paging: false,
+                    searching: true,
+                    ordering: true,
+                    info: false,
+                    destroy: true,
+                    retrieve: true,
+                    drawCallback: function() {
+                        $(this).removeClass('dataTable');
+                    }
+                });
+            } catch (error) {
+                console.error('Error inicializando DataTable:', error);
+            }
+        }, 50);
     }
 
     /**

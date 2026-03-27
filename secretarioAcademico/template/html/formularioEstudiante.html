@@ -175,11 +175,11 @@
                                         </button>
                                     </div>
 
-                                    <div>
+                                    <div id="contenedorFamiliares">
                                         <div class="row mt-1">
                                             <div class="col-4">
                                                 <label for="nombreEstudianteFamiliar" class="form-label">Nombre</label>
-                                                <input type="text" class="form-control" id="nombreEstudianteFamiliar" placeholder="Ej: Martín" required>
+                                                <input type="text" class="form-control familiar-nombre" id="nombreEstudianteFamiliar" placeholder="Ej: Martín" required>
                                                 <label id="errorNombreEstudianteFamiliar" class="errorMensaje"></label>
                                             </div>
                                             <div class="col-4">
@@ -276,50 +276,52 @@
                                             </button>
                                         </div>
 
-                                        <div class="row">
-                                            <div class="filter-group col">
-                                                <div class="combo-input-wrapper">
-                                                    <label for="comboNombreInstitucionBeca" class="form-label">Nombre de la institución</label>
-                                                    <input type="text" id="comboNombreInstitucionBeca" class="form-control" placeholder="AAUCA" required>
-                                                    <div class="dropdown-options" id="opcionesNombreInstitucionBeca"> </div>
-                                                    <label id="errorNombreInstitucionBeca" class="errorMensaje"></label> 
+                                        <div id="contenedorBecas">
+                                            <div class="row">
+                                                <div class="filter-group col">
+                                                    <div class="combo-input-wrapper">
+                                                        <label for="comboNombreInstitucionBeca" class="form-label">Nombre de la institución</label>
+                                                        <input type="text" id="comboNombreInstitucionBeca" class="form-control" placeholder="AAUCA" required>
+                                                        <div class="dropdown-options" id="opcionesNombreInstitucionBeca"> </div>
+                                                        <label id="errorNombreInstitucionBeca" class="errorMensaje"></label> 
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <label for="tiposBeca" class="form-label">Tipo</label>
+                                                    <select class="form-select" id="tiposBeca">
+                                                        <option value="Ninguno">Seleccione...</option>
+                                                        <option value="Externa">Externa</option>
+                                                        <option value="Interna">Interna</option>
+                                                    </select>
+                                                    <label id="errorTiposBeca" class="errorMensaje"></label>
+                                                </div>
+                                                <div class="col-3">
+                                                    <label for="estadosBeca" class="form-label">Estado</label>
+                                                    <select class="form-select" id="estadosBeca">
+                                                        <option value="Ninguno">Seleccione...</option>
+                                                        <option value="Vigente">Vigente</option>
+                                                        <option value="No vigente">No vigente</option>
+                                                    </select>
+                                                    <label id="errorEstadosBeca" class="errorMensaje"></label>
                                                 </div>
                                             </div>
-                                            <div class="col-3">
-                                                <label for="tiposBeca" class="form-label">Tipo</label>
-                                                <select class="form-select" id="tiposBeca">
-                                                    <option value="Ninguno">Seleccione...</option>
-                                                    <option value="Externa">Externa</option>
-                                                    <option value="Interna">Interna</option>
-                                                </select>
-                                                <label id="errorTiposBeca" class="errorMensaje"></label>
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="estadosBeca" class="form-label">Estado</label>
-                                                <select class="form-select" id="estadosBeca">
-                                                    <option value="Ninguno">Seleccione...</option>
-                                                    <option value="Vigente">Vigente</option>
-                                                    <option value="No vigente">No vigente</option>
-                                                </select>
-                                                <label id="errorEstadosBeca" class="errorMensaje"></label>
-                                            </div>
-                                        </div>
 
-                                        <div class="row mt-1">
-                                            <div class="col-3">
-                                                <label for="fechaInicioBeca" class="form-label">Fecha de inicio</label>
-                                                <input type="date" class="form-control" id="fechaInicioBeca" required>
-                                                <label id="errorFechaInicioBeca" class="errorMensaje"></label>
-                                            </div>
-                                            <div class="col-3">
-                                                <label for="fechaFinBeca" class="form-label">Fecha de fin</label>
-                                                <input type="date" class="form-control" id="fechaFinBeca" required>
-                                                <label id="errorFechaFinBeca" class="errorMensaje"></label>
-                                            </div>
-                                            <div class="col">
-                                                <label for="observacionesBeca" class="form-label">Observaciones</label>
-                                                <textarea id="observacionesBeca" class="form-control" placeholder="Ej: Describa las observaciones" required></textarea>
-                                                <label id="errorObservacionesBeca" class="errorMensaje"></label>
+                                            <div class="row mt-1">
+                                                <div class="col-3">
+                                                    <label for="fechaInicioBeca" class="form-label">Fecha de inicio</label>
+                                                    <input type="date" class="form-control" id="fechaInicioBeca" required>
+                                                    <label id="errorFechaInicioBeca" class="errorMensaje"></label>
+                                                </div>
+                                                <div class="col-3">
+                                                    <label for="fechaFinBeca" class="form-label">Fecha de fin</label>
+                                                    <input type="date" class="form-control" id="fechaFinBeca" required>
+                                                    <label id="errorFechaFinBeca" class="errorMensaje"></label>
+                                                </div>
+                                                <div class="col">
+                                                    <label for="observacionesBeca" class="form-label">Observaciones</label>
+                                                    <textarea id="observacionesBeca" class="form-control" placeholder="Ej: Describa las observaciones" required></textarea>
+                                                    <label id="errorObservacionesBeca" class="errorMensaje"></label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

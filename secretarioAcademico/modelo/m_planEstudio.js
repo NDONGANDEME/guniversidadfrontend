@@ -42,10 +42,9 @@ export class m_planEstudio {
  * CLASE CURSO
  */
 export class m_curso {
-    constructor(idCurso, nombreCurso, nivel) {
+    constructor(idCurso, nombreCurso) {
         this.idCurso = idCurso;
         this.nombreCurso = nombreCurso;
-        this.nivel = nivel;
     }
 
     static async obtenerCursos() {

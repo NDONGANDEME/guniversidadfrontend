@@ -31,6 +31,9 @@ export class c_formularioPlanEstudio {
     
     // ID temporal para nuevos semestres
     static tempIdCounter = 0;
+    
+    // Almacenar asignaturas y sus prerrequisitos para guardar
+    static asignaturasPendientesGuardar = [];
 
     /**
      * INICIALIZACIÓN
@@ -155,7 +158,7 @@ export class c_formularioPlanEstudio {
             if (this.modo === 'visualizar') {
                 const carrera = this.carreras.find(c => c.idCarrera == this.planActual.idCarrera);
                 u_formularioPlanEstudio.renderizarVistaVisualizacion(
-                    { ...this.planActual, nombreCarrera: carrera?.nombreCarrera },
+                    { ...this.planActual, nombreCarrera: carrera?.nombreCarrera, idPlanEstudio: this.planActual.idPlanEstudio },
                     this.semestresPlan,
                     this.asignaturasDisponibles
                 );
@@ -231,9 +234,8 @@ export class c_formularioPlanEstudio {
      * Obtiene el nombre del curso asociado a un semestre
      */
     static obtenerNombreCursoPorSemestre(semestre) {
-        // Buscar en cursos si hay relación (esto dependerá de tu estructura de datos)
-        // Por ahora, devolvemos un nombre genérico
-        const nombres = ['Primero', 'Segundo', 'Tercero', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'];
+        // const nombres = ['Primero', 'Segundo', 'Tercero', 'Cuarto', 'Quinto', 'Sexto', 'Séptimo', 'Octavo', 'Noveno', 'Décimo'];
+        const nombres = [];
         return nombres[semestre.numeroSemestre - 1] || `Semestre ${semestre.numeroSemestre}`;
     }
 
@@ -266,15 +268,42 @@ export class c_formularioPlanEstudio {
                 puedeEditar,
                 () => this.editarSemestre(semestre),
                 () => this.eliminarSemestre(semestre),
-                () => {} // El evento se maneja por separado
+                () => {}
             );
         });
 
         container.innerHTML = html;
 
+        // Agregar eventos a los botones de eliminar asignatura
+        if (puedeEditar) {
+            document.querySelectorAll('.eliminar-asignatura').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const semestreCard = btn.closest('.semestre-horizontal');
+                    const semestreId = semestreCard?.dataset.id;
+                    const asignaturaId = btn.dataset.asignaturaId;
+                    if (semestreId && asignaturaId) {
+                        this.eliminarAsignatura(semestreId, asignaturaId);
+                    }
+                });
+            });
+        }
+
         // Actualizar estadísticas
         u_formularioPlanEstudio.actualizarEstadisticas(this.semestresPlan);
         u_formularioPlanEstudio.actualizarMallaCurricular(this.semestresPlan, this.asignaturasDisponibles);
+    }
+
+    /**
+     * Elimina una asignatura de un semestre
+     */
+    static eliminarAsignatura(semestreId, asignaturaId) {
+        const semestre = this.semestresPlan.find(s => s.idSemestre == semestreId || s.tempId == semestreId);
+        if (semestre) {
+            semestre.asignaturas = semestre.asignaturas.filter(a => a.idAsignatura != asignaturaId);
+            this.renderizarSemestres();
+            Alerta.notificarExito('Asignatura eliminada', 1500);
+        }
     }
 
     /**
@@ -392,7 +421,10 @@ export class c_formularioPlanEstudio {
      */
     static inicializarEventos() {
         // Botón guardar semestre
-        document.getElementById('btnGuardarSemestre')?.addEventListener('click', () => this.guardarSemestre());
+        document.getElementById('btnGuardarSemestre')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.guardarSemestre();
+        });
 
         // Botón guardar plan
         document.getElementById('btnGuardarPlanEstudio')?.addEventListener('click', () => this.guardarPlan());
@@ -402,11 +434,19 @@ export class c_formularioPlanEstudio {
             window.history.back();
         });
 
+        // Botón editar plan (desde visualización)
+        const btnEditarPlan = document.getElementById('btnEditarPlan');
+        if (btnEditarPlan) {
+            btnEditarPlan.addEventListener('click', () => {
+                window.location.href = `/guniversidadfrontend/secretarioAcademico/template/html/formularioPlanEstudio.html?modo=editar&id=${this.idPlan}`;
+            });
+        }
+
         // Eventos del modal de asignatura
         this.inicializarEventosModalAsignatura();
 
         // Evento para agregar prerrequisito
-        document.getElementById('btnNuevaAsignatura')?.addEventListener('click', (e) => {
+        document.getElementById('btnAñadirPrerrequisito')?.addEventListener('click', (e) => {
             e.preventDefault();
             this.agregarCampoPrerrequisito();
         });
@@ -422,18 +462,27 @@ export class c_formularioPlanEstudio {
         // Cuando se abre el modal
         $('#modalNuevaAsignatura').on('show.bs.modal', (event) => {
             const button = event.relatedTarget;
-            const semestreId = button.getAttribute('data-semestre-id');
+            const semestreId = button?.getAttribute('data-semestre-id');
+            const semestreNumero = button?.getAttribute('data-semestre-numero');
             
             // Guardar el semestre actual en el modal
-            document.getElementById('modalNuevaAsignatura').dataset.semestreId = semestreId;
+            const modal = document.getElementById('modalNuevaAsignatura');
+            if (modal) {
+                modal.dataset.semestreId = semestreId;
+                modal.dataset.semestreNumero = semestreNumero;
+            }
             
             // Limpiar campos
-            document.getElementById('comboAsignaturasSemestre').value = '';
-            document.getElementById('creditosSemestre').value = '';
-            document.getElementById('modalidadSemestre').value = '';
+            const comboAsignaturas = document.getElementById('comboAsignaturasSemestre');
+            if (comboAsignaturas) comboAsignaturas.value = '';
+            const creditos = document.getElementById('creditosSemestre');
+            if (creditos) creditos.value = '';
+            const modalidad = document.getElementById('modalidadSemestre');
+            if (modalidad) modalidad.value = '';
             
             // Limpiar prerrequisitos
-            if (document.getElementById('contPrerrequisitos')) document.getElementById('contPrerrequisitos').innerHTML = '';
+            const contPrerrequisitos = document.getElementById('contPrerrequisitos');
+            if (contPrerrequisitos) contPrerrequisitos.innerHTML = '';
             this.combosPrerrequisitos = [];
             
             // Inicializar combo de asignaturas
@@ -450,10 +499,9 @@ export class c_formularioPlanEstudio {
             'opcionesAsignaturasSemestre',
             this.asignaturasDisponibles,
             (id, nombre) => {
-                console.log('Asignatura seleccionada:', id, nombre);
-                
-                // Al seleccionar una asignatura, limpiar prerrequisitos y permitir agregar nuevos
-                if (document.getElementById('contPrerrequisitos')) document.getElementById('contPrerrequisitos').innerHTML = '';
+                // Al seleccionar una asignatura, limpiar prerrequisitos
+                const contPrerrequisitos = document.getElementById('contPrerrequisitos');
+                if (contPrerrequisitos) contPrerrequisitos.innerHTML = '';
                 this.combosPrerrequisitos = [];
             }
         );
@@ -474,8 +522,8 @@ export class c_formularioPlanEstudio {
             'contPrerrequisitos',
             this.asignaturasDisponibles,
             idAsignatura,
-            (idPrerreq) => {
-                console.log('Prerrequisito agregado:', idPrerreq);
+            (id, nombre) => {
+                console.log('Prerrequisito seleccionado:', id, nombre);
             }
         );
 
@@ -485,7 +533,7 @@ export class c_formularioPlanEstudio {
     }
 
     /**
-     * Guarda un semestre
+     * Guarda un semestre (guarda curso y semestre en BD)
      */
     static async guardarSemestre() {
         const nombreCurso = document.getElementById('comboCursoSemestre').value;
@@ -506,52 +554,77 @@ export class c_formularioPlanEstudio {
             return;
         }
 
-        // Buscar si el semestre ya existe en la BD
-        let semestreExistente = this.semestresDisponibles.find(s => s.numeroSemestre == numeroSemestre);
+        try {
+            // 1. GUARDAR CURSO
+            let cursoExistente = this.cursos.find(c => c.nombreCurso.toLowerCase() === nombreCurso.toLowerCase());
+            let idCurso = null;
 
-        // Si no existe, crearlo
-        if (!semestreExistente) {
-            try {
-                semestreExistente = await m_semestre.insertarSemestre({ numeroSemestre });
-                this.semestresDisponibles.push(semestreExistente);
-            } catch (error) {
-                console.error('Error creando semestre:', error);
-                Alerta.error('Error', 'No se pudo crear el semestre');
+            if (!cursoExistente) {
+                // Crear nuevo curso
+                const nuevoCurso = await m_curso.insertarCurso({ nombreCurso: nombreCurso.trim() });
+                idCurso = nuevoCurso.idCurso;
+                // Agregar a la lista local de cursos
+                this.cursos.push(nuevoCurso);
+                // Actualizar combo de cursos
+                this.inicializarComboCursos();
+            } else {
+                idCurso = cursoExistente.idCurso;
+            }
+
+            // 2. GUARDAR SEMESTRE
+            let semestreExistente = this.semestresDisponibles.find(s => s.numeroSemestre == numeroSemestre);
+            let idSemestre = null;
+
+            if (!semestreExistente) {
+                // determinar si es par o impar
+                let tipoSemestre = '';
+                if (parseInt(numeroSemestre)%2==0) tipoSemestre = 'par';
+                else tipoSemestre = 'impar';
+
+                // Crear nuevo semestre
+                const nuevoSemestre = await m_semestre.insertarSemestre({ numeroSemestre: parseInt(numeroSemestre), tipoSemestre: tipoSemestre, idCurso: idCurso }); console.log(nuevoSemestre)
+                idSemestre = nuevoSemestre.id;
+                this.semestresDisponibles.push(nuevoSemestre);
+            } else {
+                idSemestre = semestreExistente.idSemestre;
+            }
+
+            // 3. VERIFICAR QUE NO EXISTA DUPLICADO EN EL PLAN ACTUAL
+            const semestreExistenteEnPlan = this.semestresPlan.find(s => s.numeroSemestre == numeroSemestre);
+            if (semestreExistenteEnPlan) {
+                Alerta.notificarAdvertencia('Ya existe un semestre con ese número en este plan', 2000);
                 return;
             }
+
+            // 4. AGREGAR SEMESTRE AL PLAN CON SU CURSO ASOCIADO
+            this.semestresPlan.push({
+                idSemestre: idSemestre,
+                numeroSemestre: parseInt(numeroSemestre),
+                nombreCurso: nombreCurso,
+                idCurso: idCurso, // Guardar también el ID del curso
+                asignaturas: []
+            });
+
+            // Ordenar semestres
+            this.semestresPlan.sort((a, b) => a.numeroSemestre - b.numeroSemestre);
+
+            // Renderizar
+            this.renderizarSemestres();
+
+            // Limpiar campos
+            document.getElementById('comboCursoSemestre').value = '';
+            document.getElementById('numeroSemestre').value = '';
+            
+            if (this.comboCursosControl) {
+                this.comboCursosControl.setSelected(null, '');
+            }
+
+            Alerta.notificarExito('Semestre agregado correctamente', 1500);
+
+        } catch (error) {
+            console.error('Error guardando semestre:', error);
+            Alerta.error('Error', 'No se pudo guardar el semestre');
         }
-
-        // Verificar si el semestre ya está en el plan
-        //const semestreEnPlan = this.semestresPlan.find(s => s.idSemestre == semestreExistente.idSemestre);
-        
-        /*if (semestreEnPlan) {
-            Alerta.notificarAdvertencia('Este semestre ya está agregado al plan', 1500);
-            return;
-        }*/
-
-        // Agregar semestre al plan
-        this.semestresPlan.push({
-            idSemestre: 1, //semestreExistente.idSemestre || 1,
-            numeroSemestre: parseInt(numeroSemestre),
-            nombreCurso,
-            asignaturas: []
-        });
-
-        // Ordenar semestres
-        this.semestresPlan.sort((a, b) => a.numeroSemestre - b.numeroSemestre);
-
-        // Renderizar
-        this.renderizarSemestres();
-
-        // Limpiar campos
-        document.getElementById('comboCursoSemestre').value = '';
-        document.getElementById('numeroSemestre').value = '';
-        
-        if (this.comboCursosControl) {
-            this.comboCursosControl.setSelected(null, '');
-        }
-
-        Alerta.notificarExito('Semestre agregado correctamente', 1500);
     }
 
     /**
@@ -565,8 +638,6 @@ export class c_formularioPlanEstudio {
 
         if (!confirmacion) return;
 
-        // Si el semestre tiene asignaturas guardadas en BD, habría que eliminarlas
-        // Por ahora, solo eliminamos del estado local
         this.semestresPlan = this.semestresPlan.filter(s => s.idSemestre != semestre.idSemestre);
         
         this.renderizarSemestres();
@@ -577,7 +648,6 @@ export class c_formularioPlanEstudio {
      * Edita un semestre
      */
     static editarSemestre(semestre) {
-        // Implementar edición de semestre si es necesario
         Alerta.informacion('Editar semestre', 'Funcionalidad próximamente');
     }
 
@@ -585,7 +655,8 @@ export class c_formularioPlanEstudio {
      * Guarda una asignatura en el semestre actual
      */
     static async guardarAsignatura() {
-        const semestreId = document.getElementById('modalNuevaAsignatura').dataset.semestreId;
+        const modal = document.getElementById('modalNuevaAsignatura');
+        const semestreId = modal?.dataset.semestreId;
         const nombreAsignatura = document.getElementById('comboAsignaturasSemestre').value;
         const creditos = document.getElementById('creditosSemestre').value;
         const modalidad = document.getElementById('modalidadSemestre').value;
@@ -619,15 +690,39 @@ export class c_formularioPlanEstudio {
         // Obtener prerrequisitos seleccionados
         const prerrequisitosIds = this.combosPrerrequisitos
             .map(combo => combo.getSelectedId())
-            .filter(id => id != null);
+            .filter(id => id != null && id !== "");
+
+        // Validar que los prerrequisitos seleccionados sean válidos
+        for (const id of prerrequisitosIds) {
+            if (!u_planEstudio.validarPrerrequisitoSeleccionado(id)) {
+                Alerta.notificarAdvertencia('Seleccione un prerrequisito válido', 1500);
+                return;
+            }
+        }
 
         // Encontrar el semestre
-        const semestre = this.semestresPlan.find(s => s.idSemestre == semestreId || s.tempId == semestreId);
+        const semestre = this.semestresPlan.find(s => s.idSemestre == semestreId);
         
         if (!semestre) {
             Alerta.error('Error', 'No se encontró el semestre');
             return;
         }
+
+        // Verificar que la asignatura no esté ya en el semestre
+        const asignaturaExistente = semestre.asignaturas.find(a => a.idAsignatura == asignatura.idAsignatura);
+        if (asignaturaExistente) {
+            Alerta.notificarAdvertencia('Esta asignatura ya está agregada en este semestre', 2000);
+            return;
+        }
+
+        // Buscar nombres de prerrequisitos
+        const prerrequisitosNombres = [];
+        prerrequisitosIds.forEach(id => {
+            const asigReq = this.asignaturasDisponibles.find(a => a.idAsignatura == id);
+            if (asigReq) {
+                prerrequisitosNombres.push(asigReq.nombreAsignatura);
+            }
+        });
 
         // Crear objeto de asignatura para el semestre
         const nuevaAsignatura = {
@@ -635,16 +730,9 @@ export class c_formularioPlanEstudio {
             nombreAsignatura: asignatura.nombreAsignatura,
             creditos: parseInt(creditos),
             modalidad,
-            prerrequisitos: [] // Se llenará después
+            prerrequisitos: prerrequisitosNombres,
+            prerrequisitosIds: prerrequisitosIds // Guardar IDs para luego insertar en BD
         };
-
-        // Buscar nombres de prerrequisitos
-        prerrequisitosIds.forEach(id => {
-            const asigReq = this.asignaturasDisponibles.find(a => a.idAsignatura == id);
-            if (asigReq) {
-                nuevaAsignatura.prerrequisitos.push(asigReq.nombreAsignatura);
-            }
-        });
 
         // Agregar al semestre
         semestre.asignaturas.push(nuevaAsignatura);
@@ -658,9 +746,6 @@ export class c_formularioPlanEstudio {
         Alerta.notificarExito('Asignatura agregada correctamente', 1500);
     }
 
-    /**
-     * Guarda el plan de estudio completo
-     */
     static async guardarPlan() {
         // Validar datos generales
         const nombre = document.getElementById('nombrePlanEstudio').value;
@@ -725,24 +810,59 @@ export class c_formularioPlanEstudio {
                 idPlanGuardado = nuevoPlan.idPlanEstudio;
             }
 
-            // Aquí iría la lógica para guardar las relaciones plan-semestre-asignatura
-            // y los prerrequisitos. Por ahora mostramos éxito.
+            // Guardar relaciones plan-semestre-asignatura y prerrequisitos
+            for (const semestre of this.semestresPlan) {
+                for (const asignatura of semestre.asignaturas) {
+                    // Guardar relación plan-semestre-asignatura
+                    await m_PlanSemestreAsignatura.insertarPlanSemestreAsignatura({
+                        idPlanEstudio: idPlanGuardado,
+                        idSemestre: semestre.idSemestre,
+                        idAsignatura: asignatura.idAsignatura,
+                        creditos: asignatura.creditos,
+                        modalidad: asignatura.modalidad
+                    });
+
+                    // Guardar prerrequisitos de esta asignatura
+                    if (asignatura.prerrequisitosIds && asignatura.prerrequisitosIds.length > 0) {
+                        for (const idPrerreq of asignatura.prerrequisitosIds) {
+                            await m_prerequisito.insertarPrerequisito({
+                                idAsignatura: asignatura.idAsignatura,
+                                idAsignaturaRequerida: idPrerreq
+                            });
+                        }
+                    }
+                }
+            }
 
             Alerta.notificarExito(
                 this.modo === 'editar' ? 'Plan actualizado correctamente' : 'Plan guardado correctamente',
-                2000
+                1500
             );
 
-            // Redirigir a la lista
-            setTimeout(() => {
-                window.location.href = '/guniversidadfrontend/secretarioAcademico/template/html/planEstudio.html';
-            }, 2000);
+            if (this.modo === 'editar') {
+                // Volver a visualización después de editar
+                setTimeout(async () => {
+                    this.modo = 'visualizar';
+                    u_formularioPlanEstudio.configurarInterfazPorModo('visualizar');
+                    
+                    // Recargar datos del plan actualizado
+                    await this.cargarPlan();
+                    
+                    Alerta.notificarExito('Cambios guardados', 1000);
+                }, 1500);
+            } else {
+                // Si es creación, redirigir a la lista
+                setTimeout(() => {
+                    window.location.href = '/guniversidadfrontend/secretarioAcademico/template/html/planEstudio.html';
+                }, 2000);
+            }
 
         } catch (error) {
             console.error('Error guardando plan:', error);
             Alerta.error('Error', 'No se pudo guardar el plan de estudio');
         }
     }
+
 }
 
 // ========== INICIALIZAR ==========

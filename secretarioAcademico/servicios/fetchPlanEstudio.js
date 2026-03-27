@@ -11,7 +11,7 @@ export class fetchPlanEstudio
      */
     static async obtenerPlanesEstudiosPorFacultadDelBackend(idFacultad) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=planestudio&accion=obtenerPlanesEstudiosPorFacultad&actor=secretario&id=${idFacultad}`);
+            let solicitud = await fetch(`${this.url}?ruta=planestudio&accion=obtenerPlanesEstudiosPorFacultad&actor=secretario&idFacultad=${idFacultad}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado;
@@ -33,7 +33,7 @@ export class fetchPlanEstudio
      */
     static async obtenerPlanesEstudiosAPaginarPorFacultadDelBackend(pagina, idFacultad) {
         try {
-            let solicitud = await fetch(`${this.url}?ruta=planestudio&accion=obtenerPlanesEstudiosAPaginarPorFacultad&actor=secretario&pagina=${pagina}&id=${idFacultad}`);
+            let solicitud = await fetch(`${this.url}?ruta=planestudio&accion=obtenerPlanesEstudiosAPaginarPorFacultad&actor=secretario&pagina=${pagina}&idFacultad=${idFacultad}`);
             let respuesta = await solicitud.json();
 
             if(respuesta.estado == 'exito') return respuesta.resultado; 
