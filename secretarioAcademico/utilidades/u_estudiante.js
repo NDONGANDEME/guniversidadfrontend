@@ -616,6 +616,7 @@ export class u_estudiante {
      * VALIDAR BLOQUE DE FAMILIAR
      */
     static validarBloqueFamiliar(bloque, index) {
+        console.log('estoy validando familiar')
         const nombre = bloque.querySelector('.familiar-nombre')?.value || '';
         const apellidos = bloque.querySelector('.familiar-apellidos')?.value || '';
         const dip = bloque.querySelector('.familiar-dip')?.value || '';
@@ -715,21 +716,21 @@ static crearBloqueFamiliar(index, datos = null) {
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">Nombre</label>
                     <input type="text" class="form-control form-control-sm familiar-nombre" 
-                           name="familiar_nombre[]" value="${this.escapeHTML(nombre)}" 
+                           name="familiar_nombre[]" value="${nombre}" 
                            placeholder="Ej: Martín" required>
                     <label class="errorMensaje error-familiar-nombre-${index}"></label>
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">Apellidos</label>
                     <input type="text" class="form-control form-control-sm familiar-apellidos" 
-                           name="familiar_apellidos[]" value="${this.escapeHTML(apellidos)}" 
+                           name="familiar_apellidos[]" value="${apellidos}" 
                            placeholder="Ej: Lola" required>
                     <label class="errorMensaje error-familiar-apellidos-${index}"></label>
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">DIP</label>
                     <input type="text" class="form-control form-control-sm familiar-dip" 
-                           name="familiar_dip[]" value="${this.escapeHTML(dip)}" 
+                           name="familiar_dip[]" value="${dip}" 
                            placeholder="Ej: 000 000 000">
                     <label class="errorMensaje error-familiar-dip-${index}"></label>
                 </div>
@@ -739,21 +740,21 @@ static crearBloqueFamiliar(index, datos = null) {
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">Dirección</label>
                     <input type="text" class="form-control form-control-sm familiar-direccion" 
-                           name="familiar_direccion[]" value="${this.escapeHTML(direccion)}" 
+                           name="familiar_direccion[]" value="${direccion}" 
                            placeholder="Ej: Avenida las Palmas">
                     <label class="errorMensaje error-familiar-direccion-${index}"></label>
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">Correo</label>
                     <input type="email" class="form-control form-control-sm familiar-correo" 
-                           name="familiar_correo[]" value="${this.escapeHTML(correo)}" 
+                           name="familiar_correo[]" value="${correo}" 
                            placeholder="Ej: familiar@email.com">
                     <label class="errorMensaje error-familiar-correo-${index}"></label>
                 </div>
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">Teléfono</label>
                     <input type="tel" class="form-control form-control-sm familiar-telefono" 
-                           name="familiar_telefono[]" value="${this.escapeHTML(telefono)}" 
+                           name="familiar_telefono[]" value="${telefono}" 
                            placeholder="Ej: +240 222 123 456">
                     <label class="errorMensaje error-familiar-telefono-${index}"></label>
                 </div>
@@ -763,7 +764,7 @@ static crearBloqueFamiliar(index, datos = null) {
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">Parentezco</label>
                     <input type="text" class="form-control form-control-sm familiar-parentesco" 
-                           name="familiar_parentesco[]" value="${this.escapeHTML(parentesco)}" 
+                           name="familiar_parentesco[]" value="${parentesco}" 
                            placeholder="Ej: Padre" required>
                     <label class="errorMensaje error-familiar-parentesco-${index}"></label>
                 </div>
@@ -812,7 +813,7 @@ static crearBloqueBeca(index, datos = null) {
                 <div class="col-md-6 mb-2">
                     <label class="form-label small">Nombre de la institución</label>
                     <input type="text" class="form-control form-control-sm beca-institucion" 
-                           name="beca_institucion[]" value="${this.escapeHTML(institucion)}" 
+                           name="beca_institucion[]" value="${institucion}" 
                            placeholder="Ej: AAUCA" required>
                     <label class="errorMensaje error-beca-institucion-${index}"></label>
                 </div>
@@ -853,7 +854,7 @@ static crearBloqueBeca(index, datos = null) {
                     <label class="form-label small">Observaciones</label>
                     <textarea class="form-control form-control-sm beca-observaciones" 
                               name="beca_observaciones[]" rows="2" 
-                              placeholder="Ej: Describa las observaciones">${this.escapeHTML(observaciones)}</textarea>
+                              placeholder="Ej: Describa las observaciones">${observaciones}</textarea>
                     <label class="errorMensaje error-beca-observaciones-${index}"></label>
                 </div>
             </div>

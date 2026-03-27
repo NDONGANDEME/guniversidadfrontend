@@ -47,7 +47,7 @@ export class u_utiles
             
             if(document.querySelector('#administrador')) u_utiles.botonesNavegacionAdministrador(); 
             if(document.querySelector('#secretarioAcademico')) u_utiles.botonesNavegacionSecretario();
-            if(document.querySelector('#comprobante')) u_utiles.botonesNavegacionComprobante();
+            //if(document.querySelector('#comprobante')) u_utiles.botonesNavegacionComprobante();
             if(document.querySelector('#profesorPanel')) u_utiles.botonesNavegacionProfesor();
         } catch(error) {
             Alerta.error('Error', `Fallo al hacer fetch para cargar los archivos de importacion, estoy en u_utiles: ${error}`);

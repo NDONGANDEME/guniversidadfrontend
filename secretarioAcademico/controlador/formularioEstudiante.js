@@ -6,10 +6,10 @@ import { m_estudiante, m_familiar, m_beca, m_estudianteBeca } from "../modelo/m_
 import { m_sesion } from "../../public/modelo/m_sesion.js";
 import { m_matricula, m_pago } from "../modelo/m_matricula.js";
 import { m_asignatura } from "../../admin/modelo/m_academico.js";
-import { u_formularioEstudiante } from "../utilidades/u_formularioPlanEstudio.js";
 import { u_usuario } from "../../admin/utilidades/u_usuario.js";
 import { m_usuario } from "../../public/modelo/m_usuario.js";
 import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
+import { u_formularioEstudiante } from "../utilidades/u_formularioEstudiante.js";
 
 /**
  * Controlador para el formulario de estudiantes
@@ -543,47 +543,64 @@ export class c_formularioEstudiante {
         contenedor.innerHTML = html;
     }
 
-    /**
-     * LLENAR FORMULARIO DE FAMILIARES
-     */
-    static llenarFormularioFamiliares() {
-        const container = document.getElementById('contenedorFamiliares');
-        if (!container) return;
-        
-        if (!this.datosFamiliares || this.datosFamiliares.length === 0) {
-            container.innerHTML = u_estudiante.crearBloqueFamiliar(0);
-        } else {
-            let html = '';
-            this.datosFamiliares.forEach((familiar, index) => {
-                html += u_estudiante.crearBloqueFamiliar(index, familiar);
-            });
-            container.innerHTML = html;
-        }
-        
-        u_formularioEstudiante.configurarEventosEliminarFamiliar();
-    }
+// En u_formularioEstudiante.js - MODIFICAR llenarFormularioFamiliares
 
-    /**
-     * LLENAR FORMULARIO DE BECAS
-     */
-    static llenarFormularioBecas() {
-        const container = document.getElementById('contenedorBecas');
-        if (!container) return;
-        
-        const esBecario = this.datosEstudiante?.esBecado === 1 || this.datosEstudiante?.esBecado === true;
-        
-        if (!esBecario || !this.datosBecas || this.datosBecas.length === 0) {
-            container.innerHTML = '';
-        } else {
-            let html = '';
-            this.datosBecas.forEach((beca, index) => {
-                html += u_estudiante.crearBloqueBeca(index, beca);
-            });
-            container.innerHTML = html;
-        }
-        
-        u_formularioEstudiante.configurarEventosEliminarBeca();
+/**
+ * LLENAR FORMULARIO DE FAMILIARES
+ */
+static llenarFormularioFamiliares() {
+    const container = document.getElementById('contenedorFamiliares');
+    if (!container) return;
+    
+    // Limpiar container
+    container.innerHTML = '';
+    
+    if (!this.datosFamiliares || this.datosFamiliares.length === 0) {
+        // Crear un bloque vacío por defecto
+        container.innerHTML = u_estudiante.crearBloqueFamiliar(0);
+    } else {
+        let html = '';
+        this.datosFamiliares.forEach((familiar, index) => {
+            html += u_estudiante.crearBloqueFamiliar(index, familiar);
+        });
+        container.innerHTML = html;
     }
+    
+    this.configurarEventosEliminarFamiliar();
+}
+
+/**
+ * LLENAR FORMULARIO DE BECAS
+ */
+static llenarFormularioBecas() {
+    const container = document.getElementById('contenedorBecas');
+    if (!container) return;
+    
+    // Limpiar container
+    container.innerHTML = '';
+    
+    const esBecario = this.datosEstudiante?.esBecado === 1 || this.datosEstudiante?.esBecado === true;
+    
+    if (!esBecario) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    if (!this.datosBecas || this.datosBecas.length === 0) {
+        // Crear un bloque vacío por defecto
+        container.innerHTML = u_estudiante.crearBloqueBeca(0);
+    } else {
+        let html = '';
+        this.datosBecas.forEach((beca, index) => {
+            html += u_estudiante.crearBloqueBeca(index, beca);
+        });
+        container.innerHTML = html;
+    }
+    
+    this.configurarEventosEliminarBeca();
+}
+
+
 
     /**
      * LLENAR FORMULARIO DE MATRÍCULA
@@ -958,17 +975,26 @@ export class c_formularioEstudiante {
         }
     }
 
-    /**
-     * GUARDAR FAMILIARES
-     */
-    /*static async guardarFamiliares(idEstudiante) {
-        const bloques = document.querySelectorAll('.familiar-bloque');
+
+/**
+ * GUARDAR FAMILIARES (solo dinámicos)
+ */
+static async guardarFamiliares(idEstudiante) {
+    const familiaresGuardar = [];
+    
+    // Obtener datos de bloques dinámicos SOLO
+    const bloquesDinamicos = document.querySelectorAll('.familiar-bloque');
+    
+    bloquesDinamicos.forEach(bloque => {
+        const nombre = bloque.querySelector('.familiar-nombre')?.value || '';
+        const apellidos = bloque.querySelector('.familiar-apellidos')?.value || '';
         
-        for (const bloque of bloques) {
-            const datos = {
+        // Solo guardar si el bloque tiene datos
+        if (nombre || apellidos) {
+            const datosDinamico = {
                 idEstudiante: idEstudiante,
-                nombre: bloque.querySelector('.familiar-nombre')?.value || '',
-                apellidos: bloque.querySelector('.familiar-apellidos')?.value || '',
+                nombre: nombre || '',
+                apellidos: apellidos || '',
                 dipFamiliar: bloque.querySelector('.familiar-dip')?.value || '',
                 direccion: bloque.querySelector('.familiar-direccion')?.value || '',
                 correoFamiliar: bloque.querySelector('.familiar-correo')?.value || '',
@@ -977,176 +1003,72 @@ export class c_formularioEstudiante {
                 esContactoIncidentes: bloque.querySelector('.familiar-contactoIncidente')?.value === 'Sí' ? 1 : 0,
                 esResponsablePago: bloque.querySelector('.familiar-responsablePago')?.value === 'Sí' ? 1 : 0
             };
-            
-            if (datos.nombre || datos.apellidos) {
-                await m_familiar.insertarFamiliar(datos);
-            }
+            familiaresGuardar.push(datosDinamico);
         }
-    }*/
-
-    /**
-     * GUARDAR FAMILIARES (estáticos + dinámicos)
-     */
-    static async guardarFamiliares(idEstudiante) {
-        const familiaresGuardar = [];
-        
-        // 1. Obtener datos del bloque estático (IDs fijos)
-        const nombreStatic = document.getElementById('nombreEstudianteFamiliar')?.value;
-        const apellidosStatic = document.getElementById('apellidosEstudianteFamiliar')?.value;
-        
-        // Solo guardar si el bloque estático tiene datos
-        if (nombreStatic || apellidosStatic) {
-            const datosStatic = {
-                idEstudiante: idEstudiante,
-                nombre: nombreStatic || '',
-                apellidos: apellidosStatic || '',
-                dipFamiliar: document.getElementById('dipEstudianteFamiliar')?.value || '',
-                direccion: document.getElementById('direccionEstudianteFamiliar')?.value || '',
-                correoFamiliar: document.getElementById('correoEstudianteFamiliar')?.value || '',
-                telefono: document.getElementById('telefonoEstudianteFamiliar')?.value || '',
-                parentesco: document.getElementById('parentezcoEstudianteFamiliar')?.value || '',
-                esContactoIncidentes: document.getElementById('contactoIncidenteEstudianteFamiliar')?.value === 'Sí' ? 1 : 0,
-                esResponsablePago: document.getElementById('responsablePagoEstudianteFamiliar')?.value === 'Sí' ? 1 : 0
-            };
-            familiaresGuardar.push(datosStatic);
-        }
-        
-        // 2. Obtener datos de bloques dinámicos
-        const bloquesDinamicos = document.querySelectorAll('.familiar-bloque');
-        bloquesDinamicos.forEach(bloque => {
-            const nombre = bloque.querySelector('.familiar-nombre')?.value;
-            const apellidos = bloque.querySelector('.familiar-apellidos')?.value;
-            
-            // Solo guardar si el bloque tiene datos
-            if (nombre || apellidos) {
-                const datosDinamico = {
-                    idEstudiante: idEstudiante,
-                    nombre: nombre || '',
-                    apellidos: apellidos || '',
-                    dipFamiliar: bloque.querySelector('.familiar-dip')?.value || '',
-                    direccion: bloque.querySelector('.familiar-direccion')?.value || '',
-                    correoFamiliar: bloque.querySelector('.familiar-correo')?.value || '',
-                    telefono: bloque.querySelector('.familiar-telefono')?.value || '',
-                    parentesco: bloque.querySelector('.familiar-parentesco')?.value || '',
-                    esContactoIncidentes: bloque.querySelector('.familiar-contactoIncidente')?.value === 'Sí' ? 1 : 0,
-                    esResponsablePago: bloque.querySelector('.familiar-responsablePago')?.value === 'Sí' ? 1 : 0
-                };
-                familiaresGuardar.push(datosDinamico);
-            }
-        });
-        
-        // 3. Guardar todos los familiares
-        for (const familiar of familiaresGuardar) {
-            await m_familiar.insertarFamiliar(familiar);
-        }
-        
-        console.log(`Guardados ${familiaresGuardar.length} familiares`);
+    });
+    
+    // Guardar todos los familiares
+    for (const familiar of familiaresGuardar) {
+        await m_familiar.insertarFamiliar(familiar);
     }
+    
+    console.log(`Guardados ${familiaresGuardar.length} familiares`);
+}
 
-    /**
-     * GUARDAR BECAS
-     */
-  /*  static async guardarBecas(idEstudiante) {
-        const esBecario = document.getElementById('esBecario')?.checked;
-        if (!esBecario) return;
+/**
+ * GUARDAR BECAS (solo dinámicas)
+ */
+static async guardarBecas(idEstudiante) {
+    const esBecario = document.getElementById('esBecario')?.checked;
+    if (!esBecario) return;
+    
+    const becasGuardar = [];
+    
+    // Obtener datos de bloques dinámicos de becas SOLO
+    const bloquesDinamicos = document.querySelectorAll('.beca-bloque');
+    
+    bloquesDinamicos.forEach(bloque => {
+        const institucion = bloque.querySelector('.beca-institucion')?.value;
+        const tipo = bloque.querySelector('.beca-tipo')?.value;
         
-        const bloques = document.querySelectorAll('.beca-bloque');
-        
-        for (const bloque of bloques) {
-            const institucion = bloque.querySelector('.beca-institucion')?.value || '';
-            const tipo = bloque.querySelector('.beca-tipo')?.value || '';
-            const estado = bloque.querySelector('.beca-estado')?.value || '';
-            const fechaInicio = bloque.querySelector('.beca-fechaInicio')?.value || '';
-            const fechaFin = bloque.querySelector('.beca-fechaFin')?.value || '';
-            const observaciones = bloque.querySelector('.beca-observaciones')?.value || '';
-            
-            if (institucion && tipo !== 'Ninguno') {
-                // Insertar beca
-                const becaResultado = await m_beca.insertarBeca({
-                    institucionBeca: institucion,
-                    tipoBeca: tipo
-                });
-                
-                if (becaResultado && becaResultado.idBeca) {
-                    // Insertar relación estudiante-beca
-                    await m_estudianteBeca.insertarEstudianteBecado({
-                        idEstudiante: idEstudiante,
-                        idBeca: becaResultado.idBeca,
-                        fechaInicio: fechaInicio,
-                        fechaFinal: fechaFin,
-                        estado: estado,
-                        observaciones: observaciones
-                    });
-                }
-            }
-        }
-    }*/
-
-    /**
-     * GUARDAR BECAS (estáticas + dinámicas)
-     */
-    static async guardarBecas(idEstudiante) {
-        const esBecario = document.getElementById('esBecario')?.checked;
-        if (!esBecario) return;
-        
-        const becasGuardar = [];
-        
-        // 1. Obtener datos del bloque estático de beca (IDs fijos)
-        const institucionStatic = document.getElementById('comboNombreInstitucionBeca')?.value;
-        const tipoStatic = document.getElementById('tiposBeca')?.value;
-        
-        if (institucionStatic && tipoStatic !== 'Ninguno') {
+        if (institucion && tipo !== 'Ninguno') {
             becasGuardar.push({
-                institucionBeca: institucionStatic,
-                tipoBeca: tipoStatic,
-                estado: document.getElementById('estadosBeca')?.value || 'Ninguno',
-                fechaInicio: document.getElementById('fechaInicioBeca')?.value,
-                fechaFin: document.getElementById('fechaFinBeca')?.value,
-                observaciones: document.getElementById('observacionesBeca')?.value || ''
+                institucionBeca: institucion,
+                tipoBeca: tipo,
+                estado: bloque.querySelector('.beca-estado')?.value || 'Ninguno',
+                fechaInicio: bloque.querySelector('.beca-fechaInicio')?.value,
+                fechaFin: bloque.querySelector('.beca-fechaFin')?.value,
+                observaciones: bloque.querySelector('.beca-observaciones')?.value || ''
             });
         }
-        
-        // 2. Obtener datos de bloques dinámicos de becas
-        const bloquesDinamicos = document.querySelectorAll('.beca-bloque');
-        bloquesDinamicos.forEach(bloque => {
-            const institucion = bloque.querySelector('.beca-institucion')?.value;
-            const tipo = bloque.querySelector('.beca-tipo')?.value;
-            
-            if (institucion && tipo !== 'Ninguno') {
-                becasGuardar.push({
-                    institucionBeca: institucion,
-                    tipoBeca: tipo,
-                    estado: bloque.querySelector('.beca-estado')?.value || 'Ninguno',
-                    fechaInicio: bloque.querySelector('.beca-fechaInicio')?.value,
-                    fechaFin: bloque.querySelector('.beca-fechaFin')?.value,
-                    observaciones: bloque.querySelector('.beca-observaciones')?.value || ''
-                });
-            }
+    });
+    
+    // Guardar todas las becas
+    for (const beca of becasGuardar) {
+        // Insertar beca
+        const becaResultado = await m_beca.insertarBeca({
+            institucionBeca: beca.institucionBeca,
+            tipoBeca: beca.tipoBeca
         });
         
-        // 3. Guardar todas las becas
-        for (const beca of becasGuardar) {
-            // Insertar beca
-            const becaResultado = await m_beca.insertarBeca({
-                institucionBeca: beca.institucionBeca,
-                tipoBeca: beca.tipoBeca
+        if (becaResultado && becaResultado.idBeca) {
+            // Insertar relación estudiante-beca
+            await m_estudianteBeca.insertarEstudianteBecado({
+                idEstudiante: idEstudiante,
+                idBeca: becaResultado.idBeca,
+                fechaInicio: beca.fechaInicio,
+                fechaFinal: beca.fechaFin,
+                estado: beca.estado,
+                observaciones: beca.observaciones
             });
-            
-            if (becaResultado && becaResultado.idBeca) {
-                // Insertar relación estudiante-beca
-                await m_estudianteBeca.insertarEstudianteBecado({
-                    idEstudiante: idEstudiante,
-                    idBeca: becaResultado.idBeca,
-                    fechaInicio: beca.fechaInicio,
-                    fechaFinal: beca.fechaFin,
-                    estado: beca.estado,
-                    observaciones: beca.observaciones
-                });
-            }
         }
-        
-        console.log(`Guardados ${becasGuardar.length} becas`);
     }
+    
+    console.log(`Guardados ${becasGuardar.length} becas`);
+}
+
+
+
 
     /**
      * GUARDAR MATRÍCULA

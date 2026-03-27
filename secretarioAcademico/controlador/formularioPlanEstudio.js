@@ -1,10 +1,10 @@
 import { u_utiles } from "../../public/utilidades/u_utiles.js";
 import { u_planEstudio } from "../utilidades/u_planEstudio.js";
-import { u_formularioPlanEstudio } from "../utilidades/u_formularioPlanEstudio.js";
 import { Alerta } from "../../public/utilidades/u_alertas.js";
 import { m_planEstudio, m_curso, m_semestre, m_PlanSemestreAsignatura, m_prerequisito } from "../modelo/m_planEstudio.js";
 import { sesiones } from "../../public/core/sesiones.js";
 import { m_asignatura, m_carrera } from "../../admin/modelo/m_academico.js";
+import { u_formularioPlanEstudio } from "../utilidades/u_formularioPlanEstudio.js";
 
 export class c_formularioPlanEstudio {
     

@@ -1,563 +1,319 @@
-import { u_verificaciones } from "../../public/utilidades/u_verificaciones.js";
-import { u_utiles } from "../../public/utilidades/u_utiles.js";
-import { u_estudiante } from "./u_estudiante.js";
+import { u_planEstudio } from "./u_planEstudio.js";
 
 /**
- * Utilidades específicas para el formulario de estudiantes
- * Contiene funciones de validación y manejo de formularios
+ * Utilidades específicas para el formulario de Planes de Estudio
+ * Contiene funciones de validación, renderizado y manejo de UI
  */
-export class u_formularioEstudiante {
+export class u_formularioPlanEstudio {
     
     /**
-     * VALIDACIONES DE DATOS PERSONALES
+     * OBTENER PARÁMETROS DE URL
      */
-    
-    static validarFormularioDatosPersonales() {
-        const nombre = document.getElementById('nombreEstudianteMatricula')?.value || '';
-        const apellidos = document.getElementById('apellidosEstudianteMatricula')?.value || '';
-        const dip = document.getElementById('dipEstudianteMatricula')?.value || '';
-        const fechaNacimiento = document.getElementById('fechaNacimientoEstudianteMatricula')?.value || '';
-        const nacionalidad = document.getElementById('nacionalidadEstudianteMatricula')?.value || '';
-        const genero = document.getElementById('generosEstudianteMatricula')?.value || '';
-        const direccion = document.getElementById('direccionEstudianteMatricula')?.value || '';
-        const localidad = document.getElementById('localidadEstudianteMatricula')?.value || '';
-        const provincia = document.getElementById('provinciaEstudianteMatricula')?.value || '';
-        const pais = document.getElementById('comboPaisesEstudianteMatricula')?.value || '';
-        const correo = document.getElementById('correoEstudianteMatricula')?.value || '';
-        const telefono = document.getElementById('telefonoEstudianteMatricula')?.value || '';
-        const centro = document.getElementById('comboCentroEstudianteMatricula')?.value || '';
-        const universidad = document.getElementById('comboUniversidadEstudianteMatricula')?.value || '';
-        const nombreUsuario = document.getElementById('nombreOCorreoUsuario')?.value || '';
-        
-        const validaciones = {
-            nombre: u_estudiante.validarNombreEstudiante(nombre),
-            apellidos: u_estudiante.validarApellidosEstudiante(apellidos),
-            dip: u_estudiante.validarDIPEstudiante(dip),
-            fechaNacimiento: u_estudiante.validarFechaNacimiento(fechaNacimiento),
-            nacionalidad: u_estudiante.validarNacionalidad(nacionalidad),
-            genero: u_estudiante.validarGenero(genero),
-            direccion: u_estudiante.validarDireccion(direccion),
-            localidad: u_estudiante.validarLocalidad(localidad),
-            provincia: u_estudiante.validarProvincia(provincia),
-            pais: u_estudiante.validarPais(pais),
-            correo: u_estudiante.validarCorreoEstudiante(correo),
-            telefono: u_estudiante.validarTelefonoEstudiante(telefono),
-            centro: u_estudiante.validarCentroProcedencia(centro),
-            universidad: u_estudiante.validarUniversidadProcedencia(universidad),
-            nombreUsuario: u_estudiante.validarNombreOCorreoUsuario(nombreUsuario)
-        };
-        
-        // Aplicar colores y mensajes
-        u_utiles.colorearCampo(validaciones.nombre, '#nombreEstudianteMatricula', '#errorNombreEstudianteMatricula', 
-            validaciones.nombre ? '' : 'Nombre inválido (mínimo 3 caracteres)');
-        u_utiles.colorearCampo(validaciones.apellidos, '#apellidosEstudianteMatricula', '#errorApellidosEstudianteMatricula', 
-            validaciones.apellidos ? '' : 'Apellidos inválidos (mínimo 3 caracteres)');
-        u_utiles.colorearCampo(validaciones.dip, '#dipEstudianteMatricula', '#errorDipEstudianteMatricula', 
-            validaciones.dip ? '' : 'Formato inválido (ej: 000 000 000)');
-        u_utiles.colorearCampo(validaciones.fechaNacimiento, '#fechaNacimientoEstudianteMatricula', '#errorFechaNacimientoEstudianteMatricula', 
-            validaciones.fechaNacimiento ? '' : 'Fecha inválida (debe ser mayor de 16 años)');
-        u_utiles.colorearCampo(validaciones.nacionalidad, '#nacionalidadEstudianteMatricula', '#errorNacionalidadEstudianteMatricula', 
-            validaciones.nacionalidad ? '' : 'Nacionalidad inválida (mínimo 3 caracteres)');
-        u_utiles.colorearCampo(validaciones.genero, '#generosEstudianteMatricula', '#errorGenerosEstudianteMatricula', 
-            validaciones.genero ? '' : 'Seleccione un género');
-        u_utiles.colorearCampo(validaciones.direccion, '#direccionEstudianteMatricula', '#errorDireccionEstudianteMatricula', 
-            validaciones.direccion ? '' : 'Dirección inválida (mínimo 5 caracteres)');
-        u_utiles.colorearCampo(validaciones.localidad, '#localidadEstudianteMatricula', '#errorLocalidadEstudianteMatricula', 
-            validaciones.localidad ? '' : 'Localidad inválida (mínimo 3 caracteres)');
-        u_utiles.colorearCampo(validaciones.provincia, '#provinciaEstudianteMatricula', '#errorProvinciaEstudianteMatricula', 
-            validaciones.provincia ? '' : 'Provincia inválida (mínimo 3 caracteres)');
-        u_utiles.colorearCampo(validaciones.pais, '#comboPaisesEstudianteMatricula', '#errorPaisesEstudianteMatricula', 
-            validaciones.pais ? '' : 'Seleccione un país');
-        u_utiles.colorearCampo(validaciones.correo, '#correoEstudianteMatricula', '#errorCorreoEstudianteMatricula', 
-            validaciones.correo ? '' : 'Formato de correo inválido');
-        u_utiles.colorearCampo(validaciones.telefono, '#telefonoEstudianteMatricula', '#errorTelefonoEstudianteMatricula', 
-            validaciones.telefono ? '' : 'Formato inválido (ej: +240 222 123 456)');
-        u_utiles.colorearCampo(validaciones.centro, '#comboCentroEstudianteMatricula', '#errorCentroEstudianteMatricula', 
-            validaciones.centro ? '' : 'Centro de procedencia inválido');
-        u_utiles.colorearCampo(validaciones.universidad, '#comboUniversidadEstudianteMatricula', '#errorUniversidadEstudianteMatricula', 
-            validaciones.universidad ? '' : 'Universidad de procedencia inválida');
-        u_utiles.colorearCampo(validaciones.nombreUsuario, '#nombreOCorreoUsuario', '#errorNombreOCorreoUsuario', 
-            validaciones.nombreUsuario ? '' : 'Nombre de usuario o correo inválido');
-        
-        return Object.values(validaciones).every(v => v === true);
+    static obtenerParametrosURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const modo = urlParams.get('modo') || 'crear';
+        const id = urlParams.get('id');
+        return { modo, id };
     }
-    
+
     /**
-     * VALIDACIONES DE MATRÍCULA
+     * CONFIGURAR INTERFAZ SEGÚN MODO
      */
-    
-    static validarFormularioMatricula() {
-        const cursoAcademico = document.getElementById('cursoAcademicoMatricula')?.value || '';
-        const fechaMatricula = document.getElementById('fechaMatricula')?.value || '';
-        const modalidad = document.getElementById('modalidadMatricula')?.value || '';
-        const creditos = document.getElementById('creditosTotalesMatricula')?.value || '';
-        const estado = document.getElementById('estadosMatricula')?.value || '';
-        
-        const validaciones = {
-            cursoAcademico: u_estudiante.validarCursoAcademico(cursoAcademico),
-            fechaMatricula: u_estudiante.validarFechaMatricula(fechaMatricula),
-            modalidad: u_estudiante.validarModalidadMatricula(modalidad),
-            creditos: u_estudiante.validarCreditosTotales(creditos),
-            estado: u_estudiante.validarEstadoMatricula(estado)
-        };
-        
-        u_utiles.colorearCampo(validaciones.cursoAcademico, '#cursoAcademicoMatricula', '#errorCursoAcademicoMatricula', 
-            validaciones.cursoAcademico ? '' : 'Formato inválido (ej: 2025/2026)');
-        u_utiles.colorearCampo(validaciones.fechaMatricula, '#fechaMatricula', '#errorFechaMatricula', 
-            validaciones.fechaMatricula ? '' : 'Fecha inválida');
-        u_utiles.colorearCampo(validaciones.modalidad, '#modalidadMatricula', '#errorModalidadMatricula', 
-            validaciones.modalidad ? '' : 'Seleccione una modalidad');
-        u_utiles.colorearCampo(validaciones.creditos, '#creditosTotalesMatricula', '#errorCreditosTotalesMatricula', 
-            validaciones.creditos ? '' : 'Créditos inválidos (0-60)');
-        u_utiles.colorearCampo(validaciones.estado, '#estadosMatricula', '#errorestadosMatricula', 
-            validaciones.estado ? '' : 'Seleccione un estado');
-        
-        return Object.values(validaciones).every(v => v === true);
+    static configurarInterfazPorModo(modo) {
+        const seccionVisualizacion = document.getElementById('seccionVisualizacion');
+        const seccionEdicion = document.getElementById('seccionEdicion');
+        const tituloPagina = document.getElementById('tituloPagina');
+        const btnGuardarPlan = document.getElementById('btnGuardarPlanEstudio');
+
+        if (modo === 'visualizar') {
+            if (seccionVisualizacion) seccionVisualizacion.classList.remove('d-none');
+            if (seccionEdicion) seccionEdicion.classList.add('d-none');
+            if (tituloPagina) tituloPagina.textContent = 'Visualizar Plan de Estudio';
+            if (btnGuardarPlan) btnGuardarPlan.style.display = 'none';
+        } else if (modo === 'editar') {
+            if (seccionVisualizacion) seccionVisualizacion.classList.add('d-none');
+            if (seccionEdicion) seccionEdicion.classList.remove('d-none');
+            if (tituloPagina) tituloPagina.textContent = 'Editar Plan de Estudio';
+            if (btnGuardarPlan) btnGuardarPlan.style.display = 'inline-flex';
+        } else {
+            if (seccionVisualizacion) seccionVisualizacion.classList.add('d-none');
+            if (seccionEdicion) seccionEdicion.classList.remove('d-none');
+            if (tituloPagina) tituloPagina.textContent = 'Nuevo Plan de Estudio';
+            if (btnGuardarPlan) btnGuardarPlan.style.display = 'inline-flex';
+        }
     }
-    
+
     /**
-     * VALIDACIONES DE PAGO
+     * CREAR HTML DE UN SEMESTRE
+     * @param {Object} semestre - Datos del semestre
+     * @param {boolean} puedeEditar - Si puede editar
+     * @param {Function} onEditar - Callback para editar semestre
+     * @param {Function} onEliminar - Callback para eliminar semestre
+     * @param {Function} onAgregarAsignatura - Callback para agregar asignatura
+     * @returns {string} - HTML del semestre
      */
-    
-    static validarFormularioPago() {
-        const cuota = document.getElementById('cuotaEstudiante')?.value || '';
-        const monto = document.getElementById('montoEstudiante')?.value || '';
-        const fechaPago = document.getElementById('fechaPagoEstudiante')?.value || '';
-        
-        const validaciones = {
-            cuota: u_estudiante.validarCuota(cuota),
-            monto: u_estudiante.validarMonto(monto),
-            fechaPago: u_estudiante.validarFechaPago(fechaPago)
-        };
-        
-        u_utiles.colorearCampo(validaciones.cuota, '#cuotaEstudiante', '#errorCuotaEstudiante', 
-            validaciones.cuota ? '' : 'Cuota inválida (1-12)');
-        u_utiles.colorearCampo(validaciones.monto, '#montoEstudiante', '#errorMontoEstudiante', 
-            validaciones.monto ? '' : 'Monto inválido');
-        u_utiles.colorearCampo(validaciones.fechaPago, '#fechaPagoEstudiante', '#errorFechaPagoEstudiante', 
-            validaciones.fechaPago ? '' : 'Fecha inválida');
-        
-        return Object.values(validaciones).every(v => v === true);
+    static crearSemestreHTML(semestre, puedeEditar, onEditar, onEliminar, onAgregarAsignatura) {
+        const asignaturasHTML = semestre.asignaturas.map((asig, idx) => `
+            <div class="asignatura-item mb-2 p-2 border rounded position-relative">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>${this.escapeHTML(asig.nombreAsignatura)}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Créditos: ${asig.creditos} | Modalidad: ${asig.modalidad}
+                        </small>
+                        ${asig.prerrequisitos && asig.prerrequisitos.length > 0 ? `
+                            <br>
+                            <small class="text-info">
+                                <i class="fas fa-link"></i> Prerrequisitos: ${asig.prerrequisitos.join(', ')}
+                            </small>
+                        ` : ''}
+                    </div>
+                    ${puedeEditar ? `
+                        <button class="btn btn-sm btn-outline-danger eliminar-asignatura" 
+                                data-asignatura-id="${asig.idAsignatura}"
+                                title="Eliminar asignatura">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        const btnAgregarHTML = puedeEditar ? `
+            <div class="text-end mt-2">
+                <button class="btn btn-outline-warning btn-sm agregar-asignatura" 
+                        data-semestre-id="${semestre.idSemestre}"
+                        data-semestre-numero="${semestre.numeroSemestre}"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#modalNuevaAsignatura">
+                    <i class="fas fa-plus"></i> Agregar Asignatura
+                </button>
+            </div>
+        ` : '';
+
+        return `
+            <div class="card semestre-horizontal mb-3" data-id="${semestre.idSemestre}">
+                <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">
+                        <i class="fas fa-book"></i> ${this.escapeHTML(semestre.nombreCurso || `Semestre ${semestre.numeroSemestre}`)} 
+                        <span class="badge bg-dark ms-2">Semestre ${semestre.numeroSemestre}</span>
+                    </h6>
+                    ${puedeEditar ? `
+                        <div>
+                            <button class="btn btn-sm btn-outline-info editar-semestre" 
+                                    data-semestre-id="${semestre.idSemestre}"
+                                    title="Editar semestre">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger eliminar-semestre" 
+                                    data-semestre-id="${semestre.idSemestre}"
+                                    title="Eliminar semestre">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="card-body">
+                    <div id="semestre-asignaturas-scroll">
+                        <div id="semestre-asignaturas-container">
+                            ${asignaturasHTML || '<p class="text-muted text-center">No hay asignaturas asignadas</p>'}
+                            ${btnAgregarHTML}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
     }
-    
+
     /**
-     * VALIDAR TODOS LOS BLOQUES DE FAMILIARES
+     * RENDERIZAR VISTA DE VISUALIZACIÓN
+     * @param {Object} plan - Datos del plan
+     * @param {Array} semestres - Lista de semestres con asignaturas
+     * @param {Array} asignaturas - Lista de asignaturas disponibles
      */
-    static validarTodosFamiliares() {
-        const bloques = document.querySelectorAll('.familiar-bloque');
-        let todosValidos = true;
+    static renderizarVistaVisualizacion(plan, semestres, asignaturas) {
+        const container = document.getElementById('seccionVisualizacion');
+        if (!container) return;
+
+        // Estadísticas
+        const estadisticas = u_planEstudio.calcularEstadisticas(semestres);
         
-        bloques.forEach((bloque, index) => {
-            const valido = u_estudiante.validarBloqueFamiliar(bloque, index);
-            if (!valido) todosValidos = false;
+        // Generar malla curricular
+        const malla = u_planEstudio.generarMallaCurricular(semestres, asignaturas);
+
+        let mallaHTML = '';
+        malla.forEach(semestre => {
+            const asignaturasLista = semestre.asignaturas.map(asig => 
+                `${asig.nombre} (${asig.creditos} créditos, ${asig.modalidad})`
+            ).join('<br>');
+
+            mallaHTML += `
+                <tr>
+                    <td class="align-middle"><strong>${this.escapeHTML(semestre.nombreCurso)}</strong><br><small>Semestre ${semestre.numero}</small></td>
+                    <td>${asignaturasLista || 'Sin asignaturas'}</td>
+                    <td class="align-middle text-center">${semestre.asignaturas.reduce((sum, asig) => sum + (asig.creditos || 0), 0)}</td>
+                </tr>
+            `;
         });
-        
-        return todosValidos;
+
+        container.innerHTML = `
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">📋 Datos Generales</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nombre del Plan:</strong> ${this.escapeHTML(plan.nombre || '')}</p>
+                            <p><strong>Fecha de Elaboración:</strong> ${plan.fechaElaboracion || ''}</p>
+                            <p><strong>Período:</strong> ${plan.periodoPlanEstudio || ''}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Carrera:</strong> ${this.escapeHTML(plan.nombreCarrera || '')}</p>
+                            <p><strong>Vigente:</strong> 
+                                <span class="badge ${plan.vigente === 'Sí' ? 'bg-success' : 'bg-danger'}">
+                                    ${plan.vigente || 'No'}
+                                </span>
+                            </p>
+                            <p><strong>ID Plan:</strong> ${plan.idPlanEstudio || ''}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">📊 Estadísticas del Plan</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Total de Semestres con asignaturas:</th>
+                            <td>${estadisticas.totalSemestres}</td>
+                        </tr>
+                        <tr>
+                            <th>Total de Asignaturas:</th>
+                            <td>${estadisticas.totalAsignaturas}</td>
+                        </tr>
+                        <tr>
+                            <th>Total de Créditos:</th>
+                            <td>${estadisticas.totalCreditos}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📋 Malla Curricular</h5>
+                    <button class="btn btn-sm btn-outline-warning" id="btnEditarPlan">
+                        <i class="fas fa-edit me-1"></i> Editar Plan
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th>Semestre</th>
+                                    <th>Asignaturas</th>
+                                    <th>Créditos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${mallaHTML || '<tr><td colspan="3" class="text-center text-muted">No hay asignaturas asignadas</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Agregar evento al botón editar si existe
+        const btnEditar = document.getElementById('btnEditarPlan');
+        if (btnEditar && u_planEstudio.verificarPermiso('actualizar')) {
+            btnEditar.addEventListener('click', () => {
+                window.location.href = `/guniversidadfrontend/secretarioAcademico/template/html/formularioPlanEstudio.html?modo=editar&id=${plan.idPlanEstudio}`;
+            });
+        } else if (btnEditar) {
+            btnEditar.style.display = 'none';
+        }
     }
-    
+
     /**
-     * VALIDAR TODOS LOS BLOQUES DE BECAS (si el checkbox está activo)
+     * ACTUALIZAR ESTADÍSTICAS DEL PLAN
+     * @param {Array} semestresPlan - Lista de semestres
      */
-    static validarTodosBecas() {
-        const esBecario = document.getElementById('esBecario')?.checked;
-        if (!esBecario) return true;
+    static actualizarEstadisticas(semestresPlan) {
+        const estadisticas = u_planEstudio.calcularEstadisticas(semestresPlan);
         
-        const bloques = document.querySelectorAll('.beca-bloque');
-        let todosValidos = true;
+        const totalSemestresSpan = document.getElementById('totalSemestres');
+        const totalAsignaturasSpan = document.getElementById('totalAsignaturas');
+        const totalCreditosSpan = document.getElementById('totalCreditos');
         
-        bloques.forEach((bloque, index) => {
-            const valido = u_estudiante.validarBloqueBeca(bloque, index);
-            if (!valido) todosValidos = false;
-        });
-        
-        return todosValidos;
+        if (totalSemestresSpan) totalSemestresSpan.textContent = estadisticas.totalSemestres;
+        if (totalAsignaturasSpan) totalAsignaturasSpan.textContent = estadisticas.totalAsignaturas;
+        if (totalCreditosSpan) totalCreditosSpan.textContent = estadisticas.totalCreditos;
     }
-    
+
     /**
-     * CONFIGURAR VALIDACIONES EN TIEMPO REAL
+     * ACTUALIZAR MALLA CURRICULAR
+     * @param {Array} semestresPlan - Lista de semestres
+     * @param {Array} asignaturas - Lista de asignaturas disponibles
      */
-    static configurarValidacionesEnTiempoReal() {
-        // Validaciones de datos personales
-        const campoNombre = document.getElementById('nombreEstudianteMatricula');
-        if (campoNombre) {
-            campoNombre.addEventListener('input', () => {
-                const valido = u_estudiante.validarNombreEstudiante(campoNombre.value);
-                u_utiles.colorearCampo(valido, '#nombreEstudianteMatricula', '#errorNombreEstudianteMatricula', 
-                    valido ? '' : 'Nombre inválido (mínimo 3 caracteres)');
-            });
+    static actualizarMallaCurricular(semestresPlan, asignaturas) {
+        const tbody = document.getElementById('mallaCurricularBody');
+        if (!tbody) return;
+
+        const malla = u_planEstudio.generarMallaCurricular(semestresPlan, asignaturas);
+
+        if (malla.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="text-center text-muted">
+                        No hay asignaturas asignadas
+                    </td>
+                </tr>
+            `;
+            return;
         }
-        
-        const campoApellidos = document.getElementById('apellidosEstudianteMatricula');
-        if (campoApellidos) {
-            campoApellidos.addEventListener('input', () => {
-                const valido = u_estudiante.validarApellidosEstudiante(campoApellidos.value);
-                u_utiles.colorearCampo(valido, '#apellidosEstudianteMatricula', '#errorApellidosEstudianteMatricula', 
-                    valido ? '' : 'Apellidos inválidos (mínimo 3 caracteres)');
-            });
-        }
-        
-        const campoDip = document.getElementById('dipEstudianteMatricula');
-        if (campoDip) {
-            campoDip.addEventListener('input', () => {
-                const valido = u_estudiante.validarDIPEstudiante(campoDip.value);
-                u_utiles.colorearCampo(valido, '#dipEstudianteMatricula', '#errorDipEstudianteMatricula', 
-                    valido ? '' : 'Formato inválido (ej: 000 000 000)');
-            });
-        }
-        
-        const campoFechaNacimiento = document.getElementById('fechaNacimientoEstudianteMatricula');
-        if (campoFechaNacimiento) {
-            campoFechaNacimiento.addEventListener('change', () => {
-                const valido = u_estudiante.validarFechaNacimiento(campoFechaNacimiento.value);
-                u_utiles.colorearCampo(valido, '#fechaNacimientoEstudianteMatricula', '#errorFechaNacimientoEstudianteMatricula', 
-                    valido ? '' : 'Fecha inválida (debe ser mayor de 16 años)');
-            });
-        }
-        
-        const campoNacionalidad = document.getElementById('nacionalidadEstudianteMatricula');
-        if (campoNacionalidad) {
-            campoNacionalidad.addEventListener('input', () => {
-                const valido = u_estudiante.validarNacionalidad(campoNacionalidad.value);
-                u_utiles.colorearCampo(valido, '#nacionalidadEstudianteMatricula', '#errorNacionalidadEstudianteMatricula', 
-                    valido ? '' : 'Nacionalidad inválida (mínimo 3 caracteres)');
-            });
-        }
-        
-        const campoGenero = document.getElementById('generosEstudianteMatricula');
-        if (campoGenero) {
-            campoGenero.addEventListener('change', () => {
-                const valido = u_estudiante.validarGenero(campoGenero.value);
-                u_utiles.colorearCampo(valido, '#generosEstudianteMatricula', '#errorGenerosEstudianteMatricula', 
-                    valido ? '' : 'Seleccione un género');
-            });
-        }
-        
-        const campoDireccion = document.getElementById('direccionEstudianteMatricula');
-        if (campoDireccion) {
-            campoDireccion.addEventListener('input', () => {
-                const valido = u_estudiante.validarDireccion(campoDireccion.value);
-                u_utiles.colorearCampo(valido, '#direccionEstudianteMatricula', '#errorDireccionEstudianteMatricula', 
-                    valido ? '' : 'Dirección inválida (mínimo 5 caracteres)');
-            });
-        }
-        
-        const campoLocalidad = document.getElementById('localidadEstudianteMatricula');
-        if (campoLocalidad) {
-            campoLocalidad.addEventListener('input', () => {
-                const valido = u_estudiante.validarLocalidad(campoLocalidad.value);
-                u_utiles.colorearCampo(valido, '#localidadEstudianteMatricula', '#errorLocalidadEstudianteMatricula', 
-                    valido ? '' : 'Localidad inválida (mínimo 3 caracteres)');
-            });
-        }
-        
-        const campoProvincia = document.getElementById('provinciaEstudianteMatricula');
-        if (campoProvincia) {
-            campoProvincia.addEventListener('input', () => {
-                const valido = u_estudiante.validarProvincia(campoProvincia.value);
-                u_utiles.colorearCampo(valido, '#provinciaEstudianteMatricula', '#errorProvinciaEstudianteMatricula', 
-                    valido ? '' : 'Provincia inválida (mínimo 3 caracteres)');
-            });
-        }
-        
-        const campoCorreo = document.getElementById('correoEstudianteMatricula');
-        if (campoCorreo) {
-            campoCorreo.addEventListener('input', () => {
-                const valido = u_estudiante.validarCorreoEstudiante(campoCorreo.value);
-                u_utiles.colorearCampo(valido, '#correoEstudianteMatricula', '#errorCorreoEstudianteMatricula', 
-                    valido ? '' : 'Formato de correo inválido');
-            });
-        }
-        
-        const campoTelefono = document.getElementById('telefonoEstudianteMatricula');
-        if (campoTelefono) {
-            campoTelefono.addEventListener('input', () => {
-                const valido = u_estudiante.validarTelefonoEstudiante(campoTelefono.value);
-                u_utiles.colorearCampo(valido, '#telefonoEstudianteMatricula', '#errorTelefonoEstudianteMatricula', 
-                    valido ? '' : 'Formato inválido (ej: +240 222 123 456)');
-            });
-        }
-        
-        const campoNombreUsuario = document.getElementById('nombreOCorreoUsuario');
-        if (campoNombreUsuario) {
-            campoNombreUsuario.addEventListener('input', () => {
-                const valido = u_estudiante.validarNombreOCorreoUsuario(campoNombreUsuario.value);
-                u_utiles.colorearCampo(valido, '#nombreOCorreoUsuario', '#errorNombreOCorreoUsuario', 
-                    valido ? '' : 'Nombre de usuario o correo inválido');
-            });
-        }
-        
-        // Validaciones de matrícula
-        const campoCursoAcademico = document.getElementById('cursoAcademicoMatricula');
-        if (campoCursoAcademico) {
-            campoCursoAcademico.addEventListener('input', () => {
-                const valido = u_estudiante.validarCursoAcademico(campoCursoAcademico.value);
-                u_utiles.colorearCampo(valido, '#cursoAcademicoMatricula', '#errorCursoAcademicoMatricula', 
-                    valido ? '' : 'Formato inválido (ej: 2025/2026)');
-            });
-        }
-        
-        const campoFechaMatricula = document.getElementById('fechaMatricula');
-        if (campoFechaMatricula) {
-            campoFechaMatricula.addEventListener('change', () => {
-                const valido = u_estudiante.validarFechaMatricula(campoFechaMatricula.value);
-                u_utiles.colorearCampo(valido, '#fechaMatricula', '#errorFechaMatricula', 
-                    valido ? '' : 'Fecha inválida');
-            });
-        }
-        
-        const campoModalidad = document.getElementById('modalidadMatricula');
-        if (campoModalidad) {
-            campoModalidad.addEventListener('change', () => {
-                const valido = u_estudiante.validarModalidadMatricula(campoModalidad.value);
-                u_utiles.colorearCampo(valido, '#modalidadMatricula', '#errorModalidadMatricula', 
-                    valido ? '' : 'Seleccione una modalidad');
-            });
-        }
-        
-        const campoCreditos = document.getElementById('creditosTotalesMatricula');
-        if (campoCreditos) {
-            campoCreditos.addEventListener('input', () => {
-                const valido = u_estudiante.validarCreditosTotales(campoCreditos.value);
-                u_utiles.colorearCampo(valido, '#creditosTotalesMatricula', '#errorCreditosTotalesMatricula', 
-                    valido ? '' : 'Créditos inválidos (0-60)');
-            });
-        }
-        
-        const campoEstadoMatricula = document.getElementById('estadosMatricula');
-        if (campoEstadoMatricula) {
-            campoEstadoMatricula.addEventListener('change', () => {
-                const valido = u_estudiante.validarEstadoMatricula(campoEstadoMatricula.value);
-                u_utiles.colorearCampo(valido, '#estadosMatricula', '#errorestadosMatricula', 
-                    valido ? '' : 'Seleccione un estado');
-            });
-        }
-        
-        // Validaciones de pago
-        const campoCuota = document.getElementById('cuotaEstudiante');
-        if (campoCuota) {
-            campoCuota.addEventListener('input', () => {
-                const valido = u_estudiante.validarCuota(campoCuota.value);
-                u_utiles.colorearCampo(valido, '#cuotaEstudiante', '#errorCuotaEstudiante', 
-                    valido ? '' : 'Cuota inválida (1-12)');
-            });
-        }
-        
-        const campoMonto = document.getElementById('montoEstudiante');
-        if (campoMonto) {
-            campoMonto.addEventListener('input', () => {
-                const valido = u_estudiante.validarMonto(campoMonto.value);
-                u_utiles.colorearCampo(valido, '#montoEstudiante', '#errorMontoEstudiante', 
-                    valido ? '' : 'Monto inválido');
-            });
-        }
-        
-        const campoFechaPago = document.getElementById('fechaPagoEstudiante');
-        if (campoFechaPago) {
-            campoFechaPago.addEventListener('change', () => {
-                const valido = u_estudiante.validarFechaPago(campoFechaPago.value);
-                u_utiles.colorearCampo(valido, '#fechaPagoEstudiante', '#errorFechaPagoEstudiante', 
-                    valido ? '' : 'Fecha inválida');
-            });
-        }
+
+        tbody.innerHTML = malla.map(semestre => `
+            <tr>
+                <td class="align-middle">
+                    <strong>${this.escapeHTML(semestre.nombreCurso)}</strong>
+                    <br><small class="text-muted">Semestre ${semestre.numero}</small>
+                </td>
+                <td>
+                    ${semestre.asignaturas.map(asig => `
+                        <div class="mb-1">
+                            <strong>${this.escapeHTML(asig.nombre)}</strong>
+                            <br><small class="text-muted">Créditos: ${asig.creditos} | Modalidad: ${asig.modalidad}</small>
+                            ${asig.prerrequisitos && asig.prerrequisitos.length > 0 ? 
+                                `<br><small class="text-info">Prerrequisitos: ${asig.prerrequisitos.join(', ')}</small>` : ''}
+                        </div>
+                    `).join('') || '<span class="text-muted">Sin asignaturas</span>'}
+                </td>
+                <td class="align-middle text-center">
+                    ${semestre.asignaturas.reduce((sum, asig) => sum + (asig.creditos || 0), 0)}
+                </td>
+            </tr>
+        `).join('');
     }
-    
+
     /**
-     * CONFIGURAR EVENTOS DE FAMILIARES
+     * ESCAPE HTML
+     * @param {string} str - String a escapar
+     * @returns {string} - String escapado
      */
-    static configurarEventosFamiliares() {
-        // Botón añadir más contactos
-        const btnAñadir = document.getElementById('añadirContactos');
-        if (btnAñadir) {
-            btnAñadir.addEventListener('click', () => {
-                const container = document.getElementById('contenedorFamiliares');
-                if (container) {
-                    const index = container.children.length;
-                    const nuevoBloque = u_estudiante.crearBloqueFamiliar(index);
-                    container.insertAdjacentHTML('beforeend', nuevoBloque);
-                    this.configurarEventosEliminarFamiliar();
-                }
-            });
-        }
-        
-        this.configurarEventosEliminarFamiliar();
-    }
-    
-    /**
-     * CONFIGURAR EVENTOS ELIMINAR FAMILIAR
-     */
-    static configurarEventosEliminarFamiliar() {
-        document.querySelectorAll('.btn-eliminar-familiar').forEach(btn => {
-            btn.removeEventListener('click', this.handleEliminarFamiliar);
-            btn.addEventListener('click', this.handleEliminarFamiliar);
-        });
-    }
-    
-    static handleEliminarFamiliar(e) {
-        e.target.closest('.familiar-bloque')?.remove();
-        // Reindexar los bloques restantes
-        document.querySelectorAll('.familiar-bloque').forEach((bloque, newIndex) => {
-            bloque.setAttribute('data-index', newIndex);
-        });
-    }
-    
-    /**
-     * CONFIGURAR EVENTOS DE BECAS
-     */
-    static configurarEventosBecas() {
-        // Botón añadir más becas
-        const btnAñadir = document.getElementById('añadirBecas');
-        if (btnAñadir) {
-            btnAñadir.addEventListener('click', () => {
-                const container = document.getElementById('contenedorBecas');
-                if (container) {
-                    const index = container.children.length;
-                    const nuevoBloque = u_estudiante.crearBloqueBeca(index);
-                    container.insertAdjacentHTML('beforeend', nuevoBloque);
-                    this.configurarEventosEliminarBeca();
-                }
-            });
-        }
-        
-        this.configurarEventosEliminarBeca();
-    }
-    
-    /**
-     * CONFIGURAR EVENTOS ELIMINAR BECA
-     */
-    static configurarEventosEliminarBeca() {
-        document.querySelectorAll('.btn-eliminar-beca').forEach(btn => {
-            btn.removeEventListener('click', this.handleEliminarBeca);
-            btn.addEventListener('click', this.handleEliminarBeca);
-        });
-    }
-    
-    static handleEliminarBeca(e) {
-        e.target.closest('.beca-bloque')?.remove();
-        document.querySelectorAll('.beca-bloque').forEach((bloque, newIndex) => {
-            bloque.setAttribute('data-index', newIndex);
-        });
-    }
-    
-    /**
-     * CONFIGURAR CHECKBOX DE BECARIO
-     */
-    static configurarCheckboxBecario() {
-        const checkBecario = document.getElementById('esBecario');
-        const contBecario = document.getElementById('contDatosBecario');
-        
-        if (checkBecario && contBecario) {
-            const toggleBecario = () => {
-                contBecario.classList.toggle('d-none', !checkBecario.checked);
-            };
-            
-            checkBecario.addEventListener('change', toggleBecario);
-            toggleBecario();
-        }
-    }
-    
-    /**
-     * CONFIGURAR COMBOS
-     */
-    static configurarCombos(centrosProcedencia = [], universidadesProcedencia = []) {
-        // Combo de países
-        u_estudiante.inicializarComboPaises('comboPaisesEstudianteMatricula', 'opcionesEstudianteMatricula');
-        
-        // Combo de centros de procedencia
-        u_estudiante.inicializarComboConNuevo(
-            'comboCentroEstudianteMatricula',
-            'opcionesCentroEstudianteMatricula',
-            centrosProcedencia,
-            null,
-            (nuevoCentro) => {
-                if (nuevoCentro && !centrosProcedencia.includes(nuevoCentro)) {
-                    centrosProcedencia.push(nuevoCentro);
-                }
-            }
-        );
-        
-        // Combo de universidades de procedencia
-        u_estudiante.inicializarComboConNuevo(
-            'comboUniversidadEstudianteMatricula',
-            'opcionesUniversidadEstudianteMatricula',
-            universidadesProcedencia,
-            null,
-            (nuevaUniversidad) => {
-                if (nuevaUniversidad && !universidadesProcedencia.includes(nuevaUniversidad)) {
-                    universidadesProcedencia.push(nuevaUniversidad);
-                }
-            }
-        );
-    }
-    
-    /**
-     * INICIALIZAR VALORES POR DEFECTO
-     */
-    static inicializarValoresPorDefecto() {
-        // Curso académico automático
-        const cursoAcademico = u_estudiante.generarCursoAcademico();
-        const campoCurso = document.getElementById('cursoAcademicoMatricula');
-        if (campoCurso) campoCurso.value = cursoAcademico;
-        
-        // Fecha actual para fecha de matrícula
-        const fechaActual = new Date().toISOString().split('T')[0];
-        const campoFechaMatricula = document.getElementById('fechaMatricula');
-        if (campoFechaMatricula) campoFechaMatricula.value = fechaActual;
-        
-        // Fecha actual para fecha de pago
-        const campoFechaPago = document.getElementById('fechaPagoEstudiante');
-        if (campoFechaPago) campoFechaPago.value = fechaActual;
-        
-        // Valor por defecto para el combo de género
-        const campoGenero = document.getElementById('generosEstudianteMatricula');
-        if (campoGenero && campoGenero.value === 'Ninguno') {
-            campoGenero.value = 'Ninguno';
-        }
-    }
-    
-    /**
-     * MOSTRAR/OCULTAR SECCIONES
-     */
-    static mostrarSeccion(seccion) {
-        const seccionPersonales = document.getElementById('seccionDatosPersonales');
-        const seccionMatricula = document.getElementById('seccionDatosMatricula');
-        const seccionAcademicos = document.getElementById('seccionDatosAcademicos');
-        
-        if (seccionPersonales) seccionPersonales.style.display = 'none';
-        if (seccionMatricula) seccionMatricula.style.display = 'none';
-        if (seccionAcademicos) seccionAcademicos.style.display = 'none';
-        
-        switch (seccion) {
-            case 'datosPersonales':
-                if (seccionPersonales) seccionPersonales.style.display = 'block';
-                break;
-            case 'matricula':
-                if (seccionMatricula) seccionMatricula.style.display = 'block';
-                break;
-            case 'datosAcademicos':
-                if (seccionAcademicos) seccionAcademicos.style.display = 'block';
-                break;
-        }
-    }
-    
-    /**
-     * CONFIGURAR BOTONES DE SECCIONES
-     */
-    static configurarBotonesSecciones() {
-        const btnDatosPersonales = document.getElementById('btnDatosPersonales');
-        const btnMatricula = document.getElementById('btnMatricula');
-        const btnDatosAcademicos = document.getElementById('btnDatosAcademicos');
-        
-        if (btnDatosPersonales) {
-            btnDatosPersonales.addEventListener('click', () => this.mostrarSeccion('datosPersonales'));
-        }
-        if (btnMatricula) {
-            btnMatricula.addEventListener('click', () => this.mostrarSeccion('matricula'));
-        }
-        if (btnDatosAcademicos) {
-            btnDatosAcademicos.addEventListener('click', () => this.mostrarSeccion('datosAcademicos'));
-        }
-        
-        // Mostrar sección por defecto
-        this.mostrarSeccion('datosPersonales');
+    static escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 }
